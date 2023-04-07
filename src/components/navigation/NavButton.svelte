@@ -3,4 +3,4 @@
     export let text: string
 </script>
 
-<a {href}>{text}</a>
+<a {href} class="">{text}</a>
