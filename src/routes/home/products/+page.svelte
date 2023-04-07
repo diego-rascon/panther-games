@@ -1,1 +1,5 @@
-<h2>Productos</h2>
+<script>
+	import SectionTitle from '../../../components/SectionTitle.svelte';
+</script>
+
+<SectionTitle text="Productos" />
