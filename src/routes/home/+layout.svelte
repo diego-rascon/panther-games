@@ -1,9 +1,10 @@
 <script>
-
-	import Navbar from "../../components/navigation/Navbar.svelte";
-
+	import Navbar from '../../components/navigation/Navbar.svelte';
 </script>
-<div class="relative flex flex-col min-h-screen justify-center overflow-hidden bg-stone-950">
+
+<div class="relative min-h-screen flex">
 	<Navbar />
-	<slot />
+	<div class="flex-1 p-4 bg-stone-950">
+		<slot />
+	</div>
 </div>
