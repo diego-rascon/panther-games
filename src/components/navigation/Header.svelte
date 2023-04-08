@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import SectionTitle from './SectionTitle.svelte';
-	import { sections, type sectionData } from './sectionsModel';
+	import SectionTitle from '../titles/SectionTitle.svelte';
+	import { sections, type sectionData } from '../sectionsModel';
 
 	let title: string;
 
