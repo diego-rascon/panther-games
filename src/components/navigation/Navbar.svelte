@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PantherGamesLogo from '../PantherGamesLogo.svelte';
 	import NavButton from './NavButton.svelte';
-	import { sections } from '../sectionsModel';
+	import { sections } from '../../models/sectionsModel';
 </script>
 
 <div
