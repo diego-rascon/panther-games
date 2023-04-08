@@ -1,4 +1,4 @@
-![Alt text](https://scontent.fcen1-1.fna.fbcdn.net/v/t39.30808-6/313400996_556025363189810_8246496044028966806_n.png?_nc_cat=105&ccb=1-7&_nc_sid=e3f864&_nc_ohc=uEeX4OIgdFYAX_gNAR4&_nc_ht=scontent.fcen1-1.fna&oh=00_AfDEZ5Yihv6g4P1hBfQJYl1juO6UZc2KRnwbCQHVRjcObg&oe=640C7463 "Panther Games")
+![Alt text](https://scontent.fhmo2-2.fna.fbcdn.net/v/t39.30808-6/313400996_556025363189810_8246496044028966806_n.png?_nc_cat=105&ccb=1-7&_nc_sid=dd9801&efg=eyJpIjoidCJ9&_nc_ohc=L_fCLpuSOBwAX8Jj92Q&tn=Bvw84NPuymUTOPhx&_nc_ht=scontent.fhmo2-2.fna&oh=00_AfAAyR43yj9GVeCQvJNonE4mMBGMv6sT-i5WC9ZE3xSp4A&oe=6435FBA3 "Panther Games")
 # Panther Games
 ## Tabla de Contenido
 - [Introducción](#introduction)
