@@ -22,6 +22,7 @@ La aplicación está desarrollada con Sveltekit utilizando Typescript, un framew
 Para trabajar con el proyecto en Windows 10/11, se requieren los siguientes componentes:
 - Microsoft Visual Studio C++ Build Tools.
 - Rust.
+
 Favor de seguir las instrucciones listadas en https://tauri.app/v1/guides/getting-started/prerequisites.
 <a id="instalation"></a>
 ### Instalación
