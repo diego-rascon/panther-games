@@ -1,6 +1,11 @@
 <script>
 	import Navbar from '../../components/navigation/Navbar.svelte';
 	import Header from '../../components/navigation/Header.svelte';
+
+	const routes = [
+		'/',
+		
+	]
 </script>
 
 <div class="relative min-h-screen md:flex bg-stone-950">

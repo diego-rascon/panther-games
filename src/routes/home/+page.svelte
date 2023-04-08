@@ -1,5 +1,2 @@
-<script>
-	import SectionTitle from '../../components/SectionTitle.svelte';
-</script>
-
-<SectionTitle text="Inicio" />
+<h2>Categorías</h2>
+<h2>Inventario</h2>

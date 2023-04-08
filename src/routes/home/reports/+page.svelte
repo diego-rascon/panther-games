@@ -1,5 +1,1 @@
-<script>
-	import SectionTitle from '../../../components/SectionTitle.svelte';
-</script>
-
-<SectionTitle text="Reportes" />
+<p>reporteeees</p>
