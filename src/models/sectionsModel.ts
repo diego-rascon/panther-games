@@ -1,4 +1,4 @@
-export interface sectionData {
+export type sectionData = {
 	href: string;
 	text: string;
 	icon: string;
