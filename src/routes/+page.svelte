@@ -1,6 +1,6 @@
 <script>
-	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
 	import SignInInput from '../components/inputs/SignInInput.svelte';
+	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
 </script>
 
 <div class="relative flex flex-col min-h-screen justify-center bg-stone-900">
