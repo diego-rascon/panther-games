@@ -4,6 +4,7 @@
 - [Introducción](#introduction)
 - [Trabajando con el Proyecto](#working-with-the-proyect)
   - [Requisitos Prévios](#prerequisites)
+  - [Recomendaciones](#recommendations)
   - [Instalación](#instalation)
   - [Ejecución](#execution)
   - [Construcción](#building)
@@ -24,6 +25,21 @@ Para trabajar con el proyecto en Windows 10/11, se requieren los siguientes comp
 - Rust.
 
 Favor de seguir las instrucciones listadas en https://tauri.app/v1/guides/getting-started/prerequisites.
+<a id="recommendations"></a>
+### Recomendaciones
+Se recomienda utilizar un editor de código como [Visual Studio Code](https://code.visualstudio.com/) para trabajar con el proyecto, así como las siguientes extensiones:
+- [Auto Rename Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag)
+- [EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [HTML CSS Support](https://marketplace.visualstudio.com/items?itemName=ecmel.vscode-html-css)
+- [IntelliCode](https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.vscodeintellicode)
+- [IntelliCode API Usage Examples](https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.intellicode-api-usage-examples)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
+- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
+
 <a id="instalation"></a>
 ### Instalación
 Para preparar el proyecto, se utilizan los siguientes comandos:
