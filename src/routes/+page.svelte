@@ -5,7 +5,7 @@
 
 <div class="relative flex flex-col min-h-screen justify-center bg-stone-900">
 	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl">
-		<form action="/home" method="post" class="flex flex-col w-64 space-y-4">
+		<form action="/home" class="flex flex-col w-64 space-y-4">
 			<PantherGamesLogo size={4} />
 			<SignInInput type="text" placeholder="Usuario" />
 			<SignInInput type="password" placeholder="Contraseña" />
