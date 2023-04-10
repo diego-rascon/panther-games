@@ -15,6 +15,7 @@
 		background-color: rgb(190 24 93 / var(--tw-bg-opacity));
 		outline: 2px solid transparent;
 		outline-offset: 2px;
+		user-select: none;
 		transition-property: all;
 		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 		transition-duration: 150ms;
