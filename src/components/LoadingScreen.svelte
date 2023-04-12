@@ -1,1 +1,1 @@
-<p class="flex justify-center content-center">Cargando...</p>
+<p>Cargando...</p>
