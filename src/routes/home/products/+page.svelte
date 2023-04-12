@@ -8,7 +8,6 @@
 	let cartVisible: boolean = false;
 
 	export let data;
-	let { categories, products, platforms, productsPlatforms } = data;
 	$: ({ categories, products, platforms, productsPlatforms } = data);
 
 	function setCartVisible() {
