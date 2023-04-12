@@ -1,4 +1,5 @@
 <script>
+	import LoadingScreen from '../../components/LoadingScreen.svelte';
 	import Header from '../../components/navigation/Header.svelte';
 	import Navbar from '../../components/navigation/Navbar.svelte';
 </script>
