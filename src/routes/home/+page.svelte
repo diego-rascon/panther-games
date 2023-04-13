@@ -97,5 +97,5 @@
 		</div>
 	{/if}
 	<ShoppingCart {cartVisible} />
-	<AddButton {cartVisible} buttonHandler={addCategory} />
+	<AddButton {cartVisible} clickHandler={addCategory} />
 </div>

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 
-	export let cartVisible: boolean;
-
 	type ClickHandler = () => void;
-	export let buttonHandler: ClickHandler;
+
+	export let cartVisible: boolean = false;
+	export let clickHandler: ClickHandler;
 </script>
 
 <button
-	on:click={buttonHandler}
+	on:click={clickHandler}
 	class="fixed bottom-0 flex m-4 p-4 items-center space-x-2 btn-fill rounded-xl shadow-xl transition-all {cartVisible
 		? 'right-64'
 		: 'right-0'}"
