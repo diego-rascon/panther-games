@@ -71,7 +71,7 @@ npm run build
 <a id="credits"></a>
 ## Créditos
 La planeación y desarrollo de este software fue completamente hecha por:
-- Dulce Roxanna Clark Valenzuela.
-- Gabriel Alejandro Ibarra López.
-- José Antonio Vega Saenz.
-- José Diego Rascón Amador.
+- Dulce Roxanna Clark Valenzuela ([fungirox](https://github.com/fungirox)).
+- Gabriel Alejandro Ibarra López ([Galiblo](https://github.com/Galiblo)).
+- José Antonio Vega Saenz ([TonyDWKR](https://github.com/TonyDWKR)).
+- José Diego Rascón Amador ([diego-rascon](https://github.com/diego-rascon)).
