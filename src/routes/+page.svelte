@@ -31,7 +31,7 @@
 	};
 </script>
 
-<div class="relative flex flex-col min-h-screen justify-center bg-stone-900">
+<div class="flex flex-col min-h-screen justify-center bg-stone-900">
 	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
 		{#if loading}
 			<LoadingScreen text="usuarios" />
