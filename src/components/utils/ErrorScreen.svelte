@@ -1,5 +1,10 @@
 <script lang="ts">
-    export let error: string;
+	import Icon from '@iconify/svelte';
+
+	export let text: string;
 </script>
 
-<p class="flex justify-center content-center">Ocurrió un error cargando los datos {error}.</p>
+<div class="flex flex-col items-center justify-center p-4 space-y-4 transition-all">
+	<Icon icon="solar:sad-square-outline" height={64} />
+	<p>Ocurrió un error cargando los datos ({text}).</p>
+</div>
