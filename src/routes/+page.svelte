@@ -1,18 +1,43 @@
 <script lang="ts">
-	import ErrorScreen from '../components/ErrorScreen.svelte';
+	import { supabase } from '$lib/db';
+	import { onMount } from 'svelte';
 	import SignInInput from '../components/inputs/SignInInput.svelte';
-	import LoadingScreen from '../components/LoadingScreen.svelte';
 	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
+	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
+	import ErrorScreen from '../components/utils/ErrorScreen.svelte';
 
-	export let data;
-	$:({ users } = data.streamed);
+	let loading = true;
+	let errorFetching = false;
+	let errorMessage = '';
+
+	let users: any = [];
+
+	onMount(() => {
+		fetchUsers();
+	});
+
+	const fetchUsers = async () => {
+		let { data, error } = await supabase
+			.from('usuario')
+			.select('*')
+			.order('usuario_id', { ascending: true });
+		if (error) {
+			errorFetching = true;
+			errorMessage = error.message;
+		} else {
+			users = data;
+		}
+		loading = false;
+	};
 </script>
 
-{#await data.streamed.users}
-	<LoadingScreen />
-{:then users}
-	<div class="relative flex flex-col min-h-screen justify-center bg-stone-900">
-		<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl">
+<div class="relative flex flex-col min-h-screen justify-center bg-stone-900">
+	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
+		{#if loading}
+			<LoadingScreen text="usuarios" />
+		{:else if errorFetching}
+			<ErrorScreen text={errorMessage} />
+		{:else}
 			<form action="/home" class="flex flex-col w-64 space-y-4">
 				<PantherGamesLogo size={4} />
 				<SignInInput type="text" placeholder="Usuario" />
@@ -20,8 +45,6 @@
 				<button type="submit" class="px-4 py-2 rounded-xl font-bold btn-fill">Iniciar sesión</button
 				>
 			</form>
-		</div>
+		{/if}
 	</div>
-{:catch error}
-	<ErrorScreen error={error.message} />
-{/await}
+</div>
