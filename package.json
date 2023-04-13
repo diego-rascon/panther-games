@@ -27,7 +27,6 @@
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
-		"supabase": "^1.49.4",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
 		"tailwind-scrollbar": "^3.0.0",
@@ -38,7 +37,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@supabase/auth-helpers-sveltekit": "^0.9.3",
 		"@supabase/supabase-js": "^2.15.0"
 	}
 }
