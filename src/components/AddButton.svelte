@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
+	import addCircleOutline from '@iconify/icons-solar/add-circle-outline';
 
 	type ClickHandler = () => void;
 
@@ -13,6 +14,6 @@
 		? 'right-64'
 		: 'right-0'}"
 >
-	<Icon icon="solar:add-circle-outline" height={32} />
+	<Icon icon={addCircleOutline} height={32} />
 	<p class="font-bold">Agregar</p>
 </button>
