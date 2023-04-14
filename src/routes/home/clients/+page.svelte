@@ -85,8 +85,6 @@
 	</div>
 	<AddButton clickHandler={toggleModal} />
 	{#if modalVisible}
-		<div>
-			<AddClient cancelHandler={toggleModal} confirmHandler={addClient} />
-		</div>
+		<AddClient cancelHandler={toggleModal} confirmHandler={addClient} />
 	{/if}
 {/if}
