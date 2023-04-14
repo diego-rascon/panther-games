@@ -6,13 +6,13 @@ import userOutline from '@iconify/icons-solar/user-outline';
 import documentTextOutline from '@iconify/icons-solar/document-text-outline';
 import logoutOutline from '@iconify/icons-solar/logout-outline';
 
-export type sectionData = {
+export type SectionData = {
 	href: string;
 	text: string;
 	icon: IconifyIcon;
 };
 
-export const sections: sectionData[] = [
+export const sections: SectionData[] = [
 	{ href: '/home', text: 'Productos', icon: gamepadOutline },
 	{ href: '/home/sales', text: 'Ventas', icon: dollarMinimalisticOutline },
 	{ href: '/home/members', text: 'Miembros', icon: crownStarOutline },
