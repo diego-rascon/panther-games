@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
+	import type { IconifyIcon } from '@iconify/types';
+	import { page } from '$app/stores';
+
 	export let href: string;
 	export let text: string;
-	export let icon: string;
+	export let icon: IconifyIcon;
 
 	let isActive: boolean = false;
 
