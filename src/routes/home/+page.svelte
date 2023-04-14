@@ -75,7 +75,7 @@
 	}
 </script>
 
-<div class="mb-20  transition-all {cartVisible ? 'mr-64' : ''}">
+<div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
 	<SectionSubtitle text="Categorías" />
 	{#if loadingCategories}
 		<LoadingScreen text="categorías" />
