@@ -36,4 +36,13 @@
 	::-ms-reveal {
 		filter: invert(100%);
 	}
+	:root {
+		--date-picker-background: #1c1917;
+		--date-picker-foreground: #be185d;
+		--date-picker-highlight-border: #be185d;
+		--date-picker-highlight-shadow: #292524;
+		--date-picker-selected-color: #f7f7f7;
+		--date-picker-selected-background: #292524;
+		
+	  }
 }
