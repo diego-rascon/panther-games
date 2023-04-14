@@ -18,7 +18,6 @@
 
 <a
 	{href}
-	data-sveltekit-preload-data
 	class="p-4 rounded-xl outline-none transition-all select-none {isActive
 		? 'btn-fill font-bold'
 		: 'hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 selection:outline-none'}"
