@@ -4,14 +4,13 @@
 
 	type ClickHandler = () => void;
 
-	let name: string;
-	let email: string;
-	let phone: string;
-
-	const animDuration = 150;
-
 	export let cancelHandler: ClickHandler;
 	export let confirmHandler: ClickHandler;
+	export let name: string;
+	export let email: string;
+	export let phone: string;
+
+	const animDuration = 150;
 </script>
 
 <div
