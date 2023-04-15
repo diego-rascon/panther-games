@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { supabase } from '$lib/db';
 	import Icon from '@iconify/svelte';
 	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/AddClient.svelte';
-	import db from '$lib/db';
 
 	export let data;
 	let { clients } = data;
@@ -14,14 +14,18 @@
 	let email: string = '';
 	let phone: string = '';
 
-	const addUser = async () => {
-		const client = await db.clients.add({
-			cliente_nombre: name,
-			cliente_email: email,
-			cliente_telefono: phone,
-			cliente_miembro: false
-		});
-		clients = [...clients, client];
+	const addClient = async () => {
+		const { data: client } = await supabase
+			.from('cliente')
+			.insert({
+				cliente_nombre: name,
+				cliente_email: email,
+				cliente_telefono: phone,
+				cliente_miembro: false
+			})
+			.select()
+			.single();
+		clients = [...clients, client ?? []];
 		closeModal();
 	};
 
@@ -72,5 +76,11 @@
 </div>
 <AddButton clickHandler={openModal} />
 {#if modalVisible}
-	<AddClient cancelHandler={closeModal} confirmHandler={addUser} bind:name bind:email bind:phone />
+	<AddClient
+		cancelHandler={closeModal}
+		confirmHandler={addClient}
+		bind:name
+		bind:email
+		bind:phone
+	/>
 {/if}
