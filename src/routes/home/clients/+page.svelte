@@ -26,17 +26,17 @@
 			.select()
 			.single();
 		clients = [...clients, client ?? []];
-		closeModal();
+		closeAddMenu();
 	};
 
-	let modalVisible = false;
+	let addMenuVisible = false;
 
-	const openModal = () => {
-		modalVisible = true;
+	const openAddMenu = () => {
+		addMenuVisible = true;
 	};
 
-	const closeModal = () => {
-		modalVisible = false;
+	const closeAddMenu = () => {
+		addMenuVisible = false;
 	};
 </script>
 
@@ -74,10 +74,10 @@
 		</tbody>
 	</table>
 </div>
-<AddButton clickHandler={openModal} />
-{#if modalVisible}
+<AddButton clickHandler={openAddMenu} />
+{#if addMenuVisible}
 	<AddClient
-		cancelHandler={closeModal}
+		cancelHandler={closeAddMenu}
 		confirmHandler={addClient}
 		bind:name
 		bind:email
