@@ -1,6 +1,6 @@
 import { supabase } from '$lib/db';
 
-export async function load() {
+export const load = async () => {
 	const fetchClients = async () => {
 		const { data } = await supabase
 			.from('cliente')
