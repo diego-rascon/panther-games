@@ -4,7 +4,7 @@
 	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import AddButton from '../../../components/AddButton.svelte';
-	import AddClient from '../../../components/AddClient.svelte';
+	import AddClient from '../../../components/add-menus/AddClient.svelte';
 
 	export let data;
 	let { clients } = data;
