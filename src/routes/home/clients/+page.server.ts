@@ -9,4 +9,4 @@ export const load = async () => {
 		return data ?? [];
 	};
 	return { clients: fetchClients() };
-}
+};
