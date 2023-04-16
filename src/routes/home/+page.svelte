@@ -46,6 +46,7 @@
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 		}
+		closeConfirmation();
 		closeAddMenu();
 	};
 

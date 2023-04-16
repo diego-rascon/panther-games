@@ -27,6 +27,7 @@
 			.select()
 			.single();
 		clients = [client ?? [], ...clients];
+		closeConfirmation();
 		closeAddMenu();
 	};
 
