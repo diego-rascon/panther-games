@@ -90,6 +90,10 @@
 		closeCancelConfirmation();
 		closeAddMenu();
 	};
+
+	const restartValues = () => {
+		//Método que reinicia las variabls conectados a los inputs
+	}
 </script>
 
 <div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
