@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
-	import SectionTitle from './titles/SectionTitle.svelte';
+	import SectionTitle from '../titles/SectionTitle.svelte';
 
 	type ClickHandler = () => void;
 
