@@ -66,7 +66,7 @@
 	};
 </script>
 
-<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
 			<tr>
@@ -85,12 +85,12 @@
 					<td class="p-2 text-left">{client.cliente_nombre}</td>
 					<td class="p-2 text-left">{client.cliente_email}</td>
 					<td class="p-2 text-left">{client.cliente_telefono}</td>
-					<td class="py-2 text-right">
+					<td class="p-2 text-center">
 						{#if client.cliente_miembro}
 							<Icon icon={crownMinimalisticBold} color="#e6d92e" />
 						{/if}
 					</td>
-					<td class="p-2 text-cemter">
+					<td class="py-2 text-right">
 						<button class="rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all">
 							<Icon icon={menuDotsBold} rotate={1} height={24} />
 						</button>
