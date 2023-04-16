@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { supabase } from '$lib/db';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
@@ -7,19 +6,19 @@
 	import AddButton from '../../components/AddButton.svelte';
 
 	export let data;
-	let { categories, products } = data;
-	$: ({ categories, products } = data);
+	let { categories, products, platforms } = data;
+	$: ({ categories, products, platforms } = data);
 
 	let cartVisible = false;
 	let addMenuVisible = false;
 
 	const openCart = () => {
 		cartVisible = true;
-	}
+	};
 
 	const openAddMenu = () => {
 		addMenuVisible = true;
-	}
+	};
 </script>
 
 <div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
@@ -32,7 +31,13 @@
 	<SectionSubtitle text="Inventario" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each products as product}
-			<Product text={product.producto_nombre} category={product.categoria_id} />
+			<Product
+				name={product.producto_nombre}
+				stock={product.producto_stock}
+				price={product.producto_precio}
+				platform={product.plataforma_nombre}
+				isGame={product.categoria_id === 1 ? true : false}
+			/>
 		{/each}
 	</div>
 	<ShoppingCart {cartVisible} />
