@@ -6,6 +6,7 @@
 	import AddButton from '../../components/AddButton.svelte';
 	import AddProduct from '../../components/add-menus/AddProduct.svelte';
 	import { supabase } from '$lib/db';
+	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 
 	export let data;
 	let { categories, products, platforms } = data;
@@ -19,8 +20,15 @@
 	let minimumStock: number;
 	let used: boolean = false;
 
+	const addProductPlatform = async (productId: number) => {
+		const { error } = await supabase
+			.from('producto_plataforma')
+			.insert({ producto_id: productId, plataforma_id: platformId });
+		if (error) console.log(error.message);
+	};
+
 	const addProduct = async () => {
-		const { data: product } = await supabase
+		const { data: product, error } = await supabase
 			.from('producto')
 			.insert({
 				categoria_id: categoryId,
@@ -32,16 +40,12 @@
 			})
 			.select()
 			.single();
-
-		if (product) {
-			const productId = product.producto_id;
-			const { error } = await supabase
-				.from('producto_plataforma')
-				.insert({ producto_id: productId, plataforma_id: platformId });
-			if (error) console.log(error.message);
+		if (error) {
+			console.log(error.message);
+		} else if (product) {
+			addProductPlatform(product.producto_id);
+			products = [product, ...products];
 		}
-
-		products = [product, ...products];
 		closeAddMenu();
 	};
 
@@ -59,6 +63,31 @@
 
 	const closeAddMenu = () => {
 		addMenuVisible = false;
+	};
+
+	let confirmationVisible = false;
+
+	const openConfirmation = () => {
+		confirmationVisible = true;
+	}
+
+	const closeConfirmation = () => {
+		confirmationVisible = false;
+	}
+
+	let cancelConfirmationVisible = false;
+
+	const openCancelConfirmation = () => {
+		cancelConfirmationVisible = true;
+	};
+
+	const closeCancelConfirmation = () => {
+		cancelConfirmationVisible = false;
+	};
+
+	const cancelAddProduct = () => {
+		closeCancelConfirmation();
+		closeAddMenu();
 	};
 </script>
 
@@ -86,8 +115,8 @@
 <AddButton {cartVisible} clickHandler={openAddMenu} />
 {#if addMenuVisible}
 	<AddProduct
-		cancelHandler={closeAddMenu}
-		confirmHandler={addProduct}
+		cancelHandler={openCancelConfirmation}
+		confirmHandler={openConfirmation}
 		{categories}
 		{platforms}
 		bind:categoryId
@@ -97,5 +126,21 @@
 		bind:stock
 		bind:minimumStock
 		bind:used
+	/>
+{/if}
+{#if confirmationVisible}
+	<ConfirmDialog
+		cancelHandler={closeConfirmation}
+		confirmHandler={addProduct}
+		title="Confirmar Registro"
+		text="¿Está seguro de que desea registrar el nuevo producto?"
+	/>
+{/if}
+{#if cancelConfirmationVisible}
+	<ConfirmDialog
+		cancelHandler={closeCancelConfirmation}
+		confirmHandler={cancelAddProduct}
+		title="Cancelar Registro"
+		text="¿Está seguro de que desea cancelar el registro del nuevo producto?"
 	/>
 {/if}
