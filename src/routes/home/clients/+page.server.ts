@@ -5,7 +5,7 @@ export const load = async () => {
 		const { data } = await supabase
 			.from('cliente')
 			.select()
-			.order('cliente_id', { ascending: true });
+			.order('cliente_id', { ascending: false });
 		return data ?? [];
 	};
 	return { clients: fetchClients() };
