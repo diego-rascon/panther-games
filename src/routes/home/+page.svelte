@@ -4,20 +4,61 @@
 	import Product from '../../components/Product.svelte';
 	import ShoppingCart from '../../components/ShoppingCart.svelte';
 	import AddButton from '../../components/AddButton.svelte';
+	import AddProduct from '../../components/add-menus/AddProduct.svelte';
+	import { supabase } from '$lib/db';
 
 	export let data;
 	let { categories, products, platforms } = data;
 	$: ({ categories, products, platforms } = data);
 
+	let categoryId: number;
+	let platformId: number;
+	let name: string;
+	let price: number;
+	let stock: number;
+	let minimumStock: number;
+	let used: boolean = false;
+
+	const addProduct = async () => {
+		const { data: product } = await supabase
+			.from('producto')
+			.insert({
+				categoria_id: categoryId,
+				producto_nuevo: !used,
+				producto_nombre: name,
+				producto_precio: price,
+				producto_stock: stock,
+				producto_minimo: minimumStock
+			})
+			.select()
+			.single();
+
+		if (product) {
+			const productId = product.producto_id;
+			const { error } = await supabase
+				.from('producto_plataforma')
+				.insert({ producto_id: productId, plataforma_id: platformId });
+			if (error) console.log(error.message);
+		}
+
+		products = [product, ...products];
+		closeAddMenu();
+	};
+
 	let cartVisible = false;
-	let addMenuVisible = false;
 
 	const openCart = () => {
 		cartVisible = true;
 	};
 
+	let addMenuVisible = false;
+
 	const openAddMenu = () => {
 		addMenuVisible = true;
+	};
+
+	const closeAddMenu = () => {
+		addMenuVisible = false;
 	};
 </script>
 
@@ -40,6 +81,21 @@
 			/>
 		{/each}
 	</div>
-	<ShoppingCart {cartVisible} />
-	<AddButton {cartVisible} clickHandler={openCart} />
 </div>
+<ShoppingCart {cartVisible} />
+<AddButton {cartVisible} clickHandler={openAddMenu} />
+{#if addMenuVisible}
+	<AddProduct
+		cancelHandler={closeAddMenu}
+		confirmHandler={addProduct}
+		{categories}
+		{platforms}
+		bind:categoryId
+		bind:platformId
+		bind:name
+		bind:price
+		bind:stock
+		bind:minimumStock
+		bind:used
+	/>
+{/if}
