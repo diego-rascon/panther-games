@@ -10,9 +10,9 @@
 	let { clients } = data;
 	$: ({ clients } = data);
 
-	let name: string = '';
-	let email: string = '';
-	let phone: string = '';
+	let name: string;
+	let email: string;
+	let phone: string;
 
 	const addClient = async () => {
 		const { data: client } = await supabase
@@ -25,7 +25,7 @@
 			})
 			.select()
 			.single();
-		clients = [...clients, client ?? []];
+		clients = [client ?? [], ...clients];
 		closeAddMenu();
 	};
 
