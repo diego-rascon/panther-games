@@ -5,7 +5,6 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/add-menus/AddClient.svelte';
-	import ConfirmDialog from '../../../components/modals/confirmDialog.svelte';
 
 	export let data;
 	let { clients } = data;
@@ -27,43 +26,13 @@
 			.select()
 			.single();
 		clients = [client ?? [], ...clients];
-		closeConfirmation();
-		closeAddMenu();
+		toggleAddMenu();
 	};
 
 	let addMenuVisible = false;
 
-	const openAddMenu = () => {
-		addMenuVisible = true;
-	};
-
-	const closeAddMenu = () => {
-		addMenuVisible = false;
-	};
-
-	let confirmationVisible = false;
-
-	const openConfirmation = () => {
-		confirmationVisible = true;
-	};
-
-	const closeConfirmation = () => {
-		confirmationVisible = false;
-	};
-
-	let cancelConfirmationVisible = false;
-
-	const openCancelConfirmation = () => {
-		cancelConfirmationVisible = true;
-	};
-
-	const closeCancelConfirmation = () => {
-		cancelConfirmationVisible = false;
-	};
-
-	const cancelAddClient = () => {
-		closeCancelConfirmation();
-		closeAddMenu();
+	const toggleAddMenu = () => {
+		addMenuVisible = !addMenuVisible;
 	};
 </script>
 
@@ -102,30 +71,14 @@
 	</table>
 </div>
 <div class="fixed bottom-0 right-0">
-	<AddButton clickHandler={openAddMenu} />
+	<AddButton clickHandler={toggleAddMenu} />
 </div>
 {#if addMenuVisible}
 	<AddClient
-		cancelHandler={openCancelConfirmation}
-		confirmHandler={openConfirmation}
+		cancelHandler={toggleAddMenu}
+		confirmHandler={addClient}
 		bind:name
 		bind:email
 		bind:phone
-	/>
-{/if}
-{#if confirmationVisible}
-	<ConfirmDialog
-		cancelHandler={closeConfirmation}
-		confirmHandler={addClient}
-		title="Confirmar Registro"
-		text="¿Está seguro de que desea registrar el nuevo cliente?"
-	/>
-{/if}
-{#if cancelConfirmationVisible}
-	<ConfirmDialog
-		cancelHandler={closeCancelConfirmation}
-		confirmHandler={cancelAddClient}
-		title="Cancelar Registro"
-		text="¿Está seguro de que desea cancelar el registro del nuevo cliente?"
 	/>
 {/if}
