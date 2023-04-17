@@ -45,11 +45,11 @@
 
 	const openConfirmation = () => {
 		confirmationVisible = true;
-	}
+	};
 
 	const closeConfirmation = () => {
 		confirmationVisible = false;
-	}
+	};
 
 	let cancelConfirmationVisible = false;
 
@@ -101,7 +101,9 @@
 		</tbody>
 	</table>
 </div>
-<AddButton clickHandler={openAddMenu} />
+<div class="fixed bottom-0 right-0">
+	<AddButton clickHandler={openAddMenu} />
+</div>
 {#if addMenuVisible}
 	<AddClient
 		cancelHandler={openCancelConfirmation}
