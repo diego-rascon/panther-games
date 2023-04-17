@@ -19,9 +19,17 @@ export const load = async () => {
 			.order('plataforma_id', { ascending: true });
 		return data ?? [];
 	};
+	const fetchCart = async () => {
+		const { data } = await supabase
+			.from('carrito')
+			.select()
+			.order('producto_id', { ascending: false });
+		return data ?? [];
+	};
 	return {
 		categories: fetchCategories(),
 		products: fetchProducts(),
-		platforms: fetchPlatforms()
+		platforms: fetchPlatforms(),
+		cart: fetchCart()
 	};
 };
