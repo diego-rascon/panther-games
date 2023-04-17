@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { supabase } from '$lib/db';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
 	import ShoppingCart from '../../components/ShoppingCart.svelte';
 	import AddButton from '../../components/AddButton.svelte';
 	import AddProduct from '../../components/add-menus/AddProduct.svelte';
-	import { supabase } from '$lib/db';
-	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
@@ -74,10 +73,6 @@
 	const toggleAddMenu = () => {
 		addMenuVisible = !addMenuVisible;
 	};
-
-	const cancelAddProduct = () => {
-		toggleAddMenu();
-	};
 </script>
 
 <div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
@@ -108,7 +103,7 @@
 </div>
 {#if addMenuVisible}
 	<AddProduct
-		cancelHandler={cancelAddProduct}
+		cancelHandler={toggleAddMenu}
 		confirmHandler={addProduct}
 		{categories}
 		{platforms}
