@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
+	import ConfirmDialog from '../modals/confirmDialog.svelte';
+	import InputError from './InputError.svelte';
 
 	type ClickHandler = () => void;
 
@@ -13,10 +15,46 @@
 	export let name: string;
 	export let price: number;
 	export let stock: number;
-    export let minimumStock: number;
+	export let minimumStock: number;
 	export let used: boolean;
 
 	const animDuration = 150;
+
+	let confirmationVisible = false;
+
+	const toggleConfirmation = () => {
+		confirmationVisible = !confirmationVisible;
+	};
+
+	const validInput = (): boolean => {
+		if (!name) {
+			errorMessage = 'El nombre del producto no es válido.';
+			return false;
+		} else if (!price || price < 1) {
+			errorMessage = 'El precio del producto no es válido.';
+			return false;
+		} else if (!stock || stock < 1) {
+			errorMessage = 'El stock del producto no es válido.';
+			return false;
+		} else if (!minimumStock || minimumStock < 1) {
+			errorMessage = 'El stock mínimo del producto no es válido.';
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const addProduct = () => {
+		if (validInput()) {
+			confirmHandler();
+		} else {
+			inputError = true;
+			toggleConfirmation();
+		}
+	};
+
+	let inputError = false;
+	let errorMessage: string;
 </script>
 
 <div
@@ -69,7 +107,7 @@
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
 				placeholder="Stock"
 			/>
-            <input
+			<input
 				type="number"
 				required
 				bind:value={minimumStock}
@@ -85,20 +123,31 @@
 					class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
 				/>
 			</label>
-		</div>
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-			<button
-				class="py-2 border-2 border-pink-600 hover:bg-stone-900 active:bg-black outline-none focus:outline-pink-600 rounded-xl transition-all select-none"
-				on:click={cancelHandler}
-			>
-				Cancelar
-			</button>
-			<button
-				class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
-				on:click={confirmHandler}
-			>
-				Confirmar
-			</button>
+			{#if inputError}
+				<InputError text={errorMessage} />
+			{/if}
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+				<button
+					class="py-2 border-2 border-pink-600 hover:bg-stone-900 active:bg-black outline-none focus:outline-pink-600 rounded-xl transition-all select-none"
+					on:click={cancelHandler}
+				>
+					Cancelar
+				</button>
+				<button
+					class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
+					on:click={toggleConfirmation}
+				>
+					Confirmar
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
+{#if confirmationVisible}
+	<ConfirmDialog
+		cancelHandler={toggleConfirmation}
+		confirmHandler={addProduct}
+		title="Confirmar Registro"
+		text="¿Está seguro de que desea registrar el nuevo producto?"
+	/>
+{/if}

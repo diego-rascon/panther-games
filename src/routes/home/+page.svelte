@@ -46,8 +46,6 @@
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 		}
-		restartValues();
-		toggleConfirmation();
 		toggleAddMenu();
 	};
 
@@ -77,32 +75,8 @@
 		addMenuVisible = !addMenuVisible;
 	};
 
-	let confirmationVisible = false;
-
-	const toggleConfirmation = () => {
-		confirmationVisible = true;
-	};
-
-	let cancelConfirmationVisible = false;
-
-	const toggleCancelConfirmation = () => {
-		cancelConfirmationVisible = !cancelConfirmationVisible;
-	};
-
 	const cancelAddProduct = () => {
-		restartValues();
-		toggleCancelConfirmation();
 		toggleAddMenu();
-	};
-
-	const restartValues = () => {
-		categoryId = 1;
-		platformId = 1;
-		name = '';
-		price = 0;
-		stock = 0;
-		minimumStock = 0;
-		used = false;
 	};
 </script>
 
@@ -134,8 +108,8 @@
 </div>
 {#if addMenuVisible}
 	<AddProduct
-		cancelHandler={toggleCancelConfirmation}
-		confirmHandler={toggleConfirmation}
+		cancelHandler={cancelAddProduct}
+		confirmHandler={addProduct}
 		{categories}
 		{platforms}
 		bind:categoryId
@@ -145,21 +119,5 @@
 		bind:stock
 		bind:minimumStock
 		bind:used
-	/>
-{/if}
-{#if confirmationVisible}
-	<ConfirmDialog
-		cancelHandler={toggleConfirmation}
-		confirmHandler={addProduct}
-		title="Confirmar Registro"
-		text="¿Está seguro de que desea registrar el nuevo producto?"
-	/>
-{/if}
-{#if cancelConfirmationVisible}
-	<ConfirmDialog
-		cancelHandler={toggleCancelConfirmation}
-		confirmHandler={cancelAddProduct}
-		title="Cancelar Registro"
-		text="¿Está seguro de que desea cancelar el registro del nuevo producto?"
 	/>
 {/if}
