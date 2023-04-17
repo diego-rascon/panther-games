@@ -126,20 +126,20 @@
 			{#if inputError}
 				<InputError text={errorMessage} />
 			{/if}
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<button
-					class="py-2 border-2 border-pink-600 hover:bg-stone-900 active:bg-black outline-none focus:outline-pink-600 rounded-xl transition-all select-none"
-					on:click={cancelHandler}
-				>
-					Cancelar
-				</button>
-				<button
-					class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
-					on:click={toggleConfirmation}
-				>
-					Confirmar
-				</button>
-			</div>
+		</div>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+			<button
+				class="py-2 border-2 border-pink-600 hover:bg-stone-900 active:bg-black outline-none focus:outline-pink-600 rounded-xl transition-all select-none"
+				on:click={cancelHandler}
+			>
+				Cancelar
+			</button>
+			<button
+				class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
+				on:click={toggleConfirmation}
+			>
+				Confirmar
+			</button>
 		</div>
 	</div>
 </div>

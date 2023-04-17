@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
+	import ConfirmDialog from '../modals/confirmDialog.svelte';
+	import InputError from './InputError.svelte';
 
 	type ClickHandler = () => void;
 
@@ -11,6 +13,39 @@
 	export let phone: string;
 
 	const animDuration = 150;
+
+	let confirmationVisible = false;
+
+	const toggleConfirmation = () => {
+		confirmationVisible = !confirmationVisible;
+	};
+
+	const validInput = (): boolean => {
+		if (!name) {
+			errorMessage = 'El nombre del producto no es válido.';
+			return false;
+		} else if (!email) {
+			errorMessage = 'El precio del producto no es válido.';
+			return false;
+		} else if (!phone) {
+			errorMessage = 'El stock del producto no es válido.';
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const addProduct = () => {
+		if (validInput()) {
+			confirmHandler();
+		} else {
+			inputError = true;
+			toggleConfirmation();
+		}
+	};
+
+	let inputError = false;
+	let errorMessage: string;
 </script>
 
 <div
@@ -18,11 +53,11 @@
 	transition:fade={{ duration: animDuration }}
 >
 	<div
-		class="flex flex-col p-8 space-y-8 bg-stone-950 border border-stone-700 rounded-xl"
+		class="flex flex-col p-8 space-y-8 bg-stone-950 border border-stone-700 rounded-xl transition-all"
 		transition:scale={{ duration: animDuration }}
 	>
 		<SectionTitle text="Registrar Cliente" />
-		<div class="flex flex-col space-y-4">
+		<div class="flex flex-col space-y-4 transition-all">
 			<input
 				type="text"
 				required
@@ -31,19 +66,22 @@
 				placeholder="Nombre"
 			/>
 			<input
-				type="email"
+				type="text"
 				required
 				bind:value={email}
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
 				placeholder="Correo"
 			/>
 			<input
-				type="tel"
+				type="text"
 				required
 				bind:value={phone}
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Teléfono"
+				placeholder="Telephone"
 			/>
+			{#if inputError}
+				<InputError text={errorMessage} />
+			{/if}
 		</div>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<button
@@ -54,10 +92,18 @@
 			</button>
 			<button
 				class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
-				on:click={confirmHandler}
+				on:click={toggleConfirmation}
 			>
 				Confirmar
 			</button>
 		</div>
 	</div>
 </div>
+{#if confirmationVisible}
+	<ConfirmDialog
+		cancelHandler={toggleConfirmation}
+		confirmHandler={addProduct}
+		title="Confirmar Registro"
+		text="¿Está seguro de que desea registrar el nuevo producto?"
+	/>
+{/if}
