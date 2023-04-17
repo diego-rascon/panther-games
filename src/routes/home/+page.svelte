@@ -9,8 +9,8 @@
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 
 	export let data;
-	let { categories, products, platforms } = data;
-	$: ({ categories, products, platforms } = data);
+	let { categories, products, platforms, cart } = data;
+	$: ({ categories, products, platforms, cart } = data);
 
 	let categoryId: number;
 	let platformId: number;
@@ -46,54 +46,59 @@
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 		}
-		closeConfirmation();
-		closeAddMenu();
+		restartValues();
+		toggleConfirmation();
+		toggleAddMenu();
+	};
+
+	const addToCart = async (productId: number, productQuantity: number) => {
+		const { data } = await supabase
+			.from('carrito')
+			.insert({ producto_id: productId, producto_cantidad: productQuantity })
+			.select()
+			.single();
+		cart = [data ?? [], ...cart];
 	};
 
 	let cartVisible = false;
 
-	const openCart = () => {
-		cartVisible = true;
+	const toggleCart = () => {
+		cartVisible = !cartVisible;
 	};
 
 	let addMenuVisible = false;
 
-	const openAddMenu = () => {
-		addMenuVisible = true;
-	};
-
-	const closeAddMenu = () => {
-		addMenuVisible = false;
+	const toggleAddMenu = () => {
+		addMenuVisible = !addMenuVisible;
 	};
 
 	let confirmationVisible = false;
 
-	const openConfirmation = () => {
+	const toggleConfirmation = () => {
 		confirmationVisible = true;
-	}
-
-	const closeConfirmation = () => {
-		confirmationVisible = false;
-	}
+	};
 
 	let cancelConfirmationVisible = false;
 
-	const openCancelConfirmation = () => {
-		cancelConfirmationVisible = true;
-	};
-
-	const closeCancelConfirmation = () => {
-		cancelConfirmationVisible = false;
+	const toggleCancelConfirmation = () => {
+		cancelConfirmationVisible = !cancelConfirmationVisible;
 	};
 
 	const cancelAddProduct = () => {
-		closeCancelConfirmation();
-		closeAddMenu();
+		restartValues();
+		toggleCancelConfirmation();
+		toggleAddMenu();
 	};
 
 	const restartValues = () => {
-		//Método que reinicia las variabls conectados a los inputs
-	}
+		categoryId = 1;
+		platformId = 1;
+		name = '';
+		price = 0;
+		stock = 0;
+		minimumStock = 0;
+		used = false;
+	};
 </script>
 
 <div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
@@ -117,11 +122,11 @@
 	</div>
 </div>
 <ShoppingCart {cartVisible} />
-<AddButton {cartVisible} clickHandler={openAddMenu} />
+<AddButton {cartVisible} clickHandler={toggleAddMenu} />
 {#if addMenuVisible}
 	<AddProduct
-		cancelHandler={openCancelConfirmation}
-		confirmHandler={openConfirmation}
+		cancelHandler={toggleCancelConfirmation}
+		confirmHandler={toggleConfirmation}
 		{categories}
 		{platforms}
 		bind:categoryId
@@ -135,7 +140,7 @@
 {/if}
 {#if confirmationVisible}
 	<ConfirmDialog
-		cancelHandler={closeConfirmation}
+		cancelHandler={toggleConfirmation}
 		confirmHandler={addProduct}
 		title="Confirmar Registro"
 		text="¿Está seguro de que desea registrar el nuevo producto?"
@@ -143,7 +148,7 @@
 {/if}
 {#if cancelConfirmationVisible}
 	<ConfirmDialog
-		cancelHandler={closeCancelConfirmation}
+		cancelHandler={toggleCancelConfirmation}
 		confirmHandler={cancelAddProduct}
 		title="Cancelar Registro"
 		text="¿Está seguro de que desea cancelar el registro del nuevo producto?"
