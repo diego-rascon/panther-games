@@ -3,11 +3,19 @@
 	import Icon from '@iconify/svelte';
 	import Dropdown from './Dropdown.svelte';
 
+	type ClickHandler = (productId: number, productQuantity: number) => void;
+
+	export let clickHandler: ClickHandler;
+	export let id: number;
 	export let name: string;
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
 	export let isGame: boolean;
+
+	const addHandler = () => {
+		clickHandler(id, 1);
+	};
 
 	let dropdownVisible = false;
 
@@ -42,6 +50,7 @@
 		</div>
 		<button
 			class=" w-full py-2 hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 border-2 border-pink-700 transition-all rounded-xl select-none"
+			on:click={addHandler}
 		>
 			<p class="font-bold">Agregar</p>
 		</button>
