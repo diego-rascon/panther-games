@@ -23,7 +23,7 @@ export const load = async () => {
 		const { data } = await supabase
 			.from('carrito')
 			.select()
-			.order('producto_id', { ascending: false });
+			.order('carrito_id', { ascending: false });
 		return data ?? [];
 	};
 	return {
