@@ -1,14 +1,27 @@
 <!-- import DatePicker y declaración de fecha-->
 <script lang="ts">
+	import * as XLSX from 'xlsx';
+	import moment from 'moment';
 	import { DateInput } from 'date-picker-svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
-	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	let dateBeginMoment: string;
+	let dateFinalMoment: string;
 	let dateFinal = new Date();
 	let dateBegin = new Date(dateFinal.getFullYear(), dateFinal.getMonth(), 1);
 	let reporteGenerado: boolean = false;
-
 	const getReport = () => {
 		reporteGenerado = true;
+		dateBeginMoment = moment(dateBegin).format('DD/MM/YYYY');
+		dateFinalMoment = moment(dateFinal).format('DD/MM/YYYY');
+	};
+	const getExcel = () => {
+		const tables = document.querySelectorAll('table');
+		const wb = XLSX.utils.book_new();
+		tables.forEach((table, index) => {
+			const ws = XLSX.utils.table_to_sheet(table);
+			XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
+		});
+		XLSX.writeFile(wb, 'export.xlsx');
 	};
 </script>
 
@@ -16,38 +29,43 @@
 	<!-- Panel gris claro -->
 	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 		<div class="m-2">
-			<SectionSubtitle
-				text="Reporte del periodo {dateBegin.getDay()}/{dateBegin.getMonth()}/{dateBegin.getFullYear()} - {dateFinal.getDay()}/{dateFinal.getMonth()}/{dateFinal.getFullYear()}"
-			/>
+			<SectionSubtitle text="Reporte del periodo {dateBeginMoment} - {dateFinalMoment}" />
+			<button
+				on:click={getExcel}
+				class="bottom-0 flex m-4 p-4 items-center space-x-2 btn-fill rounded-lg shadow-lg transition-all"
+			>
+				<p class="font-bold">Exportar en .xlsx</p>
+			</button>
 		</div>
 		<!-- División de 2 columnas -->
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
 			<!-- Izquierda -->
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-				<table class="table">
+				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-700">
-						<th class="p-2 text-left">Ventas totales</th>
-						<th class="p-2 text-left">Costos</th>
-						<th class="p-2 text-left">Total por Ventas</th>
-						<th class="p-2 text-left">Ganancia</th>
+						<tr>
+							<th class="p-2 text-left">Ventas totales</th>
+							<th class="p-2 text-left">Total por Ventas</th>
+						</tr>
 					</thead>
-
-					<tr>
-						<td class="p-2 text-left">126</td>
-						<td class="p-2 text-left">63 873.50</td>
-						<td class="p-2 text-left">84 520</td>
-						<td class="p-2 text-left">20 625.50</td>
-					</tr>
+					<tbody>
+						<tr>
+							<td class="p-2 text-left">126</td>
+							<td class="p-2 text-left">84 520</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 
 			<!-- Derecha -->
 			<div>
 				<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-					<table class="table">
+					<table id="TableToExport" class="table">
 						<thead class="border-b border-stone-700">
-							<th class="p-2 text-left">Rentas completadas</th>
-							<th class="p-2 text-left">Total por rentas</th>
+							<tr>
+								<th class="p-2 text-left">Rentas completadas</th>
+								<th class="p-2 text-left">Total por rentas</th>
+							</tr>
 						</thead>
 						<tbody>
 							<tr>
@@ -58,10 +76,12 @@
 					</table>
 				</div>
 				<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-					<table class="table">
+					<table id="TableToExport" class="table">
 						<thead class="border-b border-stone-700">
-							<th class="p-2 text-left">Nuevos miembros</th>
-							<th class="p-2 text-left">Miembros activos</th>
+							<tr>
+								<th class="p-2 text-left">Nuevos miembros</th>
+								<th class="p-2 text-left">Miembros activos</th>
+							</tr>
 						</thead>
 						<tbody>
 							<tr>
@@ -77,26 +97,30 @@
 		<!-- Parte inferior-->
 		<div>
 			<div class="m-2">
-				<SectionSubtitle text="Consolas" />
+				<SectionSubtitle text="Videojuegos" />
 			</div>
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-				<table class="table">
+				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-700">
-						<th class="p-2 text-left">Nombre</th>
-						<th class="p-2 text-left">Stock</th>
-						<th class="p-2 text-left">Precio venta</th>
-						<th class="p-2 text-left">Vendidos</th>
-						<th class="p-2 text-left">% de crecimiento</th>
-						<th class="p-2 text-left">Previsto</th>
+						<tr>
+							<th class="p-2 text-left">Nombre</th>
+							<th class="p-2 text-left">Stock</th>
+							<th class="p-2 text-left">Precio venta</th>
+							<th class="p-2 text-left">Vendidos</th>
+						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="p-2 text-left">PS4</td>
-							<td class="p-2 text-left">0</td>
-							<td class="p-2 text-left">8500</td>
-							<td class="p-2 text-left">1</td>
-							<td class="p-2 text-left">50</td>
+						<tr class="bg-blue-950">
+							<td class="p-2 text-left">Super Mario 64 PS5</td>
 							<td class="p-2 text-left">2</td>
+							<td class="p-2 text-left">1000</td>
+							<td class="p-2 text-left">1</td>
+						</tr>
+						<tr class="bg-red-950">
+							<td class="p-2 text-left">Super Mario Galaxy</td>
+							<td class="p-2 text-left">3</td>
+							<td class="p-2 text-left">300</td>
+							<td class="p-2 text-left">6</td>
 						</tr>
 					</tbody>
 				</table>
@@ -104,34 +128,24 @@
 		</div>
 		<div>
 			<div class="m-2">
-				<SectionSubtitle text="Videojuegos" />
+				<SectionSubtitle text="Consolas" />
 			</div>
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-				<table class="table">
+				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-700">
-						<th class="p-2 text-left">Nombre</th>
-						<th class="p-2 text-left">Stock</th>
-						<th class="p-2 text-left">Precio venta</th>
-						<th class="p-2 text-left">Vendidos</th>
-						<th class="p-2 text-left">% de crecimiento</th>
-						<th class="p-2 text-left">Previsto</th>
+						<tr>
+							<th class="p-2 text-left">Nombre</th>
+							<th class="p-2 text-left">Stock</th>
+							<th class="p-2 text-left">Precio venta</th>
+							<th class="p-2 text-left">Vendidos</th>
+						</tr>
 					</thead>
 					<tbody>
-						<tr class="bg-blue-500">
-							<td class="p-2 text-left">Super Mario 64 PS5</td>
-							<td class="p-2 text-left">2</td>
-							<td class="p-2 text-left">1000</td>
-							<td class="p-2 text-left">1</td>
-							<td class="p-2 text-left">100</td>
+						<tr>
+							<td class="p-2 text-left">PS4</td>
 							<td class="p-2 text-left">0</td>
-						</tr>
-						<tr class=" bg-red-500">
-							<td class="p-2 text-left">Super Mario Galaxy</td>
-							<td class="p-2 text-left">3</td>
-							<td class="p-2 text-left">300</td>
-							<td class="p-2 text-left">6</td>
-							<td class="p-2 text-left">15</td>
-							<td class="p-2 text-left">4</td>
+							<td class="p-2 text-left">8500</td>
+							<td class="p-2 text-left">1</td>
 						</tr>
 					</tbody>
 				</table>
