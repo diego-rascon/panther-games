@@ -20,10 +20,7 @@ export const load = async () => {
 		return data ?? [];
 	};
 	const fetchCart = async () => {
-		const { data } = await supabase
-			.from('carrito')
-			.select()
-			.order('carrito_id', { ascending: false });
+		const { data } = await supabase.rpc('products_cart');
 		return data ?? [];
 	};
 	return {
