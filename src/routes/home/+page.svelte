@@ -92,12 +92,12 @@
 				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
-				isGame={product.categoria_id === 1 ? true : false}
+				isGame={products.categoria_id === 1 ? true : false}
 			/>
 		{/each}
 	</div>
 </div>
-<ShoppingCart {cartVisible} />
+<ShoppingCart {cartVisible} {cart} />
 <div class="fixed bottom-0 {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton clickHandler={toggleAddMenu} />
 </div>
