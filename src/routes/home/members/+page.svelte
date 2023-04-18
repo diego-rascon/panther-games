@@ -10,8 +10,6 @@
 	let { members } = data;
 	$: ({ members } = data);
 
-	console.log(members);
-
 	let name: string;
 	let email: string;
 	let phone: string;
