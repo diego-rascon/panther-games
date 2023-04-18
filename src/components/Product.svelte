@@ -33,9 +33,9 @@
 		<p class="text-xl font-bold select-none">{name}</p>
 		<button
 			on:click={toggleDropdown}
-			class="ml-2 rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all"
+			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all"
 		>
-			<Icon icon={menuDotsBold} rotate={1} height={24} />
+			<Icon icon={menuDotsBold} rotate={1} height={18} />
 		</button>
 	</div>
 	<div class="mt-auto">
@@ -44,7 +44,7 @@
 				<p class="text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
 			<p class="text-sm"><strong>Cantidad:</strong> {stock}</p>
-			<p class="pt-4 text-xl font-bold">$ {price}</p>
+			<p class="pt-2 text-xl font-bold">$ {price}</p>
 		</div>
 		<button
 			class=" w-full py-2 hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 border-2 border-pink-700 transition-all rounded-xl select-none"
