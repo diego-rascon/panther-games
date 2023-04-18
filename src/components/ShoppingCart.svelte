@@ -1,7 +1,9 @@
 <script lang="ts">
-	import SectionTitle from './titles/SectionTitle.svelte';
+	import CartProduct from './CartProduct.svelte';
+import SectionTitle from './titles/SectionTitle.svelte';
 
 	export let cartVisible: boolean;
+	export let cart: any;
 </script>
 
 <div
@@ -10,4 +12,7 @@
 		: ''}"
 >
 	<SectionTitle text="Carrito" />
+	{#each cart as product}
+		<CartProduct name={product.producto_nombre} />
+	{/each}
 </div>
