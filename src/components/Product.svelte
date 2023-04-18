@@ -19,7 +19,7 @@
 
 	let dropdownVisible = false;
 
-	const togleDropdown = () => {
+	const toggleDropdown = () => {
 		dropdownVisible = !dropdownVisible;
 	};
 
@@ -29,17 +29,15 @@
 </script>
 
 <div class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
-	<button
-		on:click={togleDropdown}
-		class="ml-auto rounded-full hover:bg-stone-800 active:bg-stone-950 transition-all"
-		on:blur={dropdownFocusLoss}
-	>
-		<Icon icon={menuDotsBold} rotate={1} height={24} />
-	</button>
-	<p class="text-xl font-lexend font-bold select-none">
-		{name}
-	</p>
-
+	<div class="flex items-start justify-between">
+		<p class="text-xl font-bold select-none">{name}</p>
+		<button
+			on:click={toggleDropdown}
+			class="ml-2 rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all"
+		>
+			<Icon icon={menuDotsBold} rotate={1} height={24} />
+		</button>
+	</div>
 	<div class="mt-auto">
 		<div class="py-4">
 			{#if isGame}
