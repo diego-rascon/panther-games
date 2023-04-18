@@ -1,7 +1,11 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import CartProduct from './CartProduct.svelte';
-import SectionTitle from './titles/SectionTitle.svelte';
+	import SectionTitle from './titles/SectionTitle.svelte';
 
+	type ClickHandler = (carritoId: number) => void;
+
+	export let removeHandler: ClickHandler;
 	export let cartVisible: boolean;
 	export let cart: any;
 </script>
@@ -11,8 +15,24 @@ import SectionTitle from './titles/SectionTitle.svelte';
 		? 'translate-x-full'
 		: ''}"
 >
-	<SectionTitle text="Carrito" />
-	{#each cart as product}
-		<CartProduct name={product.producto_nombre} />
-	{/each}
+	<div class="flex flex-col space-y-4">
+		<SectionTitle text="Carrito" />
+		<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
+			{#each cart as product}
+				<div transition:fade={{ duration: 150 }}>
+					<CartProduct
+						{removeHandler}
+						id={product.carrito_id}
+						name={product.producto_nombre}
+						price={product.producto_precio}
+						stock={product.producto_stock}
+					/>
+				</div>
+			{/each}
+		</div>
+		<button
+			class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
+			>Realizar venta</button
+		>
+	</div>
 </div>
