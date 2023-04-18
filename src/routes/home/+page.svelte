@@ -50,13 +50,9 @@
 
 	let cartVisible = false;
 
-	const toggleCart = () => {
-		if (cart.length > 0) {
-			cartVisible = true;
-		}
-	};
-
-	toggleCart();
+	$: {
+		cartVisible = cart.length > 0;
+	}
 
 	const addToCart = async (productId: number, productQuantity: number) => {
 		const { data } = await supabase
@@ -65,7 +61,11 @@
 			.select()
 			.single();
 		cart = [data ?? [], ...cart];
-		toggleCart();
+	};
+
+	const removeFromCart = async (id: number) => {
+		await supabase.from('carrito').delete().eq('carrito_id', id);
+		cart = cart.filter((x: any) => x.carrito_id != id);
 	};
 
 	let addMenuVisible = false;
@@ -97,7 +97,7 @@
 		{/each}
 	</div>
 </div>
-<ShoppingCart {cartVisible} {cart} />
+<ShoppingCart removeHandler={removeFromCart} {cartVisible} {cart} />
 <div class="fixed bottom-0 {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton clickHandler={toggleAddMenu} />
 </div>
