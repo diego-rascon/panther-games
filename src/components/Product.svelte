@@ -6,12 +6,12 @@
 	type ClickHandler = (productId: number, productQuantity: number) => void;
 
 	export let clickHandler: ClickHandler;
+	export let isGame: boolean;
 	export let id: number;
 	export let name: string;
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
-	export let isGame: boolean;
 
 	const addHandler = () => {
 		clickHandler(id, 1);

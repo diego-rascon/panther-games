@@ -87,12 +87,12 @@
 		{#each products as product}
 			<Product
 				clickHandler={addToCart}
+				isGame={product.categoria_id === 1}
 				id={product.producto_id}
 				name={product.producto_nombre}
 				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
-				isGame={products.categoria_id === 1 ? true : false}
 			/>
 		{/each}
 	</div>
