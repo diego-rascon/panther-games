@@ -13,6 +13,8 @@
 	export let price: number;
 	export let platform: string;
 
+	let onCart: boolean = false;
+
 	const addHandler = () => {
 		clickHandler(id, 1);
 	};
