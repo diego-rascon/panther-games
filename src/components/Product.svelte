@@ -1,7 +1,7 @@
 <script lang="ts">
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import Icon from '@iconify/svelte';
-	import Dropdown from './Dropdown.svelte';
+	import Dropdown from './Dropdown/Dropdown.svelte';
 
 	type ClickHandler = (productId: number, productQuantity: number) => void;
 
@@ -22,10 +22,6 @@
 	const toggleDropdown = () => {
 		dropdownVisible = !dropdownVisible;
 	};
-
-	const dropdownFocusLoss = () => {
-		dropdownVisible = false;
-	};
 </script>
 
 <div class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
@@ -35,6 +31,9 @@
 			on:click={toggleDropdown}
 			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all"
 		>
+			{#if dropdownVisible}
+				<Dropdown />
+			{/if}
 			<Icon icon={menuDotsBold} rotate={1} height={18} />
 		</button>
 	</div>
@@ -54,6 +53,3 @@
 		</button>
 	</div>
 </div>
-{#if dropdownVisible}
-	<Dropdown />
-{/if}
