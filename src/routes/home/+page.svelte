@@ -48,11 +48,7 @@
 		toggleAddMenu();
 	};
 
-	let cartVisible = false;
-
-	$: {
-		cartVisible = cart.length > 0;
-	}
+	$: cartVisible = cart.length > 0;
 
 	const addToCart = async (productId: number, productQuantity: number) => {
 		await supabase
@@ -61,12 +57,28 @@
 		const { data } = await supabase.rpc('products_cart').eq('producto_id', productId).single();
 		console.log(data);
 		cart = [data ?? [], ...cart];
+		fetchTotal();
 	};
 
-	const removeFromCart = async (id: number) => {
-		await supabase.from('carrito').delete().eq('carrito_id', id);
-		cart = cart.filter((x: any) => x.carrito_id != id);
+	const removeFromCart = async (cartId: number) => {
+		await supabase.from('carrito').delete().eq('carrito_id', cartId);
+		cart = cart.filter((x: any) => x.carrito_id != cartId);
+		fetchTotal();
 	};
+
+	const updateQuantity = async (productId: number, quantity: number) => {
+		await supabase
+			.from('carrito')
+			.update({ producto_cantidad: quantity })
+			.eq('producto_id', productId);
+	};
+
+	const fetchTotal = async () => {
+		const { data } = await supabase.rpc('get_total');
+		return data ?? [];
+	};
+
+	let total = fetchTotal();
 
 	let addMenuVisible = false;
 
@@ -97,7 +109,13 @@
 		{/each}
 	</div>
 </div>
-<ShoppingCart removeHandler={removeFromCart} {cartVisible} {cart} />
+<ShoppingCart
+	removeHandler={removeFromCart}
+	quantityHandler={updateQuantity}
+	{cartVisible}
+	{cart}
+	{total}
+/>
 <div class="fixed bottom-0 {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton clickHandler={toggleAddMenu} />
 </div>
