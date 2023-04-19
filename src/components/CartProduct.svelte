@@ -2,16 +2,23 @@
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticOutline from '@iconify/icons-solar/trash-bin-minimalistic-outline';
 
-	type ClickHandler = (carritoId: number) => void;
+	type RemoveHandler = (cartId: number) => void;
+	type QuantityHandler = (cartId: number, quantity: number) => void;
 
 	const removeFromCart = () => {
 		removeHandler(id);
 	};
 
-	export let removeHandler: ClickHandler;
+	const updateQuantity = () => {
+		quantityHandler(id, quantity);
+	}
+
+	export let removeHandler: RemoveHandler;
+	export let quantityHandler: QuantityHandler;
 	export let id: number;
 	export let name: string;
 	export let price: number;
+	export let quantity: number;
 	export let stock: number;
 </script>
 
@@ -21,9 +28,9 @@
 		<p>$ {price}</p>
 	</div>
 	<div class="flex justify-between">
-		<select class="p-1 bg-stone-900 rounded-xl select-none">
+		<select on:change={updateQuantity} class="p-1 bg-stone-900 rounded-xl select-none">
 			{#each Array(stock) as _, index (index)}
-				<option>{index + 1}</option>
+				<option>{quantity}</option>
 			{/each}
 		</select>
 		<button
