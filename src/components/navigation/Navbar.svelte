@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PantherGamesLogo from '../PantherGamesLogo.svelte';
-	import NavButton from './NavButton.svelte';
+	import NavItem from './NavItem.svelte';
 	import { sections } from '../../models/sectionsModel';
 </script>
 
@@ -14,7 +14,7 @@
 			class="p-4 outline-none focus:outline-pink-700 rounded-xl"><PantherGamesLogo size={2} /></a
 		>
 		{#each sections as section}
-			<NavButton href={section.href} text={section.text} icon={section.icon} />
+			<NavItem href={section.href} text={section.text} icon={section.icon} />
 		{/each}
 	</nav>
 </div>
