@@ -55,11 +55,11 @@
 	}
 
 	const addToCart = async (productId: number, productQuantity: number) => {
-		const { data } = await supabase
+		await supabase
 			.from('carrito')
-			.insert({ producto_id: productId, producto_cantidad: productQuantity })
-			.select()
-			.single();
+			.insert({ producto_id: productId, producto_cantidad: productQuantity });
+		const { data } = await supabase.rpc('products_cart').eq('producto_id', productId).single();
+		console.log(data);
 		cart = [data ?? [], ...cart];
 	};
 
