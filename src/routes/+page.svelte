@@ -1,15 +1,87 @@
 <script lang="ts">
 	import SignInInput from '../components/inputs/SignInInput.svelte';
 	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
+	import { supabase } from '$lib/db';
+	import InputError from '../components/add-menus/InputError.svelte';
+	import Icon from '@iconify/svelte';
+	import refreshLinear from '@iconify/icons-solar/refresh-linear';
+
+	let usuario = '';
+	let contraseña = '';
+	let errorString = '';
+
+	let errorVisible = false;
+
+	let loading = false;
+
+	const checkLogin = async () => {
+		// Verificar si el usuario y la contraseña no están vacíos
+		if (usuario && contraseña) {
+			// Realizar una consulta a la tabla "usuario" en Supabase para verificar la coincidencia
+			const { data, error } = await supabase
+				.from('usuario')
+				.select()
+				.eq('usuario_username', usuario)
+				.eq('usuario_password', contraseña)
+				.limit(1);
+
+			if (error) {
+				console.error('Error al verificar usuario y contraseña:', error);
+				return;
+			}
+
+			if (data && data.length > 0) {
+				// Desactivar variables
+				errorVisible = false;
+				// Los datos coinciden, el usuario y contraseña son válidos
+				console.log('Usuario y contraseña coinciden.');
+				// Redireccionar a la página de inicio
+				window.location.href = '/home';
+			} else {
+				loading = false;
+				errorVisible = true;
+				errorString = 'Usuario o contraseña no coinciden.';
+			}
+		} else {
+			loading = false;
+			errorVisible = true;
+			errorString = 'Por favor, ingresa usuario y contraseña';
+		}
+	};
+
+	const submit = () => {
+		loading = true;
+		checkLogin();
+	};
 </script>
 
 <div class="flex flex-col min-h-screen justify-center bg-stone-900">
 	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
-		<form action="/home" class="flex flex-col w-64 space-y-4">
+		<form class="flex flex-col w-64 space-y-4">
+			<!-- Enlaza los campos de entrada a las variables en el script -->
 			<PantherGamesLogo size={4} />
-			<SignInInput type="text" placeholder="Usuario" />
-			<SignInInput type="password" placeholder="Contraseña" />
-			<button type="submit" class="px-4 py-2 rounded-xl font-bold btn-fill">Iniciar sesión</button>
+			<input
+				type="text"
+				bind:value={usuario}
+				placeholder="Usuario"
+				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+			/>
+			<input
+				type="password"
+				bind:value={contraseña}
+				placeholder="Contraseña"
+				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+			/>
+			{#if errorVisible}
+				<InputError text={errorString} />
+			{/if}
+			<button
+				type="button"
+				class="px-4 py-2 rounded-xl font-bold {loading ? 'bg-green-600' : 'btn-fill'}"
+				on:click={submit}
+			>
+				Iniciar sesión
+			</button>
 		</form>
 	</div>
 </div>
