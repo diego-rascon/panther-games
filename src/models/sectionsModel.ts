@@ -1,10 +1,10 @@
 import type { IconifyIcon } from '@iconify/types';
-import gamepadOutline from '@iconify/icons-solar/gamepad-outline';
-import dollarMinimalisticOutline from '@iconify/icons-solar/dollar-minimalistic-outline';
-import crownStarOutline from '@iconify/icons-solar/crown-star-outline';
-import userOutline from '@iconify/icons-solar/user-outline';
-import documentTextOutline from '@iconify/icons-solar/document-text-outline';
-import logoutOutline from '@iconify/icons-solar/logout-outline';
+import gamepadLinear from '@iconify/icons-solar/gamepad-outline';
+import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-outline';
+import crownStarLinear from '@iconify/icons-solar/crown-star-outline';
+import userLinear from '@iconify/icons-solar/user-outline';
+import documentTextLinear from '@iconify/icons-solar/document-text-outline';
+import logoutLinear from '@iconify/icons-solar/logout-outline';
 
 export type SectionData = {
 	href: string;
@@ -13,10 +13,10 @@ export type SectionData = {
 };
 
 export const sections: SectionData[] = [
-	{ href: '/home', text: 'Productos', icon: gamepadOutline },
-	{ href: '/home/sales', text: 'Ventas', icon: dollarMinimalisticOutline },
-	{ href: '/home/members', text: 'Miembros', icon: crownStarOutline },
-	{ href: '/home/clients', text: 'Clientes', icon: userOutline },
-	{ href: '/home/reports', text: 'Reportes', icon: documentTextOutline },
-	{ href: '/', text: 'Cerrar sesión', icon: logoutOutline }
+	{ href: '/home', text: 'Productos', icon: gamepadLinear },
+	{ href: '/home/sales', text: 'Ventas', icon: dollarMinimalisticLinear },
+	{ href: '/home/members', text: 'Miembros', icon: crownStarLinear },
+	{ href: '/home/clients', text: 'Clientes', icon: userLinear },
+	{ href: '/home/reports', text: 'Reportes', icon: documentTextLinear },
+	{ href: '/', text: 'Cerrar sesión', icon: logoutLinear }
 ];
