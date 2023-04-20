@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import CartProduct from './CartProduct.svelte';
 	import SectionTitle from './titles/SectionTitle.svelte';
+	import { fade } from 'svelte/transition';
 
+	type TotalHandler = () => void;
 	type ClickHandler = (carritoId: number) => void;
-	type QuantityHandler = (cartId: number, quantity: number) => void;
 
+	export let totalHandler: TotalHandler;
 	export let removeHandler: ClickHandler;
-	export let quantityHandler: QuantityHandler;
 	export let cartVisible: boolean;
 	export let cart: any;
-	export let total: any;
 </script>
 
 <div
@@ -24,12 +23,11 @@
 			{#each cart as product}
 				<div transition:fade={{ duration: 150 }}>
 					<CartProduct
+						{totalHandler}
 						{removeHandler}
-						{quantityHandler}
 						id={product.carrito_id}
 						name={product.producto_nombre}
 						price={product.producto_precio}
-						quantity={product.producto_cantidad}
 						stock={product.producto_stock}
 					/>
 				</div>
