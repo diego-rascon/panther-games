@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
+	import { fade } from 'svelte/transition';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
-	import ShoppingCart from '../../components/ShoppingCart.svelte';
 	import AddButton from '../../components/AddButton.svelte';
 	import AddProduct from '../../components/add-menus/AddProduct.svelte';
+	import CartProduct from '../../components/CartProduct.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
@@ -20,14 +21,13 @@
 	let used: boolean = false;
 
 	const addProductPlatform = async (productId: number) => {
-		const { error } = await supabase
+		await supabase
 			.from('producto_plataforma')
 			.insert({ producto_id: productId, plataforma_id: platformId });
-		if (error) console.log(error.message);
 	};
 
 	const addProduct = async () => {
-		const { data: product, error } = await supabase
+		const { data: product } = await supabase
 			.from('producto')
 			.insert({
 				categoria_id: categoryId,
@@ -39,9 +39,7 @@
 			})
 			.select()
 			.single();
-		if (error) {
-			console.log(error.message);
-		} else if (product) {
+		if (product) {
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 		}
@@ -50,13 +48,15 @@
 
 	$: cartVisible = cart.length > 0;
 
-	const addToCart = async (productId: number, productQuantity: number) => {
-		await supabase
-			.from('carrito')
-			.insert({ producto_id: productId, producto_cantidad: productQuantity });
-		const { data } = await supabase.rpc('products_cart').eq('producto_id', productId).single();
-		console.log(data);
-		cart = [data ?? [], ...cart];
+	const addToCart = async (productId: number) => {
+		await supabase.from('carrito').insert({ producto_id: productId, producto_cantidad: 1 });
+		const { data: cartItem } = await supabase
+			.rpc('products_cart')
+			.eq('producto_id', productId)
+			.single();
+		cart = [cartItem ?? [], ...cart];
+		console.log(cart);
+		
 		fetchTotal();
 	};
 
@@ -66,19 +66,12 @@
 		fetchTotal();
 	};
 
-	const updateQuantity = async (productId: number, quantity: number) => {
-		await supabase
-			.from('carrito')
-			.update({ producto_cantidad: quantity })
-			.eq('producto_id', productId);
-	};
-
 	const fetchTotal = async () => {
-		const { data } = await supabase.rpc('get_total');
-		return data ?? [];
+		const { data: total } = await supabase.rpc('get_total').single();
+		console.log(total);
 	};
 
-	let total = fetchTotal();
+	fetchTotal();
 
 	let addMenuVisible = false;
 
@@ -109,13 +102,39 @@
 		{/each}
 	</div>
 </div>
-<ShoppingCart
-	removeHandler={removeFromCart}
-	quantityHandler={updateQuantity}
-	{cartVisible}
-	{cart}
-	{total}
-/>
+
+<div
+	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
+		? 'translate-x-full'
+		: ''}"
+>
+	<div class="flex flex-col space-y-4">
+		<SectionSubtitle text="Carrito" />
+		<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
+			{#each cart as product}
+				<div transition:fade={{ duration: 150 }}>
+					<CartProduct
+						removeHandler={removeFromCart}
+						id={product.carrito_id}
+						name={product.producto_nombre}
+						price={product.producto_precio}
+						stock={product.producto_stock}
+						quantity={product.producto_cantidad}
+					/>
+				</div>
+			{/each}
+		</div>
+		<div class="flex text-xl px-4 justify-between">
+			<p class="font-bold">Total:</p>
+			<p>$ total</p>
+		</div>
+		<button
+			class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
+		>
+			Realizar venta
+		</button>
+	</div>
+</div>
 <div class="fixed bottom-0 {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton clickHandler={toggleAddMenu} />
 </div>
