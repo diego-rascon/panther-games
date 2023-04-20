@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { fade } from 'svelte/transition';
+	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
@@ -19,6 +20,10 @@
 	let stock: number;
 	let minimumStock: number;
 	let used: boolean = false;
+
+	const registerProduct = async () => {
+		await supabase.rpc('register_sale');
+	};
 
 	const addProductPlatform = async (productId: number) => {
 		await supabase
@@ -55,20 +60,40 @@
 			.eq('producto_id', productId)
 			.single();
 		cart = [cartItem ?? [], ...cart];
-		console.log(cart);
-		
+
 		fetchTotal();
 	};
 
 	const removeFromCart = async (cartId: number) => {
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
-		cart = cart.filter((x: any) => x.carrito_id != cartId);
+		cart = cart.filter((item: any) => item.carrito_id != cartId);
 		fetchTotal();
 	};
 
+	const emptyCart = async () => {
+		await supabase.from('carrito').delete().neq('carrito_id', 0);
+		cart = [];
+		fetchTotal();
+	};
+
+	const updateQuantity = async (cartId: number, quantity: number) => {
+		await supabase
+			.from('carrito')
+			.update({ producto_cantidad: quantity })
+			.eq('carrito_id', cartId)
+			.select()
+			.single();
+
+		const updatedItem = cart.find((item: any) => item.carrito_id === cartId);
+		updatedItem.producto_cantidad = quantity;
+		fetchTotal();
+	};
+
+	let cartTotal: number;
+
 	const fetchTotal = async () => {
-		const { data: total } = await supabase.rpc('get_total').single();
-		console.log(total);
+		const { data: total }: any = await supabase.rpc('get_total').single();
+		cartTotal = total.producto_precio;
 	};
 
 	fetchTotal();
@@ -80,7 +105,8 @@
 	};
 </script>
 
-<div class="mb-20 transition-all {cartVisible ? 'mr-64' : ''}">
+<div class="mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
+	<SectionTitle text="Productos" />
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
@@ -110,10 +136,17 @@
 >
 	<div class="flex flex-col space-y-4">
 		<SectionSubtitle text="Carrito" />
+		<button
+			on:click={emptyCart}
+			class="py-4 border-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-none focus:outline-pink-700 rounded-xl transition-all"
+		>
+			Vaciar carrito
+		</button>
 		<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
 			{#each cart as product}
 				<div transition:fade={{ duration: 150 }}>
 					<CartProduct
+						quantityHandler={updateQuantity}
 						removeHandler={removeFromCart}
 						id={product.carrito_id}
 						name={product.producto_nombre}
@@ -126,9 +159,10 @@
 		</div>
 		<div class="flex text-xl px-4 justify-between">
 			<p class="font-bold">Total:</p>
-			<p>$ total</p>
+			<p>$ {cartTotal}</p>
 		</div>
 		<button
+			on:click={registerProduct}
 			class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
 		>
 			Realizar venta
