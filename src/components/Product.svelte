@@ -1,7 +1,7 @@
 <script lang="ts">
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import Icon from '@iconify/svelte';
-	import Dropdown from './Dropdown/Dropdown.svelte';
+	import Dropdown from './dropdown/Dropdown.svelte';
 
 	type ClickHandler = (productId: number) => void;
 
