@@ -3,7 +3,7 @@
 	import Icon from '@iconify/svelte';
 	import Dropdown from './Dropdown/Dropdown.svelte';
 
-	type ClickHandler = (productId: number, productQuantity: number) => void;
+	type ClickHandler = (productId: number) => void;
 
 	export let clickHandler: ClickHandler;
 	export let isGame: boolean;
@@ -13,10 +13,8 @@
 	export let price: number;
 	export let platform: string;
 
-	let onCart: boolean = false;
-
 	const addHandler = () => {
-		clickHandler(id, 1);
+		clickHandler(id);
 	};
 
 	let dropdownVisible = false;
