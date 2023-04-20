@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import trashBinMinimalisticOutline from '@iconify/icons-solar/trash-bin-minimalistic-outline';
+	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 
 	type RemoveHandler = (cartId: number) => void;
 	type QuantityHandler = (cartId: number, quantity: number) => void;
@@ -40,7 +40,7 @@
 			on:click={removeFromCart}
 			class="p-1 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 rounded-xl"
 		>
-			<Icon icon={trashBinMinimalisticOutline} height={20} />
+			<Icon icon={trashBinMinimalisticLinear} height={20} />
 		</button>
 	</div>
 </div>
