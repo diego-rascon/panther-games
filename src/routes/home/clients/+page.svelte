@@ -5,6 +5,8 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/add-menus/AddClient.svelte';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import Search from '../../../components/inputs/Search.svelte';
 
 	export let data;
 	let { clients } = data;
@@ -13,6 +15,8 @@
 	let name: string;
 	let email: string;
 	let phone: string;
+
+	let search: string;
 
 	const addClient = async () => {
 		const { data: client } = await supabase
@@ -29,6 +33,10 @@
 		toggleAddMenu();
 	};
 
+	const searchClient = (search: string) => {
+		console.log(search);
+	};
+
 	let addMenuVisible = false;
 
 	const toggleAddMenu = () => {
@@ -36,6 +44,10 @@
 	};
 </script>
 
+<div class="flex justify-between space-x-8">
+	<SectionTitle text="Clientes" />
+	<Search {searchClient} bind:search />
+</div>
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
