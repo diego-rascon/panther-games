@@ -1,10 +1,10 @@
 import type { IconifyIcon } from '@iconify/types';
-import gamepadLinear from '@iconify/icons-solar/gamepad-outline';
-import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-outline';
-import crownStarLinear from '@iconify/icons-solar/crown-star-outline';
-import userLinear from '@iconify/icons-solar/user-outline';
-import documentTextLinear from '@iconify/icons-solar/document-text-outline';
-import logoutLinear from '@iconify/icons-solar/logout-outline';
+import gamepadLinear from '@iconify/icons-solar/gamepad-linear';
+import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-linear';
+import crownStarLinear from '@iconify/icons-solar/crown-star-linear';
+import userLinear from '@iconify/icons-solar/user-linear';
+import documentTextLinear from '@iconify/icons-solar/document-text-linear';
+import logoutLinear from '@iconify/icons-solar/logout-linear';
 
 export type SectionData = {
 	href: string;
