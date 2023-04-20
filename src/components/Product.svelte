@@ -1,10 +1,12 @@
 <script lang="ts">
-	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import Icon from '@iconify/svelte';
-	import Dropdown from './dropdown/Dropdown.svelte';
+	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import DropdownItem from './Dropdown/DropdownItem.svelte';
+	import Dropdown from './Dropdown/Dropdown.svelte';
 
 	type ClickHandler = (productId: number) => void;
 
+	export let dropdownOptions: any[];
 	export let clickHandler: ClickHandler;
 	export let isGame: boolean;
 	export let id: number;
@@ -32,7 +34,11 @@
 			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all"
 		>
 			{#if dropdownVisible}
-				<Dropdown />
+				<Dropdown>
+					{#each dropdownOptions as dropdownOption}
+						<DropdownItem text={dropdownOption.text} icon={dropdownOption.icon} />
+					{/each}
+				</Dropdown>
 			{/if}
 			<Icon icon={menuDotsBold} rotate={1} height={18} />
 		</button>
