@@ -1,25 +1,35 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticOutline from '@iconify/icons-solar/trash-bin-minimalistic-outline';
+	import { supabase } from '$lib/db';
 
+	type TotalHandler = () => void;
 	type RemoveHandler = (cartId: number) => void;
-	type QuantityHandler = (cartId: number, quantity: number) => void;
 
 	const removeFromCart = () => {
 		removeHandler(id);
 	};
 
-	const updateQuantity = () => {
-		quantityHandler(id, quantity);
-	}
+	const updateQuantity = async (productId: number, quantity: number) => {
+		await supabase
+			.from('carrito')
+			.update({ producto_cantidad: quantity })
+			.eq('carrito_id', productId);
+	};
 
+	const quantityHandler = () => {
+		updateQuantity(id, quantity);
+		totalHandler();
+	};
+
+	export let totalHandler: TotalHandler;
 	export let removeHandler: RemoveHandler;
-	export let quantityHandler: QuantityHandler;
 	export let id: number;
 	export let name: string;
 	export let price: number;
-	export let quantity: number;
 	export let stock: number;
+
+	let quantity: number;
 </script>
 
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
@@ -28,9 +38,13 @@
 		<p>$ {price}</p>
 	</div>
 	<div class="flex justify-between">
-		<select on:change={updateQuantity} class="p-1 bg-stone-900 rounded-xl select-none">
+		<select
+			bind:value={quantity}
+			on:change={quantityHandler}
+			class="p-1 bg-stone-900 rounded-xl select-none"
+		>
 			{#each Array(stock) as _, index (index)}
-				<option>{quantity}</option>
+				<option>{index + 1}</option>
 			{/each}
 		</select>
 		<button
