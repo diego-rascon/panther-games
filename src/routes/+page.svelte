@@ -5,12 +5,14 @@
 	import InputError from '../components/add-menus/InputError.svelte';
 	import Icon from '@iconify/svelte';
 	import refreshLinear from '@iconify/icons-solar/refresh-linear';
+	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
 
 	let usuario = '';
 	let contraseña = '';
 	let errorString = '';
 
 	let errorVisible = false;
+	let loginSuccess = false;
 
 	let loading = false;
 
@@ -33,6 +35,8 @@
 			if (data && data.length > 0) {
 				// Desactivar variables
 				errorVisible = false;
+				// Volver boton verde
+				loginSuccess = true;
 				// Los datos coinciden, el usuario y contraseña son válidos
 				console.log('Usuario y contraseña coinciden.');
 				// Redireccionar a la página de inicio
@@ -53,34 +57,47 @@
 		loading = true;
 		checkLogin();
 	};
+
+	const submitOnEnter = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			submit();
+		}
+	};
 </script>
 
 <div class="flex flex-col min-h-screen justify-center bg-stone-900">
 	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
 		<form class="flex flex-col w-64 space-y-4">
-			<!-- Enlaza los campos de entrada a las variables en el script -->
 			<PantherGamesLogo size={4} />
 			<input
 				type="text"
 				bind:value={usuario}
 				placeholder="Usuario"
 				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+				on:keypress={submitOnEnter}
 			/>
 			<input
 				type="password"
 				bind:value={contraseña}
 				placeholder="Contraseña"
 				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+				on:keypress={submitOnEnter}
 			/>
 			{#if errorVisible}
 				<InputError text={errorString} />
 			{/if}
 			<button
 				type="button"
-				class="px-4 py-2 rounded-xl font-bold {loading ? 'bg-green-600' : 'btn-fill'}"
+				class="px-4 py-2 rounded-xl font-bold {loginSuccess ? 'bg-green-500' : 'btn-fill'}"
 				on:click={submit}
 			>
-				Iniciar sesión
+				{#if loginSuccess}
+					Bienvenido :)
+				{:else if loading}
+					<LoadingScreen />
+				{:else}
+					<p>Iniciar sesión</p>
+				{/if}
 			</button>
 		</form>
 	</div>
