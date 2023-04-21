@@ -32,35 +32,40 @@
 		<p class="text-xl font-bold select-none">{name}</p>
 		<button
 			on:click={toggleDropdown}
-			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all"
+			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all {dropdownVisible
+				? 'bg-stone-800'
+				: ''}"
 		>
-			{#if dropdownVisible}
-				<Dropdown>
-					<DropdownItem
-						text="Editar"
-						icon={pen2Linear}
-						on:click={() => {
-							editProduct(id);
-						}}
-					/>
-					<DropdownItem
-						text="Cambio de stock"
-						icon={boxLinear}
-						on:click={() => {
-							changeStock(id);
-						}}
-					/>
-					<DropdownItem
-						text="Eliminar"
-						icon={trashBinMinimalisticLinear}
-						on:click={() => {
-							deleteProduct(id);
-						}}
-					/>
-				</Dropdown>
-			{/if}
 			<Icon icon={menuDotsBold} rotate={1} height={18} />
 		</button>
+		{#if dropdownVisible}
+			<Dropdown>
+				<DropdownItem
+					text="Editar"
+					icon={pen2Linear}
+					on:click={() => {
+						editProduct(id);
+						toggleDropdown();
+					}}
+				/>
+				<DropdownItem
+					text="Cambiar stock"
+					icon={boxLinear}
+					on:click={() => {
+						changeStock(id);
+						toggleDropdown();
+					}}
+				/>
+				<DropdownItem
+					text="Eliminar"
+					icon={trashBinMinimalisticLinear}
+					on:click={() => {
+						deleteProduct(id);
+						toggleDropdown();
+					}}
+				/>
+			</Dropdown>
+		{/if}
 	</div>
 	<div class="mt-auto">
 		<div class="py-4">
