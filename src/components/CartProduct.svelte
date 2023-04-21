@@ -5,14 +5,6 @@
 	type RemoveHandler = (cartId: number) => void;
 	type QuantityHandler = (cartId: number, quantity: number) => void;
 
-	const removeFromCart = () => {
-		removeHandler(id);
-	};
-
-	const updateQuantity = () => {
-		quantityHandler(id, quantity);
-	};
-
 	export let removeHandler: RemoveHandler;
 	export let quantityHandler: QuantityHandler;
 	export let id: number;
@@ -33,11 +25,15 @@
 			min="1"
 			max={stock}
 			bind:value={quantity}
-			on:change={updateQuantity}
+			on:change={() => {
+				quantityHandler(id, quantity);
+			}}
 			class="w-12 p-1 px-2 bg-stone-900 rounded-xl select-none"
 		/>
 		<button
-			on:click={removeFromCart}
+			on:click={() => {
+				removeHandler(id);
+			}}
 			class="p-1 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 rounded-xl"
 		>
 			<Icon icon={trashBinMinimalisticLinear} height={20} />
