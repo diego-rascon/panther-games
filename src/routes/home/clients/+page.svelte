@@ -46,7 +46,7 @@
 
 <div class="flex justify-between space-x-8">
 	<SectionTitle text="Clientes" />
-	<Search {searchClient} bind:search />
+	<Search searchHandler={searchClient} bind:search />
 </div>
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
