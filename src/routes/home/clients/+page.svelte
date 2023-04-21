@@ -83,7 +83,7 @@
 	</table>
 </div>
 <div class="fixed bottom-0 right-0">
-	<AddButton clickHandler={toggleAddMenu} />
+	<AddButton on:click={toggleAddMenu} />
 </div>
 {#if addMenuVisible}
 	<AddClient
