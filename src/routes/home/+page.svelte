@@ -8,6 +8,7 @@
 	import AddButton from '../../components/AddButton.svelte';
 	import AddProduct from '../../components/add-menus/AddProduct.svelte';
 	import CartProduct from '../../components/CartProduct.svelte';
+	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
@@ -21,16 +22,36 @@
 	let minimumStock: number;
 	let used: boolean = false;
 
-	const editProduct = () => {
+	const editProduct = (productId: number) => {
 		console.log('Editar producto');
 	};
 
-	const changeStock = () => {
-		console.log();
+	const changeStock = (productId: number) => {
+		console.log('Cambiar stock');
 	};
 
-	const deleteProduct = () => {
-		console.log('Eliminar producto');
+	const deleteProduct = async () => {
+		const { error } = await supabase
+			.from('producto')
+			.update({ producto_activo: false })
+			.eq('producto_id', productToDeleteID)
+			.select()
+			.single();
+		if (error) console.log(error.message);
+		products = products.filter((product: any) => product.producto_id != productToDeleteID);
+		toggleConfirmation();
+	};
+
+	const confirmDelete = (productId: number) => {
+		productToDeleteID = productId;
+		toggleConfirmation();
+	};
+
+	let confirmationVisible = false;
+	let productToDeleteID: number;
+
+	const toggleConfirmation = () => {
+		confirmationVisible = !confirmationVisible;
 	};
 
 	const registerProduct = async () => {
@@ -134,7 +155,7 @@
 				{addToCart}
 				{editProduct}
 				{changeStock}
-				{deleteProduct}
+				deleteProduct={confirmDelete}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
 				name={product.producto_nombre}
@@ -202,5 +223,13 @@
 		bind:stock
 		bind:minimumStock
 		bind:used
+	/>
+{/if}
+{#if confirmationVisible}
+	<ConfirmDialog
+		cancelHandler={toggleConfirmation}
+		confirmHandler={deleteProduct}
+		title="Eliminar Producto"
+		text="¿Está seguro de que desea eliminar el producto?"
 	/>
 {/if}
