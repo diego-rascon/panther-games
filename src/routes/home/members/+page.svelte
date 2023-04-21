@@ -96,9 +96,6 @@
 		</tbody>
 	</table>
 </div>
-<div class="fixed bottom-0 right-0">
-	<AddButton clickHandler={openAddMenu} />
-</div>
 {#if addMenuVisible}
 	<AddClient
 		cancelHandler={openCancelConfirmation}
