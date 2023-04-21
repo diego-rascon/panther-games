@@ -131,6 +131,8 @@
 	let addMenuVisible = false;
 
 	const toggleAddMenu = () => {
+		console.log('aaa');
+		
 		addMenuVisible = !addMenuVisible;
 	};
 </script>
@@ -200,8 +202,8 @@
 		</button>
 	</div>
 </div>
-<div class="fixed bottom-0 {cartVisible ? 'right-64' : 'right-0'}">
-	<AddButton clickHandler={toggleAddMenu} />
+<div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
+	<AddButton on:click={toggleAddMenu} />
 </div>
 {#if addMenuVisible}
 	<AddProduct
