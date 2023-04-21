@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { fade } from 'svelte/transition';
-	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
-	import boxLinear from '@iconify/icons-solar/box-linear';
-	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
@@ -35,21 +32,6 @@
 	const deleteProduct = () => {
 		console.log('Eliminar producto');
 	};
-
-	const dropdownOptions = [
-		{
-			text: 'Editar',
-			icon: pen2Linear
-		},
-		{
-			text: 'Cambiar stock',
-			icon: boxLinear
-		},
-		{
-			text: 'Eliminar',
-			icon: trashBinMinimalisticLinear
-		}
-	];
 
 	const registerProduct = async () => {
 		await supabase.rpc('register_sale');
@@ -132,7 +114,7 @@
 
 	const toggleAddMenu = () => {
 		console.log('aaa');
-		
+
 		addMenuVisible = !addMenuVisible;
 	};
 </script>
@@ -149,8 +131,10 @@
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each products as product}
 			<Product
-				{dropdownOptions}
-				clickHandler={addToCart}
+				{addToCart}
+				{editProduct}
+				{changeStock}
+				{deleteProduct}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
 				name={product.producto_nombre}
