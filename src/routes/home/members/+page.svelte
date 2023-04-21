@@ -5,6 +5,7 @@
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/add-menus/AddClient.svelte';
 	import ConfirmDialog from '../../../components/modals/confirmDialog.svelte';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 
 	export let data;
 	let { members } = data;
@@ -66,6 +67,7 @@
 	};
 </script>
 
+<SectionTitle text="Miembros" />
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">

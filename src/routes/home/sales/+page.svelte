@@ -6,6 +6,7 @@
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/add-menus/AddClient.svelte';
 	import ConfirmDialog from '../../../components/modals/confirmDialog.svelte';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 
 	export let data;
 	let { sales } = data;
@@ -47,6 +48,7 @@
 	};
 </script>
 
+<SectionTitle text="Reportes" />
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
@@ -69,7 +71,7 @@
 					<td class="p-2 text-left">{sale.venta_descuento}</td>
 					<td class="p-2 text-left">{sale.venta_fecha}</td>
 					<td class="p-2 text-center">{sale.usuario_id} </td>
-                    <td class="p-2 text-center">{sale.cliente_id} </td>
+					<td class="p-2 text-center">{sale.cliente_id} </td>
 				</tr>
 			{/each}
 		</tbody>

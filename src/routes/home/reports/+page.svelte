@@ -4,6 +4,7 @@
 	import moment from 'moment';
 	import { DateInput } from 'date-picker-svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	let dateBeginMoment: string;
 	let dateFinalMoment: string;
 	let dateFinal = new Date();
@@ -15,7 +16,7 @@
 		dateFinalMoment = moment(dateFinal).format('DD/MM/YYYY');
 	};
 	const getExcel = () => {
-		try{
+		try {
 			const tables = document.querySelectorAll('table');
 			const wb = XLSX.utils.book_new();
 
@@ -23,9 +24,8 @@
 				const ws = XLSX.utils.table_to_sheet(table);
 				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
 			});
-			XLSX.writeFile(wb,'export.xlsx');
-		}
-		catch (error){
+			XLSX.writeFile(wb, 'export.xlsx');
+		} catch (error) {
 			console.error(error);
 		}
 	};
@@ -58,6 +58,7 @@
 	};
 </script>
 
+<SectionTitle text="Reportes" />
 {#if reporteGenerado}
 	<!-- Panel gris claro -->
 	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
