@@ -1,23 +1,24 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
+	import boxLinear from '@iconify/icons-solar/box-linear';
+	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import DropdownItem from './Dropdown/DropdownItem.svelte';
 	import Dropdown from './Dropdown/Dropdown.svelte';
 
-	type ClickHandler = (productId: number) => void;
+	type UpdateProduct = (productId: number) => void;
 
-	export let dropdownOptions: any[];
-	export let clickHandler: ClickHandler;
+	export let addToCart: UpdateProduct;
+	export let editProduct: UpdateProduct;
+	export let changeStock: UpdateProduct;
+	export let deleteProduct: UpdateProduct;
 	export let isGame: boolean;
 	export let id: number;
 	export let name: string;
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
-
-	const addHandler = () => {
-		clickHandler(id);
-	};
 
 	let dropdownVisible = false;
 
@@ -35,9 +36,27 @@
 		>
 			{#if dropdownVisible}
 				<Dropdown>
-					{#each dropdownOptions as dropdownOption}
-						<DropdownItem text={dropdownOption.text} icon={dropdownOption.icon} />
-					{/each}
+					<DropdownItem
+						text="Editar"
+						icon={pen2Linear}
+						on:click={() => {
+							editProduct(id);
+						}}
+					/>
+					<DropdownItem
+						text="Cambio de stock"
+						icon={boxLinear}
+						on:click={() => {
+							changeStock(id);
+						}}
+					/>
+					<DropdownItem
+						text="Eliminar"
+						icon={trashBinMinimalisticLinear}
+						on:click={() => {
+							deleteProduct(id);
+						}}
+					/>
 				</Dropdown>
 			{/if}
 			<Icon icon={menuDotsBold} rotate={1} height={18} />
@@ -53,7 +72,9 @@
 		</div>
 		<button
 			class=" w-full py-2 hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 border-2 border-pink-700 transition-all rounded-xl select-none"
-			on:click={addHandler}
+			on:click={() => {
+				addToCart(id);
+			}}
 		>
 			<p class="font-bold">Agregar</p>
 		</button>
