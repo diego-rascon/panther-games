@@ -28,13 +28,13 @@
 			on:change={() => {
 				quantityHandler(id, quantity);
 			}}
-			class="w-12 p-1 px-2 bg-stone-900 rounded-xl select-none"
+			class="w-12 p-2 bg-stone-900 rounded-xl select-none"
 		/>
 		<button
 			on:click={() => {
 				removeHandler(id);
 			}}
-			class="p-1 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 rounded-xl"
+			class="p-2 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 rounded-xl"
 		>
 			<Icon icon={trashBinMinimalisticLinear} height={20} />
 		</button>

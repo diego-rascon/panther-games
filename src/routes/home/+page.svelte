@@ -23,6 +23,9 @@
 	let minimumStock: number;
 	let used: boolean = false;
 
+	let paymentType: string;
+	let payment: number = 0;
+
 	const editProduct = (productId: number) => {
 		console.log('Editar producto');
 	};
@@ -178,7 +181,7 @@
 </div>
 
 <div
-	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
+	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out overflow-auto {!cartVisible
 		? 'translate-x-full'
 		: ''}"
 >
@@ -205,8 +208,30 @@
 				</div>
 			{/each}
 		</div>
-		<div class="flex text-xl px-4 justify-between">
-			<p class="font-bold">Total:</p>
+		<div class="flex justify-between items-center">
+			<p class="text-xl font-bold">Método:</p>
+			<select bind:value={paymentType} class="bg-stone-800 rounded-xl p-2">
+				<option value="Efectivo">Efectivo</option>
+				<option value="Tarjeta">Tarjeta</option>
+			</select>
+		</div>
+		{#if paymentType === 'Efectivo'}
+			<div class="flex pl-4 justify-between items-center">
+				<p>Pago:</p>
+				<input
+					bind:value={payment}
+					type="number"
+					min="0"
+					class="w-24 p-2 bg-stone-800 rounded-xl select-none"
+				/>
+			</div>
+			<div class="flex pl-4 justify-between items-center">
+				<p>Cambio:</p>
+				<p>$ {payment - cartTotal}</p>
+			</div>
+		{/if}
+		<div class="flex justify-between">
+			<p class="text-xl font-bold">Total:</p>
 			<p>$ {cartTotal}</p>
 		</div>
 		<button
@@ -215,6 +240,15 @@
 		>
 			Realizar venta
 		</button>
+		<label class="flex px-4 justify-between select-none">
+			Generar comprobante
+			<input
+				type="checkbox"
+				required
+				bind:value={used}
+				class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
+			/>
+		</label>
 	</div>
 </div>
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
