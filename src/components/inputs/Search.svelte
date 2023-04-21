@@ -5,15 +5,11 @@
 
 	type SearchHandler = (search: string) => void;
 
-	export let searchClient: SearchHandler;
+	export let searchHandler: SearchHandler;
 	export let search: string;
 
 	const iconHeight = 24;
 	let searching: boolean = false;
-
-	const searchHandler = () => {
-		searchClient(search);
-	};
 
 	const searchFocusGain = () => {
 		searching = true;
@@ -37,7 +33,9 @@
 	<input
 		type="text"
 		bind:value={search}
-		on:input={searchHandler}
+		on:input={() => {
+			searchHandler(search);
+		}}
 		on:focus={searchFocusGain}
 		on:blur={searchFocusLoss}
 		class="w-full bg-transparent outline-none"
