@@ -4,7 +4,7 @@
 </script>
 
 <input
-	class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+	class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"	
 	{type}
 	{placeholder}
 />
