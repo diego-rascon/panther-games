@@ -56,7 +56,9 @@
 	};
 
 	const registerProduct = async () => {
-		await supabase.rpc('register_sale');
+		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
+		if (error) console.log(error);
+		emptyCart();
 	};
 
 	const addProductPlatform = async (productId: number) => {
@@ -123,11 +125,11 @@
 		fetchTotal();
 	};
 
-	let cartTotal: number;
+	let cartTotal: number = 0;
 
 	const fetchTotal = async () => {
 		const { data: total }: any = await supabase.rpc('get_total').single();
-		cartTotal = total.producto_precio;
+		cartTotal = total.total;
 	};
 
 	fetchTotal();
