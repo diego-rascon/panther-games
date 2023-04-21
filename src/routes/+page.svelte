@@ -1,10 +1,7 @@
 <script lang="ts">
-	import SignInInput from '../components/inputs/SignInInput.svelte';
 	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
 	import { supabase } from '$lib/db';
 	import InputError from '../components/add-menus/InputError.svelte';
-	import Icon from '@iconify/svelte';
-	import refreshLinear from '@iconify/icons-solar/refresh-linear';
 	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
 
 	let usuario = '';
@@ -49,7 +46,7 @@
 		} else {
 			loading = false;
 			errorVisible = true;
-			errorString = 'Por favor, ingresa usuario y contraseña';
+			errorString = 'Favor de introducir usuario y contraseña.';
 		}
 	};
 
@@ -66,8 +63,8 @@
 </script>
 
 <div class="flex flex-col min-h-screen justify-center bg-stone-900">
-	<div class="mx-auto p-8 bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
-		<form class="flex flex-col w-64 space-y-4">
+	<div class="mx-auto p-8 max-w-sm w-full bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
+		<form class="flex flex-col space-y-4">
 			<PantherGamesLogo size={4} />
 			<input
 				type="text"
