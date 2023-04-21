@@ -9,6 +9,7 @@
 	import AddProduct from '../../components/add-menus/AddProduct.svelte';
 	import CartProduct from '../../components/CartProduct.svelte';
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
+	import Search from '../../components/inputs/Search.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
@@ -131,17 +132,24 @@
 
 	fetchTotal();
 
+	let search: string;
+
+	const searchProduct = (search: string) => {
+		console.log(search);
+	};
+
 	let addMenuVisible = false;
 
 	const toggleAddMenu = () => {
-		console.log('aaa');
-
 		addMenuVisible = !addMenuVisible;
 	};
 </script>
 
 <div class="mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
-	<SectionTitle text="Productos" />
+	<div class="flex justify-between space-x-8">
+		<SectionTitle text="Clientes" />
+		<Search searchHandler={searchProduct} bind:search />
+	</div>
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
