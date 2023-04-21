@@ -11,44 +11,9 @@
 	export let data;
 	let { sales } = data;
 	$: ({ sales } = data);
-
-	let addMenuVisible = false;
-
-	const openAddMenu = () => {
-		addMenuVisible = true;
-	};
-
-	const closeAddMenu = () => {
-		addMenuVisible = false;
-	};
-
-	let confirmationVisible = false;
-
-	const openConfirmation = () => {
-		confirmationVisible = true;
-	};
-
-	const closeConfirmation = () => {
-		confirmationVisible = false;
-	};
-
-	let cancelConfirmationVisible = false;
-
-	const openCancelConfirmation = () => {
-		cancelConfirmationVisible = true;
-	};
-
-	const closeCancelConfirmation = () => {
-		cancelConfirmationVisible = false;
-	};
-
-	const cancelAddClient = () => {
-		closeCancelConfirmation();
-		closeAddMenu();
-	};
 </script>
 
-<SectionTitle text="Reportes" />
+<SectionTitle text="Ventas" />
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
