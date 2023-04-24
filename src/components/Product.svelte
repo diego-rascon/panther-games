@@ -29,7 +29,7 @@
 
 <div class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
 	<div class="flex items-start justify-between">
-		<p class="text-xl font-bold select-none">{name}</p>
+		<p class="line-clamp-4 text-xl font-bold select-none">{name}</p>
 		<button
 			on:click={toggleDropdown}
 			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all {dropdownVisible
