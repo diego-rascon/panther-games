@@ -16,7 +16,7 @@
 
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
 	<div class="flex justify-between">
-		<p>{name}</p>
+		<p class="line-clamp-4 w-32">{name}</p>
 		<p>$ {quantity * price}</p>
 	</div>
 	<div class="flex justify-end space-x-2">
