@@ -17,7 +17,7 @@
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
 	<div class="flex justify-between">
 		<p>{name}</p>
-		<p>$ {price}</p>
+		<p>$ {quantity * price}</p>
 	</div>
 	<div class="flex justify-end space-x-2">
 		<input
@@ -28,13 +28,13 @@
 			on:change={() => {
 				quantityHandler(id, quantity);
 			}}
-			class="w-12 p-2 bg-stone-900 rounded-xl select-none"
+			class="w-12 px-2 py-1 bg-stone-900 outline-pink rounded-xl select-none"
 		/>
 		<button
 			on:click={() => {
 				removeHandler(id);
 			}}
-			class="p-2 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 rounded-xl"
+			class="px-2 py-1 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 outline-pink rounded-xl"
 		>
 			<Icon icon={trashBinMinimalisticLinear} height={20} />
 		</button>
