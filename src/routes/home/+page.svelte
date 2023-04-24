@@ -181,7 +181,7 @@
 </div>
 
 <div
-	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out overflow-auto {!cartVisible
+	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
 		? 'translate-x-full'
 		: ''}"
 >
@@ -189,66 +189,72 @@
 		<SectionSubtitle text="Carrito" />
 		<button
 			on:click={emptyCart}
-			class="py-4 border-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-none focus:outline-pink-700 rounded-xl transition-all"
+			class="py-4 border-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-pink rounded-xl transition-all"
 		>
 			Vaciar carrito
 		</button>
-		<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
-			{#each cart as product}
-				<div transition:fade={{ duration: 150 }}>
-					<CartProduct
-						quantityHandler={updateQuantity}
-						removeHandler={removeFromCart}
-						id={product.carrito_id}
-						name={product.producto_nombre}
-						price={product.producto_precio}
-						stock={product.producto_stock}
-						quantity={product.producto_cantidad}
+		<div class="flex-grow overflow-y-auto">
+			<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
+				{#each cart as product}
+					<div transition:fade={{ duration: 150 }}>
+						<CartProduct
+							quantityHandler={updateQuantity}
+							removeHandler={removeFromCart}
+							id={product.carrito_id}
+							name={product.producto_nombre}
+							price={product.producto_precio}
+							stock={product.producto_stock}
+							quantity={product.producto_cantidad}
+						/>
+					</div>
+				{/each}
+			</div>
+		</div>
+		<div class="space-y-2">
+			<div class="flex justify-between items-center">
+				<p class="text-xl font-bold">Método:</p>
+				<select bind:value={paymentType} class="w-24 px-2 py-1 bg-stone-800 outline-pink rounded-xl">
+					<option value="Efectivo">Efectivo</option>
+					<option value="Tarjeta">Tarjeta</option>
+				</select>
+			</div>
+			{#if paymentType === 'Efectivo'}
+				<div class="flex pl-4 justify-between items-center">
+					<p>Pago:</p>
+					<input
+						bind:value={payment}
+						type="number"
+						min="0"
+						class="w-24 px-2 py-1 bg-stone-800 rounded-xl outline-pink select-none"
 					/>
 				</div>
-			{/each}
+				<div class="flex pl-4 justify-between items-center">
+					<p>Cambio:</p>
+					<p>$ {payment - cartTotal}</p>
+				</div>
+			{/if}
 		</div>
-		<div class="flex justify-between items-center">
-			<p class="text-xl font-bold">Método:</p>
-			<select bind:value={paymentType} class="bg-stone-800 rounded-xl p-2">
-				<option value="Efectivo">Efectivo</option>
-				<option value="Tarjeta">Tarjeta</option>
-			</select>
-		</div>
-		{#if paymentType === 'Efectivo'}
-			<div class="flex pl-4 justify-between items-center">
-				<p>Pago:</p>
-				<input
-					bind:value={payment}
-					type="number"
-					min="0"
-					class="w-24 p-2 bg-stone-800 rounded-xl select-none"
-				/>
-			</div>
-			<div class="flex pl-4 justify-between items-center">
-				<p>Cambio:</p>
-				<p>$ {payment - cartTotal}</p>
-			</div>
-		{/if}
 		<div class="flex justify-between">
 			<p class="text-xl font-bold">Total:</p>
 			<p>$ {cartTotal}</p>
 		</div>
-		<button
-			on:click={registerProduct}
-			class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
-		>
-			Realizar venta
-		</button>
-		<label class="flex px-4 justify-between select-none">
-			Generar comprobante
-			<input
-				type="checkbox"
-				required
-				bind:value={used}
-				class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-			/>
-		</label>
+		<div class="flex flex-col space-y-2">
+			<button
+				on:click={registerProduct}
+				class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
+			>
+				Realizar venta
+			</button>
+			<label class="flex px-4 justify-between select-none">
+				Generar comprobante
+				<input
+					type="checkbox"
+					required
+					bind:value={used}
+					class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
+				/>
+			</label>
+		</div>
 	</div>
 </div>
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
