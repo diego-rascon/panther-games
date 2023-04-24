@@ -10,6 +10,16 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
+	.outline-pink {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		transition-property: all;
+		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+		transition-duration: 150ms;
+	}
+	.outline-pink:focus {
+		outline-color: #be185d;
+	}
 	.btn-fill {
 		--tw-bg-opacity: 1;
 		background-color: rgb(190 24 93 / var(--tw-bg-opacity));
@@ -43,5 +53,5 @@
 		--date-picker-highlight-shadow: #292524;
 		--date-picker-selected-color: #f7f7f7;
 		--date-picker-selected-background: #292524;
-	  }
+	}
 }
