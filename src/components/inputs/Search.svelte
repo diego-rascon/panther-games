@@ -21,6 +21,7 @@
 
 	const clearSearch = () => {
 		search = '';
+		searchHandler(search);
 	};
 </script>
 
