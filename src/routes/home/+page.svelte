@@ -58,7 +58,7 @@
 		confirmationVisible = !confirmationVisible;
 	};
 
-	const registerProduct = async () => {
+	const registerSale = async () => {
 		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
 		if (error) console.log(error);
 		emptyCart();
@@ -103,9 +103,11 @@
 		fetchTotal();
 	};
 
-	const removeFromCart = async (cartId: number) => {
+	const removeFromCart = async (cartId: number, productId: number) => {
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
 		cart = cart.filter((item: any) => item.carrito_id != cartId);
+		const removedItem = products.find((item: any) => item.producto_id === productId);
+		removedItem.on_cart = false;
 		fetchTotal();
 	};
 
@@ -175,6 +177,7 @@
 				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
+				onCart={product.on_cart}
 			/>
 		{/each}
 	</div>
@@ -201,9 +204,10 @@
 			{#each cart as product}
 				<div transition:fade={{ duration: 150 }}>
 					<CartProduct
-						quantityHandler={updateQuantity}
 						removeHandler={removeFromCart}
-						id={product.carrito_id}
+						quantityHandler={updateQuantity}
+						cartId={product.carrito_id}
+						productId={product.producto_id}
 						name={product.producto_nombre}
 						price={product.producto_precio}
 						stock={product.producto_stock}
@@ -247,7 +251,7 @@
 			</div>
 			<div class="flex flex-col space-y-2">
 				<button
-					on:click={registerProduct}
+					on:click={registerSale}
 					class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
 				>
 					Realizar venta
