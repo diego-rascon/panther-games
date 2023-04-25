@@ -12,7 +12,7 @@
 	let { clients } = data;
 	$: ({ clients } = data);
 
-	let filteredClients = clients;
+	$: filteredClients = clients;
 
 	let name: string;
 	let email: string;
@@ -31,7 +31,7 @@
 			})
 			.select()
 			.single();
-		clients = [client ?? [], ...clients];
+		if (client) clients = [client, ...clients];
 		toggleAddMenu();
 	};
 
@@ -55,7 +55,7 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
+<div class="flex flex-col min-w-full mb-20 bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
 			<tr>
