@@ -2,12 +2,13 @@
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 
-	type RemoveHandler = (cartId: number) => void;
+	type RemoveHandler = (cartId: number, productId: number) => void;
 	type QuantityHandler = (cartId: number, quantity: number) => void;
 
 	export let removeHandler: RemoveHandler;
 	export let quantityHandler: QuantityHandler;
-	export let id: number;
+	export let cartId: number;
+	export let productId: number;
 	export let name: string;
 	export let price: number;
 	export let stock: number;
@@ -26,13 +27,13 @@
 			max={stock}
 			bind:value={quantity}
 			on:change={() => {
-				quantityHandler(id, quantity);
+				quantityHandler(cartId, quantity);
 			}}
 			class="w-12 px-2 py-1 bg-stone-900 outline-pink rounded-xl select-none"
 		/>
 		<button
 			on:click={() => {
-				removeHandler(id);
+				removeHandler(cartId, productId);
 			}}
 			class="px-2 py-1 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 outline-pink rounded-xl"
 		>
