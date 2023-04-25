@@ -12,6 +12,8 @@
 	let { clients } = data;
 	$: ({ clients } = data);
 
+	let filteredClients = clients;
+
 	let name: string;
 	let email: string;
 	let phone: string;
@@ -34,7 +36,12 @@
 	};
 
 	const searchClient = (search: string) => {
-		console.log(search);
+		filteredClients = clients.filter(
+			(client) =>
+				client.cliente_nombre.toLowerCase().includes(search.toLowerCase()) ||
+				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
+				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
+		);
 	};
 
 	let addMenuVisible = false;
@@ -61,7 +68,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each clients as client}
+			{#each filteredClients as client}
 				<tr>
 					<td class="p-2 text-left">{client.cliente_id}</td>
 					<td class="p-2 text-left">{client.cliente_nombre}</td>
