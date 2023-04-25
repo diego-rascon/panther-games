@@ -15,6 +15,8 @@
 	let { categories, products, platforms, cart } = data;
 	$: ({ categories, products, platforms, cart } = data);
 
+	$: filteredProducts = products;
+
 	let categoryId: number;
 	let platformId: number;
 	let name: string;
@@ -142,7 +144,9 @@
 	let search: string;
 
 	const searchProduct = (search: string) => {
-		console.log(search);
+		filteredProducts = products.filter((product: any) =>
+			product.producto_nombre.toLowerCase().includes(search.toLowerCase())
+		);
 	};
 
 	let addMenuVisible = false;
@@ -165,7 +169,7 @@
 	</div>
 	<SectionSubtitle text="Inventario" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-		{#each products as product}
+		{#each filteredProducts as product}
 			<Product
 				{addToCart}
 				{editProduct}
