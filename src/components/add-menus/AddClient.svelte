@@ -20,15 +20,19 @@
 		confirmationVisible = !confirmationVisible;
 	};
 
+	const namePattern = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]*$/;
+	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const phonePattern = /^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$/;
+
 	const validInput = (): boolean => {
-		if (!name) {
-			errorMessage = 'El nombre del producto no es válido.';
+		if (!name || !namePattern.test(name)) {
+			errorMessage = 'El nombre del cliente no es válido';
 			return false;
-		} else if (!email) {
-			errorMessage = 'El precio del producto no es válido.';
+		} else if (!email || !emailPattern.test(email)) {
+			errorMessage = 'El correo del cliente no es válido.';
 			return false;
-		} else if (!phone) {
-			errorMessage = 'El stock del producto no es válido.';
+		} else if (!phone || !phonePattern.test(phone)) {
+			errorMessage = 'El teléfono del cliente no es válido.';
 			return false;
 		} else {
 			return true;
@@ -77,7 +81,7 @@
 				required
 				bind:value={phone}
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Telephone"
+				placeholder="Teléfono"
 			/>
 			{#if inputError}
 				<InputError text={errorMessage} />
