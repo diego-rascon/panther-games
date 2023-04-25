@@ -19,6 +19,7 @@
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
+	export let onCart: boolean;
 
 	let dropdownVisible = false;
 
@@ -67,7 +68,7 @@
 			</Dropdown>
 		{/if}
 	</div>
-	<div class="mt-auto">
+	<div class="flex flex-col mt-auto">
 		<div class="py-4">
 			{#if isGame}
 				<p class="text-sm"><strong>Plataforma:</strong> {platform}</p>
@@ -76,12 +77,15 @@
 			<p class="pt-2 text-xl font-bold">$ {price}</p>
 		</div>
 		<button
-			class=" w-full py-2 hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 border-2 border-pink-700 transition-all rounded-xl select-none"
+			class="py-2 border-2 outline-none rounded-xl transition-all select-none {onCart
+				? 'border-stone-700 text-stone-300'
+				: 'hover:bg-stone-800 active:bg-stone-950 border-pink-700 font-bold focus:outline-pink-700'}"
 			on:click={() => {
-				addToCart(id);
-			}}
+				if (!onCart) {
+					addToCart(id);
+					onCart = true;
+				}
+			}}>Agregar</button
 		>
-			<p class="font-bold">Agregar</p>
-		</button>
 	</div>
 </div>
