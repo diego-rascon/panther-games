@@ -39,7 +39,7 @@
 		}}
 		on:focus={searchFocusGain}
 		on:blur={searchFocusLoss}
-		class="w-full bg-transparent outline-none"
+		class="w-full bg-transparent outline-none select-none"
 		placeholder="Buscar..."
 	/>
 	<button

@@ -3,4 +3,4 @@
 	export let text: string;
 </script>
 
-<h1 class="text-4xl font-lexend font-bold {centered ? 'text-center' : 'text-left'}">{text}</h1>
+<h1 class="text-4xl font-lexend font-bold select-none {centered ? 'text-center' : 'text-left'}">{text}</h1>
