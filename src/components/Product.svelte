@@ -6,6 +6,7 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import DropdownItem from './Dropdown/DropdownItem.svelte';
 	import Dropdown from './Dropdown/Dropdown.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	type UpdateProduct = (productId: number) => void;
 
@@ -26,12 +27,17 @@
 	const toggleDropdown = () => {
 		dropdownVisible = !dropdownVisible;
 	};
+
+	const closeDropdown = () => {
+		dropdownVisible = false;
+	};
 </script>
 
 <div class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
 	<div class="flex items-start justify-between">
 		<p class="line-clamp-4 text-xl font-bold select-none">{name}</p>
 		<button
+			on:focusout={closeDropdown}
 			on:click={toggleDropdown}
 			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all {dropdownVisible
 				? 'bg-stone-800'
@@ -45,16 +51,16 @@
 					text="Editar"
 					icon={pen2Linear}
 					on:click={() => {
+						console.log('hehe');
+						
 						editProduct(id);
-						toggleDropdown();
 					}}
 				/>
 				<DropdownItem
-					text="Cambiar stock"
+					text="Editar stock"
 					icon={boxLinear}
 					on:click={() => {
 						changeStock(id);
-						toggleDropdown();
 					}}
 				/>
 				<DropdownItem
@@ -62,7 +68,6 @@
 					icon={trashBinMinimalisticLinear}
 					on:click={() => {
 						deleteProduct(id);
-						toggleDropdown();
 					}}
 				/>
 			</Dropdown>
