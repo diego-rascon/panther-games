@@ -51,11 +51,13 @@
 	};
 </script>
 
-<div class="flex justify-between space-x-8">
+<div
+	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
+>
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="flex flex-col min-w-full mb-20 bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
+<div class="mt-14 flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
 			<tr>

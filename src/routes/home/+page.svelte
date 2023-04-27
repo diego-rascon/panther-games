@@ -158,11 +158,7 @@
 	};
 </script>
 
-<div class="mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
-	<div class="flex justify-between space-x-8">
-		<SectionTitle text="Productos" />
-		<Search searchHandler={searchProduct} bind:search />
-	</div>
+<div class="mt-14 mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
@@ -190,6 +186,15 @@
 </div>
 
 <div
+	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950 transition-all {cartVisible
+		? 'mr-64'
+		: ''}"
+>
+	<SectionTitle text="Productos" />
+	<Search searchHandler={searchProduct} bind:search />
+</div>
+
+<div
 	class="fixed inset-y-0 right-0 w-64 h-full flex flex-col p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
 		? 'translate-x-full'
 		: ''}"
@@ -205,7 +210,9 @@
 		</button>
 	</div>
 	<!--Items-->
-	<div class="my-4 grid grid-cols-1 gap-4 overflow-y-auto transition-all">
+	<div
+		class="my-4 grid grid-cols-1 gap-4 overflow-y-auto scrollbar-thin scrollbar-thumb-stone-700 scrollbar-thumb-rounded-full transition-all"
+	>
 		{#each cart as product}
 			<div transition:fade={{ duration: 150 }}>
 				<CartProduct
