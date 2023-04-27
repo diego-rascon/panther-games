@@ -18,12 +18,10 @@
 
 <a
 	{href}
-	class="p-4 rounded-xl outline-none transition-all select-none {isActive
+	class="flex p-4 space-x-4 rounded-xl outline-none transition-all select-none {isActive
 		? 'btn-fill font-bold'
 		: 'hover:bg-stone-800 active:bg-stone-950 outline-none focus:outline-pink-700 selection:outline-none'}"
 >
-	<div class="flex space-x-4">
-		<Icon {icon} height={24} />
-		<p>{text}</p>
-	</div>
+	<Icon {icon} height={24} />
+	<p>{text}</p>
 </a>
