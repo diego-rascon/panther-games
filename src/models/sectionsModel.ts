@@ -4,7 +4,6 @@ import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-l
 import crownStarLinear from '@iconify/icons-solar/crown-star-linear';
 import userLinear from '@iconify/icons-solar/user-linear';
 import documentTextLinear from '@iconify/icons-solar/document-text-linear';
-import logoutLinear from '@iconify/icons-solar/logout-linear';
 
 export type SectionData = {
 	href: string;
@@ -17,6 +16,5 @@ export const sections: SectionData[] = [
 	{ href: '/home/sales', text: 'Ventas', icon: dollarMinimalisticLinear },
 	{ href: '/home/members', text: 'Miembros', icon: crownStarLinear },
 	{ href: '/home/clients', text: 'Clientes', icon: userLinear },
-	{ href: '/home/reports', text: 'Reportes', icon: documentTextLinear },
-	{ href: '/', text: 'Cerrar sesión', icon: logoutLinear }
+	{ href: '/home/reports', text: 'Reportes', icon: documentTextLinear }
 ];
