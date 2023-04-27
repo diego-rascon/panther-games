@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
+	import Icon from '@iconify/svelte';
+	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
 	import { fade } from 'svelte/transition';
 	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
@@ -158,7 +160,7 @@
 
 <div class="mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
 	<div class="flex justify-between space-x-8">
-		<SectionTitle text="Clientes" />
+		<SectionTitle text="Productos" />
 		<Search searchHandler={searchProduct} bind:search />
 	</div>
 	<SectionSubtitle text="Categorías" />
@@ -188,88 +190,86 @@
 </div>
 
 <div
-	class="fixed inset-y-0 right-0 w-64 p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
+	class="fixed inset-y-0 right-0 w-64 h-full flex flex-col p-4 bg-stone-900 border-l border-stone-800 transition ease-in-out {!cartVisible
 		? 'translate-x-full'
 		: ''}"
 >
-	<div class="flex flex-col space-y-4">
-		<!--Title-->
-		<div class="flex flex-col space-y-4">
-			<SectionTitle text="Carrito" />
-			<button
-				on:click={emptyCart}
-				class="py-4 border-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-pink rounded-xl transition-all"
-			>
-				Vaciar carrito
-			</button>
-		</div>
-		<!--Items-->
-		<div class="grid grid-cols-1 gap-4 transition-all overflow-auto">
-			{#each cart as product}
-				<div transition:fade={{ duration: 150 }}>
-					<CartProduct
-						removeHandler={removeFromCart}
-						quantityHandler={updateQuantity}
-						cartId={product.carrito_id}
-						productId={product.producto_id}
-						name={product.producto_nombre}
-						price={product.producto_precio}
-						stock={product.producto_stock}
-						quantity={product.producto_cantidad}
-					/>
-				</div>
-			{/each}
-		</div>
-		<!--Buttons-->
-		<div class="space-y-4">
-			<div class="space-y-2">
-				<div class="flex justify-between items-center">
-					<p class="text-xl font-bold">Método:</p>
-					<select
-						bind:value={paymentType}
-						class="w-24 px-2 py-1 bg-stone-800 outline-pink rounded-xl"
-					>
-						<option value="Efectivo">Efectivo</option>
-						<option value="Tarjeta">Tarjeta</option>
-					</select>
-				</div>
-				{#if paymentType === 'Efectivo'}
-					<div class="flex pl-4 justify-between items-center">
-						<p>Pago:</p>
-						<input
-							bind:value={payment}
-							type="number"
-							min="0"
-							class="w-24 px-2 py-1 bg-stone-800 rounded-xl outline-pink select-none"
-						/>
-					</div>
-					<div class="flex pl-4 justify-between items-center">
-						<p>Cambio:</p>
-						<p>$ {payment - cartTotal}</p>
-					</div>
-				{/if}
-				<div class="flex justify-between">
-					<p class="text-xl font-bold">Total:</p>
-					<p>$ {cartTotal}</p>
-				</div>
+	<!--Title-->
+	<div class="flex justify-between">
+		<SectionTitle text="Carrito" />
+		<button
+			on:click={emptyCart}
+			class="p-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-pink rounded-full transition-all"
+		>
+			<Icon icon={cartCrossOutline} height={24} />
+		</button>
+	</div>
+	<!--Items-->
+	<div class="my-4 grid grid-cols-1 gap-4 overflow-y-auto transition-all">
+		{#each cart as product}
+			<div transition:fade={{ duration: 150 }}>
+				<CartProduct
+					removeHandler={removeFromCart}
+					quantityHandler={updateQuantity}
+					cartId={product.carrito_id}
+					productId={product.producto_id}
+					name={product.producto_nombre}
+					price={product.producto_precio}
+					stock={product.producto_stock}
+					quantity={product.producto_cantidad}
+				/>
 			</div>
-			<div class="flex flex-col space-y-2">
-				<button
-					on:click={registerSale}
-					class="py-4 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all"
+		{/each}
+	</div>
+	<!--Buttons-->
+	<div class="mt-auto space-y-4">
+		<div class="space-y-2">
+			<div class="flex justify-between items-center">
+				<p class="text-lg font-bold select-none">Método:</p>
+				<select
+					bind:value={paymentType}
+					class="w-24 p-2 bg-stone-800 outline-pink rounded-xl select-none"
 				>
-					Realizar venta
-				</button>
-				<label class="flex px-4 justify-between select-none">
-					Generar comprobante
-					<input
-						type="checkbox"
-						required
-						bind:value={used}
-						class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-					/>
-				</label>
+					<option value="Efectivo">Efectivo</option>
+					<option value="Tarjeta">Tarjeta</option>
+				</select>
 			</div>
+			{#if paymentType === 'Efectivo'}
+				<div class="flex pl-4 justify-between items-center select-none">
+					<p>Pago:</p>
+					<input
+						bind:value={payment}
+						type="number"
+						min="0"
+						class="w-24 p-2 bg-stone-800 rounded-xl outline-pink"
+					/>
+				</div>
+				<div class="flex pl-4 justify-between items-center">
+					<p class="select-none">Cambio:</p>
+					<p>$ {payment - cartTotal}</p>
+				</div>
+			{/if}
+			<div class="flex justify-between">
+				<p class="text-lg font-bold select-none">Total:</p>
+				<p>$ {cartTotal}</p>
+			</div>
+		</div>
+		<div class="flex flex-col space-y-2">
+			<button
+				on:click={registerSale}
+				class="py-2 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all select-none"
+			>
+				Realizar venta
+			</button>
+			<label class="flex px-4 justify-between text-sm select-none">
+				Generar comprobante
+				<input
+					type="checkbox"
+					required
+					bind:value={used}
+					class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
+				/>
+			</label>
 		</div>
 	</div>
 </div>
