@@ -4,7 +4,7 @@
 
 <div class="min-h-screen bg-stone-950">
 	<Navbar />
-	<div class="flex-1 p-4 ml-64">
+	<main class="flex-1 p-4 ml-64">
 		<slot />
-	</div>
+	</main>
 </div>
