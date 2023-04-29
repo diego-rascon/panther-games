@@ -1,11 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
-	import Dropdown from './Dropdown/Dropdown.svelte';
-	import DropdownItem from './Dropdown/DropdownItem.svelte';
-	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
-	import boxLinear from '@iconify/icons-solar/box-linear';
-	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 
 	export let id: number;
 	export let total: number;
