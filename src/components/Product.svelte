@@ -6,14 +6,11 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import DropdownItem from './Dropdown/DropdownItem.svelte';
 	import Dropdown from './Dropdown/Dropdown.svelte';
-	import { createEventDispatcher } from 'svelte';
 
-	type UpdateProduct = (productId: number) => void;
-
-	export let addToCart: UpdateProduct;
-	export let editProduct: UpdateProduct;
-	export let changeStock: UpdateProduct;
-	export let deleteProduct: UpdateProduct;
+	export let addToCart: (productId: number) => void;
+	export let editProduct: (productId: number) => void;
+	export let changeStock: (productId: number) => void;
+	export let deleteProduct: (productId: number) => void;
 	export let isGame: boolean;
 	export let id: number;
 	export let name: string;

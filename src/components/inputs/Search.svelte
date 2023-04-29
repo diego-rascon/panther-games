@@ -2,10 +2,8 @@
 	import Icon from '@iconify/svelte';
 	import magniferLinear from '@iconify/icons-solar/magnifer-linear';
 	import closeCircleLinear from '@iconify/icons-solar/close-circle-linear';
-
-	type SearchHandler = (search: string) => void;
-
-	export let searchHandler: SearchHandler;
+	
+	export let searchHandler: (search: string) => void;
 	export let search: string;
 
 	const iconHeight = 24;

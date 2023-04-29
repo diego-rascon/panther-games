@@ -4,10 +4,8 @@
 	import ConfirmDialog from '../modals/confirmDialog.svelte';
 	import InputError from './InputError.svelte';
 
-	type ClickHandler = () => void;
-
-	export let cancelHandler: ClickHandler;
-	export let confirmHandler: ClickHandler;
+	export let cancelHandler: () => void;
+	export let confirmHandler: () => void;
 	export let categories: any;
 	export let platforms: any;
 	export let categoryId: number;

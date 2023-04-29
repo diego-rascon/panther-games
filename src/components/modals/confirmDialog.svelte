@@ -2,10 +2,8 @@
 	import { fade, scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 
-	type ClickHandler = () => void;
-
-	export let cancelHandler: ClickHandler;
-	export let confirmHandler: ClickHandler;
+	export let cancelHandler: () => void;
+	export let confirmHandler: () => void;
 	export let title: string;
 	export let text: string;
 

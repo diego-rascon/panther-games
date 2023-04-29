@@ -2,11 +2,8 @@
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 
-	type RemoveHandler = (cartId: number, productId: number) => void;
-	type QuantityHandler = (cartId: number, quantity: number) => void;
-
-	export let removeHandler: RemoveHandler;
-	export let quantityHandler: QuantityHandler;
+	export let removeHandler: (cartId: number, productId: number) => void;
+	export let quantityHandler: (cartId: number, quantity: number) => void;
 	export let cartId: number;
 	export let productId: number;
 	export let name: string;
