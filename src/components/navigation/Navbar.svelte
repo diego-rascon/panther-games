@@ -2,7 +2,7 @@
 	import PantherGamesLogo from '../PantherGamesLogo.svelte';
 	import NavItem from './NavItem.svelte';
 	import logoutLinear from '@iconify/icons-solar/logout-linear';
-	import { sections } from '../../models/sectionsModel';
+	import { sections } from '../../lib/sections';
 </script>
 
 <nav
