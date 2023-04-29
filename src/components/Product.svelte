@@ -6,6 +6,7 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import DropdownItem from './Dropdown/DropdownItem.svelte';
 	import Dropdown from './Dropdown/Dropdown.svelte';
+	import { cartItems } from '$lib/stores';
 
 	export let addToCart: (productId: number) => void;
 	export let editProduct: (productId: number) => void;
@@ -17,7 +18,6 @@
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
-	export let onCart: boolean;
 
 	let dropdownVisible = false;
 
@@ -48,8 +48,6 @@
 					text="Editar"
 					icon={pen2Linear}
 					on:click={() => {
-						console.log('hehe');
-						
 						editProduct(id);
 					}}
 				/>
@@ -79,15 +77,17 @@
 			<p class="pt-2 text-xl font-bold">$ {price}</p>
 		</div>
 		<button
-			class="py-2 border-2 outline-none rounded-xl transition-all select-none {onCart
+			class="py-2 border-2 outline-none rounded-xl transition-all select-none {$cartItems.includes(
+				id
+			)
 				? 'border-stone-700 text-stone-300'
 				: 'hover:bg-stone-800 active:bg-stone-950 border-pink-700 font-bold focus:outline-pink-700'}"
 			on:click={() => {
-				if (!onCart) {
-					addToCart(id);
-					onCart = true;
-				}
-			}}>Agregar</button
+				if (!$cartItems.includes(id)) addToCart(id);
+			}}
 		>
+			Agregar
+		</button>
 	</div>
 </div>
+<!--'border-stone-700 text-stone-300'-->
