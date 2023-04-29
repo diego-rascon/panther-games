@@ -12,12 +12,15 @@
 	import CartProduct from '../../components/CartProduct.svelte';
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 	import Search from '../../components/inputs/Search.svelte';
+	import { cartItems } from '$lib/stores';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
 	$: ({ categories, products, platforms, cart } = data);
 
 	$: filteredProducts = products;
+
+	$: cartItems.set(cart.map((item: any) => item.producto_id));
 
 	let categoryId: number;
 	let platformId: number;
@@ -179,7 +182,6 @@
 				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
-				onCart={product.on_cart}
 			/>
 		{/each}
 	</div>
