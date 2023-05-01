@@ -2,4 +2,4 @@
 	export let text: string;
 </script>
 
-<h2 class="text-2xl font-lexend font-bold select-none">{text}</h2>
+<h2 class="unstyled text-2xl font-lexend font-bold select-none">{text}</h2>
