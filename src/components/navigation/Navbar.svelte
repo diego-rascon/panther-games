@@ -11,7 +11,7 @@
 	<a
 		href="/home"
 		data-sveltekit-preload-data
-		class="p-4 outline-none focus:outline-pink-700 rounded-xl"><PantherGamesLogo size={2} /></a
+		class="btn p-4 rounded-xl"><PantherGamesLogo size={2} /></a
 	>
 	{#each sections as section}
 		<NavItem href={section.href} text={section.text} icon={section.icon} />
