@@ -23,10 +23,18 @@ export const load = async () => {
 		const { data } = await supabase.rpc('products_cart');
 		return data ?? [];
 	};
+	const fetchClients = async () => {
+		const { data } = await supabase
+			.from('cliente')
+			.select()
+			.order('cliente_id', { ascending: false });
+		return data ?? [];
+	};
 	return {
 		categories: fetchCategories(),
 		products: fetchProducts(),
 		platforms: fetchPlatforms(),
-		cart: fetchCart()
+		cart: fetchCart(),
+		clients: fetchClients()
 	};
 };
