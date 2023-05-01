@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import Icon from '@iconify/svelte';
-	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
+	import { activeProducts } from '$lib/stores';
 	import { fade } from 'svelte/transition';
+	import Icon from '@iconify/svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
 	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
@@ -12,7 +14,6 @@
 	import CartProduct from '../../components/CartProduct.svelte';
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 	import Search from '../../components/inputs/Search.svelte';
-	import { cartItems } from '$lib/stores';
 
 	export let data;
 	let { categories, products, platforms, cart } = data;
@@ -20,7 +21,9 @@
 
 	$: filteredProducts = products;
 
-	$: cartItems.set(cart.map((item: any) => item.producto_id));
+	$: activeProducts.set(
+		cart.map((item: any) => ({ productId: item.producto_id, quantity: item.producto_cantidad }))
+	);
 
 	let categoryId: number;
 	let platformId: number;
@@ -266,19 +269,13 @@
 		<div class="flex flex-col space-y-2">
 			<button
 				on:click={registerSale}
-				class="py-2 bg-green-700 hover:bg-green-600 active:bg-green-800 outline-none focus:outline-green-700 font-bold rounded-xl transition-all select-none"
+				class="py-2 btn variant-filled-success font-bold"
 			>
 				Realizar venta
 			</button>
-			<label class="flex px-4 justify-between text-sm select-none">
-				Generar comprobante
-				<input
-					type="checkbox"
-					required
-					bind:value={used}
-					class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				/>
-			</label>
+			<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm"
+				>Generar comprobante</SlideToggle
+			>
 		</div>
 	</div>
 </div>
