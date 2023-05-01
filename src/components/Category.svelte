@@ -3,7 +3,7 @@
 </script>
 
 <button
-	class="p-4 border-2 hover:bg-stone-900 active:bg-black border-pink-700 outline-none focus:outline-pink-700 rounded-xl transition-all"
+	class="btn variant-ghost-primary p-4"
 >
-	<p class="select-none font-lexend font-bold">{text}</p>
+	<h4 class="select-none font-bold">{text}</h4>
 </button>
