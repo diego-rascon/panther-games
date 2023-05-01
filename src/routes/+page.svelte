@@ -63,21 +63,23 @@
 </script>
 
 <div class="flex flex-col min-h-screen justify-center bg-stone-900">
-	<div class="mx-auto p-8 max-w-sm w-full bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all">
+	<div
+		class="mx-auto p-8 max-w-sm w-full bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all"
+	>
 		<form class="flex flex-col space-y-4">
 			<PantherGamesLogo size={4} />
 			<input
 				type="text"
 				bind:value={usuario}
 				placeholder="Usuario"
-				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+				class="input"
 				on:keypress={submitOnEnter}
 			/>
 			<input
 				type="password"
 				bind:value={contraseña}
 				placeholder="Contraseña"
-				class="px-4 py-2 rounded-xl bg-stone-900 outline-none focus:outline-pink-700 transition-all"
+				class="input"
 				on:keypress={submitOnEnter}
 			/>
 			{#if errorVisible}
@@ -85,11 +87,13 @@
 			{/if}
 			<button
 				type="button"
-				class="px-4 py-2 rounded-xl font-bold {loginSuccess ? 'bg-green-500' : 'btn-fill'}"
+				class="px-4 py-2 btn font-bold {loginSuccess
+					? 'variant-filled-success'
+					: 'variant-filled-primary'}"
 				on:click={submit}
 			>
 				{#if loginSuccess}
-					Bienvenido :)
+					Bienvenido
 				{:else if loading}
 					<LoadingScreen />
 				{:else}
