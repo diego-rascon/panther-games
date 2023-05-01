@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PantherGamesLogo from '../PantherGamesLogo.svelte';
+	import PantherGamesLogo from '../titles/PantherGamesLogo.svelte';
 	import NavItem from './NavItem.svelte';
 	import logoutLinear from '@iconify/icons-solar/logout-linear';
 	import { sections } from '../../lib/sections';

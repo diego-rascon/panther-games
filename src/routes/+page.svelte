@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PantherGamesLogo from '../components/PantherGamesLogo.svelte';
+	import PantherGamesLogo from '../components/titles/PantherGamesLogo.svelte';
 	import { supabase } from '$lib/db';
 	import InputError from '../components/add-menus/InputError.svelte';
 	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
@@ -87,17 +87,15 @@
 			{/if}
 			<button
 				type="button"
-				class="px-4 py-2 btn font-bold {loginSuccess
-					? 'variant-filled-success'
-					: 'variant-filled-primary'}"
+				class="btn font-bold {loginSuccess ? 'variant-filled-success' : 'variant-filled-primary'}"
 				on:click={submit}
 			>
 				{#if loginSuccess}
-					Bienvenido
+					<span>Bienvenido</span>
 				{:else if loading}
 					<LoadingScreen />
 				{:else}
-					<p>Iniciar sesión</p>
+					<span>Iniciar sesión</span>
 				{/if}
 			</button>
 		</form>
