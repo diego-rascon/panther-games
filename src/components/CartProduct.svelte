@@ -20,21 +20,24 @@
 	<div class="flex justify-end space-x-2">
 		<input
 			type="number"
+			class="input w-16"
 			min="1"
 			max={stock}
 			bind:value={quantity}
 			on:change={() => {
 				quantityHandler(cartId, quantity);
 			}}
-			class="w-12 p-2 bg-stone-900 outline-pink rounded-xl select-none"
 		/>
 		<button
+			type="button"
+			class="btn-icon hover:variant-soft"
 			on:click={() => {
 				removeHandler(cartId, productId);
 			}}
-			class="p-2 bg-stone-900 hover:bg-stone-700 active:bg-stone-950 outline-pink rounded-xl"
 		>
-			<Icon icon={trashBinMinimalisticLinear} height={20} />
+			<span>
+				<Icon icon={trashBinMinimalisticLinear} height={20} />
+			</span>
 		</button>
 	</div>
 </div>
