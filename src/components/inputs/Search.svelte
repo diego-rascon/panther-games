@@ -30,14 +30,14 @@
 >
 	<Icon icon={magniferLinear} height={iconHeight} />
 	<input
-		type="text"
+		type="search"
 		bind:value={search}
 		on:input={() => {
 			searchHandler(search);
 		}}
 		on:focus={searchFocusGain}
 		on:blur={searchFocusLoss}
-		class="w-full bg-transparent outline-none select-none"
+		class="input w-full bg-transparent outline-none select-none"
 		placeholder="Buscar..."
 	/>
 	<button
