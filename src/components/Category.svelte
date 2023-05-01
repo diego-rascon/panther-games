@@ -3,7 +3,7 @@
 </script>
 
 <button
-	class="btn variant-ghost-primary p-4"
+	class="btn variant-soft-primary p-4"
 >
 	<h4 class="select-none font-bold">{text}</h4>
 </button>
