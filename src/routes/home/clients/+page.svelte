@@ -7,6 +7,7 @@
 	import AddClient from '../../../components/add-menus/AddClient.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
+	import ClientRow from '../../../components/ClientRow.svelte';
 
 	export let data;
 	let { clients } = data;
@@ -72,6 +73,14 @@
 		<tbody>
 			{#each filteredClients as client}
 				<tr>
+					<ClientRow
+						id={client.cliente_id}
+						name={client.cliente_nombre}
+						email={client.cliente_email}
+						phone={client.cliente_telefono}
+						member={client.cliente_miembro}
+					/>
+					<!--
 					<td class="p-2 text-left">{client.cliente_id}</td>
 					<td class="p-2 text-left">{client.cliente_nombre}</td>
 					<td class="p-2 text-left">{client.cliente_email}</td>
@@ -86,6 +95,7 @@
 							<Icon icon={menuDotsBold} rotate={1} height={24} />
 						</button>
 					</td>
+					-->
 				</tr>
 			{/each}
 		</tbody>
