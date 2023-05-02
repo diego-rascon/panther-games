@@ -191,6 +191,7 @@
 				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
+				isNew={product.producto_nuevo}
 			/>
 		{/each}
 	</div>
