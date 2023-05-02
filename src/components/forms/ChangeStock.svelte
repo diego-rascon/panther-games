@@ -9,12 +9,13 @@
 
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;
+	export let productId: number;
+	export let currentStock: number;
 
 	const iconSize = 24;
 
 	let changeType = 1;
 	let stockChange: number;
-	let currentStock = 0;
 	let newStock = 0;
 
 	const calculateNewStock = () => {
@@ -42,9 +43,12 @@
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle text="Cambiar Stock" />
-		<RadioGroup class="justify-center" active="variant-filled-primary">
-			<RadioItem bind:group={changeType} name="justify" value={0}>Reducir</RadioItem>
-			<RadioItem bind:group={changeType} name="justify" value={1}>Aumentar</RadioItem>
+		<RadioGroup
+			class="justify-center"
+			active="variant-filled-primary"
+		>
+			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={0}>Reducir</RadioItem>
+			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={1}>Aumentar</RadioItem>
 		</RadioGroup>
 		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 			<div class="input-group-shim">
