@@ -10,7 +10,7 @@
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
 	import AddButton from '../../components/AddButton.svelte';
-	import AddProduct from '../../components/add-menus/AddProduct.svelte';
+	import AddProduct from '../../components/forms/ProductForm.svelte';
 	import CartProduct from '../../components/CartProduct.svelte';
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 	import Search from '../../components/inputs/Search.svelte';
@@ -57,19 +57,18 @@
 			.single();
 		if (error) console.log(error.message);
 		products = products.filter((product: any) => product.producto_id != productToDeleteID);
-		toggleConfirmation();
 	};
 
 	const confirmDelete = (productId: number) => {
 		productToDeleteID = productId;
-		toggleConfirmation();
 	};
 
-	let confirmationVisible = false;
 	let productToDeleteID: number;
 
-	const toggleConfirmation = () => {
-		confirmationVisible = !confirmationVisible;
+	let addingProduct = false;
+
+	const toggleAddingProduct = () => {
+		addingProduct = !addingProduct;
 	};
 
 	let doingSale = false;
@@ -112,7 +111,7 @@
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 		}
-		toggleAddMenu();
+		toggleAddingProduct();
 	};
 
 	$: cartVisible = cart.length > 0;
@@ -172,12 +171,6 @@
 		filteredProducts = products.filter((product: any) =>
 			product.producto_nombre.toLowerCase().includes(search.toLowerCase())
 		);
-	};
-
-	let addMenuVisible = false;
-
-	const toggleAddMenu = () => {
-		addMenuVisible = !addMenuVisible;
 	};
 </script>
 
@@ -261,31 +254,16 @@
 	</div>
 </div>
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
-	<AddButton on:click={toggleAddMenu} />
+	<AddButton on:click={toggleAddingProduct} />
 </div>
-{#if addMenuVisible}
-	<AddProduct
-		cancelHandler={toggleAddMenu}
-		confirmHandler={addProduct}
-		{categories}
-		{platforms}
-		bind:categoryId
-		bind:platformId
-		bind:name
-		bind:price
-		bind:stock
-		bind:minimumStock
-		bind:used
-	/>
-{/if}
 {#if doingSale}
 	<DarkenSreen>
 		{#if confirmSale}
 			<ConfirmDialog
 				cancelHandler={toggleSaleConfirmation}
 				confirmHandler={registerSale}
-				title="Eliminar Producto"
-				text="¿Está seguro de que desea eliminar el producto?"
+				title="Confirmar venta"
+				text="¿Está seguro de que desea registrar la venta?"
 			/>
 		{:else}
 			<div
@@ -354,11 +332,20 @@
 	</DarkenSreen>
 {/if}
 
-{#if confirmationVisible}
-	<ConfirmDialog
-		cancelHandler={toggleConfirmation}
-		confirmHandler={deleteProduct}
-		title="Eliminar Producto"
-		text="¿Está seguro de que desea eliminar el producto?"
-	/>
+{#if addingProduct}
+	<DarkenSreen>
+		<AddProduct
+			cancelHandler={toggleAddingProduct}
+			confirmHandler={addProduct}
+			{categories}
+			{platforms}
+			bind:categoryId
+			bind:platformId
+			bind:name
+			bind:price
+			bind:stock
+			bind:minimumStock
+			bind:used
+		/>
+	</DarkenSreen>
 {/if}
