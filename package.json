@@ -41,6 +41,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@floating-ui/dom": "^1.2.7",
 		"@supabase/supabase-js": "^2.15.0",
 		"date-picker-svelte": "^2.3.0",
 		"moment": "^2.29.4",
