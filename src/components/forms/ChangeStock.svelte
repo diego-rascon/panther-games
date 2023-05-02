@@ -15,13 +15,15 @@
 	const iconSize = 24;
 
 	let changeType = 1;
-	let stockChange: number;
-	let newStock = 0;
+	let stockChange = 0;
+	let newStock: number;
 
 	const calculateNewStock = () => {
 		if (changeType === 0) newStock = currentStock - stockChange;
 		else newStock = currentStock + stockChange;
 	};
+
+	calculateNewStock();
 
 	let confirmationVisible = false;
 
@@ -34,8 +36,8 @@
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
 		{confirmHandler}
-		title="Confirmar Registro"
-		text="¿Está seguro de que desea registrar al nuevo cliente?"
+		title="Confirmar Cambio"
+		text="¿Está seguro de que desea cambiar el stock del producto de {currentStock} a {newStock}?"
 	/>
 {:else}
 	<div
@@ -43,12 +45,13 @@
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle text="Cambiar Stock" />
-		<RadioGroup
-			class="justify-center"
-			active="variant-filled-primary"
-		>
-			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={0}>Reducir</RadioItem>
-			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={1}>Aumentar</RadioItem>
+		<RadioGroup class="justify-center" active="variant-filled-primary">
+			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={0}
+				>Reducir</RadioItem
+			>
+			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={1}
+				>Aumentar</RadioItem
+			>
 		</RadioGroup>
 		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 			<div class="input-group-shim">
@@ -64,10 +67,7 @@
 				min="0"
 				class="input"
 				placeholder="Cantidad"
-				on:input={() => {
-					if (changeType === 0) newStock = currentStock - stockChange;
-					else newStock = currentStock + stockChange;
-				}}
+				on:input={calculateNewStock}
 			/>
 		</div>
 		<div class="flex justify-between items-center">
