@@ -205,7 +205,7 @@
 	<!--Title-->
 	<div class="flex justify-between">
 		<SectionTitle text="Carrito" />
-		<button on:click={emptyCart} class="btn-icon hover:variant-soft transition-all">
+		<button on:click={emptyCart} class="btn variant-filled-surface p-2 rounded-full">
 			<Icon icon={cartCrossOutline} height={24} />
 		</button>
 	</div>
