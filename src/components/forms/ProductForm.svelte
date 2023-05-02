@@ -17,6 +17,9 @@
 	export let minimumStock: number;
 	export let used: boolean;
 
+	let inputError = false;
+	let errorMessage: string;
+
 	const validInput = (): boolean => {
 		if (!name) {
 			errorMessage = 'El nombre del producto no es válido.';
@@ -35,18 +38,6 @@
 		}
 	};
 
-	const addProduct = () => {
-		if (validInput()) {
-			confirmHandler();
-		} else {
-			inputError = true;
-			toggleConfirmation();
-		}
-	};
-
-	let inputError = false;
-	let errorMessage: string;
-
 	let confirmationVisible = false;
 
 	const toggleConfirmation = () => {
@@ -57,7 +48,14 @@
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
-		confirmHandler={addProduct}
+		confirmHandler={() => {
+			if (validInput()) {
+				confirmHandler();
+			} else {
+				inputError = true;
+				toggleConfirmation();
+			}
+		}}
 		title="Confirmar Registro"
 		text="¿Está seguro de que desea registrar el nuevo producto?"
 	/>
