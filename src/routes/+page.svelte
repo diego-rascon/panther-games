@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PantherGamesLogo from '../components/titles/PantherGamesLogo.svelte';
 	import { supabase } from '$lib/db';
-	import InputError from '../components/add-menus/InputError.svelte';
+	import InputError from '../components/utils/InputError.svelte';
 	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
 
 	let usuario = '';
