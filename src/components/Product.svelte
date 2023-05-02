@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { popup } from '@skeletonlabs/skeleton';
+	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
@@ -69,10 +71,10 @@
 	<div class="flex flex-col mt-auto">
 		<div class="py-4">
 			{#if isGame}
-				<p class="text-sm"><strong>Plataforma:</strong> {platform}</p>
+				<p class="unstyled text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
-			<p class="text-sm"><strong>Cantidad:</strong> {stock}</p>
-			<p class="pt-2 text-xl font-bold">$ {price}</p>
+			<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
+			<p class="unstyled pt-2 text-xl font-bold">$ {price}</p>
 		</div>
 		<button
 			class="btn {onCart
