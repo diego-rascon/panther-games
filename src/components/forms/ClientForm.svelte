@@ -2,19 +2,13 @@
 	import { fade, scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 	import ConfirmDialog from '../modals/confirmDialog.svelte';
-	import InputError from './InputError.svelte';
+	import InputError from '../utils/InputError.svelte';
 
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;
-	export let categories: any;
-	export let platforms: any;
-	export let categoryId: number;
-	export let platformId: number;
 	export let name: string;
-	export let price: number;
-	export let stock: number;
-	export let minimumStock: number;
-	export let used: boolean;
+	export let email: string;
+	export let phone: string;
 
 	const animDuration = 150;
 
@@ -24,18 +18,19 @@
 		confirmationVisible = !confirmationVisible;
 	};
 
+	const namePattern = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]*$/;
+	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const phonePattern = /^\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})$/;
+
 	const validInput = (): boolean => {
-		if (!name) {
-			errorMessage = 'El nombre del producto no es válido.';
+		if (!name || !namePattern.test(name)) {
+			errorMessage = 'El nombre del cliente no es válido';
 			return false;
-		} else if (!price || price < 1) {
-			errorMessage = 'El precio del producto no es válido.';
+		} else if (!email || !emailPattern.test(email)) {
+			errorMessage = 'El correo del cliente no es válido.';
 			return false;
-		} else if (!stock || stock < 1) {
-			errorMessage = 'El stock del producto no es válido.';
-			return false;
-		} else if (!minimumStock || minimumStock < 1) {
-			errorMessage = 'El stock mínimo del producto no es válido.';
+		} else if (!phone || !phonePattern.test(phone)) {
+			errorMessage = 'El teléfono del cliente no es válido.';
 			return false;
 		} else {
 			return true;
@@ -63,27 +58,8 @@
 		class="flex flex-col p-8 space-y-8 bg-stone-950 border border-stone-700 rounded-xl transition-all"
 		transition:scale={{ duration: animDuration }}
 	>
-		<SectionTitle text="Registrar Producto" />
+		<SectionTitle text="Registrar Cliente" />
 		<div class="flex flex-col space-y-4 transition-all">
-			<select
-				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				bind:value={categoryId}
-			>
-				{#each categories as category}
-					<option value={category.categoria_id}>{category.categoria_nombre}</option>
-				{/each}
-			</select>
-			{#if categoryId === 1}
-				<select
-					transition:fade={{ duration: animDuration }}
-					class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-					bind:value={platformId}
-				>
-					{#each platforms as platform}
-						<option value={platform.plataforma_id}>{platform.plataforma_nombre}</option>
-					{/each}
-				</select>
-			{/if}
 			<input
 				type="text"
 				required
@@ -92,35 +68,19 @@
 				placeholder="Nombre"
 			/>
 			<input
-				type="number"
+				type="text"
 				required
-				bind:value={price}
+				bind:value={email}
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Precio"
+				placeholder="Correo"
 			/>
 			<input
-				type="number"
+				type="text"
 				required
-				bind:value={stock}
+				bind:value={phone}
 				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Stock"
+				placeholder="Teléfono"
 			/>
-			<input
-				type="number"
-				required
-				bind:value={minimumStock}
-				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Mínimo de stock"
-			/>
-			<label class="flex px-4 justify-between select-none">
-				Producto usado
-				<input
-					type="checkbox"
-					required
-					bind:value={used}
-					class="bg-stone-900 p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				/>
-			</label>
 			{#if inputError}
 				<InputError text={errorMessage} />
 			{/if}
