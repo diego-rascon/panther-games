@@ -78,7 +78,7 @@
 		<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
 			Generar comprobante
 		</SlideToggle>
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+		<div class="grid grid-cols-2 gap-4">
 			<button class="btn variant-ringed-primary" on:click={cancelHandler}> Cancelar </button>
 			<button class="btn variant-filled-primary font-bold" on:click={toggleConfirmation}>
 				Confirmar
