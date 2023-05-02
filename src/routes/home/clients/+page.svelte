@@ -58,7 +58,7 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="mt-14 flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto">
+<div class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
 		<thead class="border-b border-stone-700">
 			<tr>
