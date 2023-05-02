@@ -8,7 +8,7 @@
 
 <button
 	on:click
-	class="btn variant-filled-surface justify-start"
+	class="btn variant-filled-surface justify-start space-x-4"
 >
 	<Icon {icon} height={20} />
 	<p>{text}</p>
