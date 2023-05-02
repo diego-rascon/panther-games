@@ -12,7 +12,7 @@
 
 	export let addToCart: (productId: number) => void;
 	export let editProduct: (productId: number) => void;
-	export let changeStock: (productId: number) => void;
+	export let changeStock: (productId: number, stock: number) => void;
 	export let deleteProduct: (productId: number) => void;
 	export let isGame: boolean;
 	export let id: number;
@@ -58,7 +58,7 @@
 					text="Editar stock"
 					icon={boxLinear}
 					on:click={() => {
-						changeStock(id);
+						changeStock(id, stock);
 					}}
 				/>
 				<DropdownItem
