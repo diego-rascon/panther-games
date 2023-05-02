@@ -18,9 +18,9 @@
 
 <a
 	{href}
-	class="flex p-4 justify-start space-x-4 rounded-xl outline-none transition-all select-none text-white {isActive
-		? 'btn variant-filled-primary'
-		: 'btn variant-filled-surface'}"
+	class="flex p-4 justify-start space-x-4 {isActive
+		? 'btn variant-filled-primary font-bold'
+		: 'btn variant-filled-surface text-stone-500'}"
 	data-sveltekit-preload-data="hover"
 >
 	<Icon {icon} height={24} />
