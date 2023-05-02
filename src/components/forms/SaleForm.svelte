@@ -7,7 +7,7 @@
 	import SectionSubtitle from '../titles/SectionSubtitle.svelte';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 	import { scale } from 'svelte/transition';
-	import ConfirmDialog from '../modals/confirmDialog.svelte';
+	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;

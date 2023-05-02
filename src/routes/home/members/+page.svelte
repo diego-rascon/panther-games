@@ -2,10 +2,9 @@
 	import { supabase } from '$lib/db';
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
-	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/forms/ClientForm.svelte';
-	import ConfirmDialog from '../../../components/modals/confirmDialog.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 
 	export let data;
 	let { members } = data;
