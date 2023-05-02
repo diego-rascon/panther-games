@@ -14,6 +14,7 @@
 	import Search from '../../components/inputs/Search.svelte';
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
 	import SaleForm from '../../components/forms/SaleForm.svelte';
+	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
@@ -73,10 +74,16 @@
 		console.log('Cambiar stock');
 	};
 
+	let deleteConfirmation = false;
 	let productToDeleteID: number;
 
 	const confirmDelete = (productId: number) => {
+		toggleDeleteConfirmation();
 		productToDeleteID = productId;
+	};
+
+	const toggleDeleteConfirmation = () => {
+		deleteConfirmation = !deleteConfirmation;
 	};
 
 	const deleteProduct = async () => {
@@ -88,6 +95,7 @@
 			.single();
 		if (error) console.log(error.message);
 		products = products.filter((product: any) => product.producto_id != productToDeleteID);
+		toggleDeleteConfirmation();
 	};
 
 	let doingSale = false;
@@ -269,6 +277,16 @@
 			{clients}
 			{cartTotal}
 			{cartQuantity}
+		/>
+	</DarkenSreen>
+{/if}
+{#if deleteConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleDeleteConfirmation}
+			confirmHandler={deleteProduct}
+			title="Eliminar Producto"
+			text="¿Seguro de que desea eliminar el producto?"
 		/>
 	</DarkenSreen>
 {/if}
