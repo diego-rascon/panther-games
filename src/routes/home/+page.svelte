@@ -67,11 +67,20 @@
 			.insert({ producto_id: productId, plataforma_id: platformId });
 	};
 
+	let tempProductId: number;
+
 	const editProduct = (productId: number) => {
 		console.log('Editar producto');
 	};
 
+	let tempProductStock: number;
 	let changingStock = false;
+
+	const startStockChange = (productId: number, stock: number) => {
+		toggleChangingStock();
+		tempProductId = productId;
+		tempProductStock = stock;
+	};
 
 	const toggleChangingStock = () => {
 		changingStock = !changingStock;
@@ -82,11 +91,10 @@
 	};
 
 	let deleteConfirmation = false;
-	let productToDeleteID: number;
 
 	const confirmDelete = (productId: number) => {
 		toggleDeleteConfirmation();
-		productToDeleteID = productId;
+		tempProductId = productId;
 	};
 
 	const toggleDeleteConfirmation = () => {
@@ -97,11 +105,11 @@
 		const { error } = await supabase
 			.from('producto')
 			.update({ producto_activo: false })
-			.eq('producto_id', productToDeleteID)
+			.eq('producto_id', tempProductId)
 			.select()
 			.single();
 		if (error) console.log(error.message);
-		products = products.filter((product: any) => product.producto_id != productToDeleteID);
+		products = products.filter((product: any) => product.producto_id != tempProductId);
 		toggleDeleteConfirmation();
 	};
 
@@ -190,7 +198,7 @@
 			<Product
 				{addToCart}
 				{editProduct}
-				changeStock={toggleChangingStock}
+				changeStock={startStockChange}
 				deleteProduct={confirmDelete}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
@@ -290,7 +298,12 @@
 {/if}
 {#if changingStock}
 	<DarkenSreen>
-		<ChangeStock cancelHandler={toggleChangingStock} confirmHandler={toggleChangingStock} />
+		<ChangeStock
+			cancelHandler={toggleChangingStock}
+			confirmHandler={toggleChangingStock}
+			productId={tempProductId}
+			currentStock={tempProductStock}
+		/>
 	</DarkenSreen>
 {/if}
 {#if deleteConfirmation}
