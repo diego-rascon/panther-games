@@ -20,6 +20,7 @@
 	export let stock: number;
 	export let price: number;
 	export let platform: string;
+	export let isNew: boolean;
 
 	$: onCart = $activeProducts.some((item: any) => item.productId == id);
 
@@ -33,7 +34,9 @@
 	<div class="flex items-start justify-between">
 		<div class="flex flex-col items-start space-y-2">
 			<p class="unstyled line-clamp-4 text-xl font-bold select-none">{name}</p>
-			<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">Usado</p>
+			{#if !isNew}
+				<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">Usado</p>
+			{/if}
 		</div>
 		<button
 			on:click
