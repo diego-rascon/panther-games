@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import Icon from '@iconify/svelte';
-	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
-	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import { Toast, toastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
@@ -20,8 +19,6 @@
 	let email: string;
 	let phone: string;
 
-	let search: string;
-
 	const addClient = async () => {
 		const { data: client } = await supabase
 			.from('cliente')
@@ -33,9 +30,14 @@
 			})
 			.select()
 			.single();
-		if (client) clients = [client, ...clients];
-		toggleAddingClient();
+		if (client) {
+			clients = [client, ...clients];
+			toggleAddingClient();
+			toastStore.trigger(clientAdded);
+		}
 	};
+
+	let search: string;
 
 	const searchClient = (search: string) => {
 		filteredClients = clients.filter(
@@ -50,6 +52,11 @@
 
 	const toggleAddingClient = () => {
 		addingClient = !addingClient;
+	};
+
+	const clientAdded: ToastSettings = {
+		message: 'Se agregó a un nuevo cliente con éxito',
+		background: 'variant-filled-primary'
 	};
 </script>
 
@@ -83,22 +90,6 @@
 						phone={client.cliente_telefono}
 						member={client.cliente_miembro}
 					/>
-					<!--
-					<td class="p-2 text-left">{client.cliente_id}</td>
-					<td class="p-2 text-left">{client.cliente_nombre}</td>
-					<td class="p-2 text-left">{client.cliente_email}</td>
-					<td class="p-2 text-left">{client.cliente_telefono}</td>
-					<td class="p-2 text-center">
-						{#if client.cliente_miembro}
-							<Icon icon={crownMinimalisticBold} color="#e6d92e" />
-						{/if}
-					</td>
-					<td class="py-2 text-right">
-						<button class="rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all">
-							<Icon icon={menuDotsBold} rotate={1} height={24} />
-						</button>
-					</td>
-					-->
 				</tr>
 			{/each}
 		</tbody>
