@@ -10,16 +10,6 @@
 	export let email: string;
 	export let phone: string;
 	export let member: boolean;
-
-	let dropdownVisible = false;
-
-	const toggleDropdown = () => {
-		dropdownVisible = !dropdownVisible;
-	};
-
-	const closeDropdown = () => {
-		dropdownVisible = false;
-	};
 </script>
 
 <td class="p-2 text-left">{id}</td>
@@ -32,13 +22,7 @@
 	{/if}
 </td>
 <td class="relative py-2 text-right">
-	<button
-		on:focusout={closeDropdown}
-		on:click={toggleDropdown}
-		class="rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all"
-	>
+	<button class="rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all">
 		<Icon icon={menuDotsBold} rotate={1} height={24} />
 	</button>
-	{#if dropdownVisible}
-	{/if}
 </td>
