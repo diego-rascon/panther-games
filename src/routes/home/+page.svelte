@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { activeProducts } from '$lib/stores';
-	import { fade } from 'svelte/transition';
+	import { fade, scale } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
@@ -14,10 +14,13 @@
 	import CartProduct from '../../components/CartProduct.svelte';
 	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 	import Search from '../../components/inputs/Search.svelte';
+	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
+	import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-linear';
+	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
 
 	export let data;
-	let { categories, products, platforms, cart } = data;
-	$: ({ categories, products, platforms, cart } = data);
+	let { categories, products, platforms, cart, clients } = data;
+	$: ({ categories, products, platforms, cart, clients } = data);
 
 	$: filteredProducts = products;
 
@@ -33,8 +36,9 @@
 	let minimumStock: number;
 	let used: boolean = false;
 
+	let genericClient = true;
 	let paymentType: string;
-	let payment: number = 0;
+	let payment: number;
 
 	const editProduct = (productId: number) => {
 		console.log('Editar producto');
@@ -66,6 +70,17 @@
 
 	const toggleConfirmation = () => {
 		confirmationVisible = !confirmationVisible;
+	};
+
+	let doingSale = false;
+	let confirmSale = false;
+
+	const toggleSale = () => {
+		doingSale = !doingSale;
+	};
+
+	const toggleSaleConfirmation = () => {
+		confirmSale = !confirmSale;
 	};
 
 	const registerSale = async () => {
@@ -141,10 +156,12 @@
 	};
 
 	let cartTotal: number = 0;
+	let cartQuantity: number = 0;
 
 	const fetchTotal = async () => {
 		const { data: total }: any = await supabase.rpc('get_total').single();
 		cartTotal = total.total;
+		cartQuantity = total.quantity;
 	};
 
 	fetchTotal();
@@ -164,7 +181,7 @@
 	};
 </script>
 
-<div class="mt-14 mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
+<div class="mt-[60px] mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
@@ -207,10 +224,7 @@
 	<!--Title-->
 	<div class="flex justify-between">
 		<SectionTitle text="Carrito" />
-		<button
-			on:click={emptyCart}
-			class="p-2 hover:bg-stone-800 active:bg-stone-950 border-pink-700 outline-pink rounded-full transition-all"
-		>
+		<button on:click={emptyCart} class="btn-icon hover:variant-soft transition-all">
 			<Icon icon={cartCrossOutline} height={24} />
 		</button>
 	</div>
@@ -235,47 +249,14 @@
 	</div>
 	<!--Buttons-->
 	<div class="mt-auto space-y-4">
-		<div class="space-y-2">
-			<div class="flex justify-between items-center">
-				<p class="text-lg font-bold select-none">Método:</p>
-				<select
-					bind:value={paymentType}
-					class="w-24 p-2 bg-stone-800 outline-pink rounded-xl select-none"
-				>
-					<option value="Efectivo">Efectivo</option>
-					<option value="Tarjeta">Tarjeta</option>
-				</select>
-			</div>
-			{#if paymentType === 'Efectivo'}
-				<div class="flex pl-4 justify-between items-center select-none">
-					<p>Pago:</p>
-					<input
-						bind:value={payment}
-						type="number"
-						min="0"
-						class="w-24 p-2 bg-stone-800 rounded-xl outline-pink"
-					/>
-				</div>
-				<div class="flex pl-4 justify-between items-center">
-					<p class="select-none">Cambio:</p>
-					<p>$ {payment - cartTotal}</p>
-				</div>
-			{/if}
-			<div class="flex justify-between">
-				<p class="text-lg font-bold select-none">Total:</p>
-				<p>$ {cartTotal}</p>
-			</div>
+		<div class="flex justify-between text-lg">
+			<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
+			<p class="unstyled">$ {cartTotal}</p>
 		</div>
-		<div class="flex flex-col space-y-2">
-			<button
-				on:click={registerSale}
-				class="py-2 btn variant-filled-success font-bold"
-			>
+		<div class="flex flex-col space-y-4">
+			<button class="btn variant-filled-success font-bold" on:click={toggleSale}>
 				Realizar venta
 			</button>
-			<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm"
-				>Generar comprobante</SlideToggle
-			>
 		</div>
 	</div>
 </div>
@@ -297,6 +278,82 @@
 		bind:used
 	/>
 {/if}
+{#if doingSale}
+	<DarkenSreen>
+		{#if confirmSale}
+			<ConfirmDialog
+				cancelHandler={toggleSaleConfirmation}
+				confirmHandler={registerSale}
+				title="Eliminar Producto"
+				text="¿Está seguro de que desea eliminar el producto?"
+			/>
+		{:else}
+			<div
+				class="flex flex-col p-8 space-y-4 bg-stone-950 border border-stone-700 rounded-xl"
+				in:scale={{ duration: 150 }}
+			>
+				<SectionTitle text="Realizar Venta" />
+				<SectionSubtitle text="Cliente" />
+				<SlideToggle
+					bind:checked={genericClient}
+					name="slider-sm"
+					active="bg-primary-500"
+					size="sm"
+				>
+					Cliente genérico
+				</SlideToggle>
+				{#if !genericClient}
+					<select class="input">
+						{#each clients as client}
+							<option value={client.cliente_id}>{client.cliente_nombre}</option>
+						{/each}
+					</select>
+				{/if}
+				<SectionSubtitle text="Pago" />
+				<select bind:value={paymentType} class="input">
+					<option value="Efectivo">Efectivo</option>
+					<option value="Tarjeta">Tarjeta</option>
+				</select>
+				{#if paymentType === 'Efectivo'}
+					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+						<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
+						<input
+							bind:value={payment}
+							type="number"
+							min="0"
+							class="input"
+							placeholder="Cantidad"
+						/>
+					</div>
+					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+						<div class="input-group-shim"><Icon icon={refreshCircleOutline} height={24} /></div>
+						<input
+							class="input"
+							type="number"
+							placeholder="Cambio"
+							value={payment - cartTotal < 0 ? null : payment - cartTotal}
+							readonly
+						/>
+					</div>
+				{/if}
+				<div class="flex justify-between text-lg">
+					<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
+					<p class="unstyled">$ {cartTotal}</p>
+				</div>
+				<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
+					Generar comprobante
+				</SlideToggle>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<button class="btn variant-ringed-primary" on:click={toggleSale}> Cancelar </button>
+					<button class="btn variant-filled-primary font-bold" on:click={toggleSaleConfirmation}>
+						Confirmar
+					</button>
+				</div>
+			</div>
+		{/if}
+	</DarkenSreen>
+{/if}
+
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
