@@ -23,20 +23,23 @@
 
 	$: onCart = $activeProducts.some((item: any) => item.productId == id);
 
-	let dropdown: PopupSettings = {
+	let dropdown: any = {
 		placement: 'bottom-end',
-		event: 'focus-click',
-		target: 'dropdown'
+		event: 'focus-click'
 	};
 </script>
 
 <div class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
 	<div class="flex items-start justify-between">
 		<p class="unstyled line-clamp-4 text-xl font-bold select-none">{name}</p>
-		<button on:click|stopPropagation  use:popup={dropdown} class="ml-2 btn-icon hover:variant-soft">
-			<Icon icon={menuDotsBold} rotate={1} height={18} />
+		<button
+			on:click
+			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
+			class="btn p-1 rounded-xl"
+		>
+			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
-		<div data-popup="dropdown">
+		<div data-popup={`dropdown-${id}`}>
 			<Dropdown>
 				<DropdownItem
 					text="Editar"
