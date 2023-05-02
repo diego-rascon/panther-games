@@ -244,18 +244,6 @@
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton on:click={toggleAddingProduct} />
 </div>
-{#if doingSale}
-	<DarkenSreen>
-		<SaleForm
-			cancelHandler={toggleSale}
-			confirmHandler={registerSale}
-			{clients}
-			{cartTotal}
-			{cartQuantity}
-		/>
-	</DarkenSreen>
-{/if}
-
 {#if addingProduct}
 	<DarkenSreen>
 		<AddProduct
@@ -270,6 +258,17 @@
 			bind:stock
 			bind:minimumStock
 			bind:used
+		/>
+	</DarkenSreen>
+{/if}
+{#if doingSale}
+	<DarkenSreen>
+		<SaleForm
+			cancelHandler={toggleSale}
+			confirmHandler={registerSale}
+			{clients}
+			{cartTotal}
+			{cartQuantity}
 		/>
 	</DarkenSreen>
 {/if}
