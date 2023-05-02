@@ -15,6 +15,7 @@
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
 	import SaleForm from '../../components/forms/SaleForm.svelte';
 	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
+	import ChangeStock from '../../components/forms/ChangeStock.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
@@ -68,6 +69,12 @@
 
 	const editProduct = (productId: number) => {
 		console.log('Editar producto');
+	};
+
+	let changingStock = false;
+
+	const toggleChangingStock = () => {
+		changingStock = !changingStock;
 	};
 
 	const changeStock = (productId: number) => {
@@ -183,7 +190,7 @@
 			<Product
 				{addToCart}
 				{editProduct}
-				{changeStock}
+				changeStock={toggleChangingStock}
 				deleteProduct={confirmDelete}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
@@ -279,6 +286,11 @@
 			{cartTotal}
 			{cartQuantity}
 		/>
+	</DarkenSreen>
+{/if}
+{#if changingStock}
+	<DarkenSreen>
+		<ChangeStock cancelHandler={toggleChangingStock} confirmHandler={toggleChangingStock} />
 	</DarkenSreen>
 {/if}
 {#if deleteConfirmation}
