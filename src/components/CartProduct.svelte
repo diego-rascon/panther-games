@@ -25,6 +25,7 @@
 			max={stock}
 			bind:value={quantity}
 			on:change={() => {
+				if (quantity > stock) quantity = stock;
 				quantityHandler(cartId, quantity);
 			}}
 		/>
