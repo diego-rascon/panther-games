@@ -4,7 +4,7 @@
 	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import AddButton from '../../../components/AddButton.svelte';
-	import AddClient from '../../../components/add-menus/AddClient.svelte';
+	import AddClient from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
 	import ClientRow from '../../../components/ClientRow.svelte';
