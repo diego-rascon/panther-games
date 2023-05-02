@@ -32,7 +32,7 @@
 
 <div class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
 	<div class="flex items-start justify-between">
-		<p class="line-clamp-4 text-xl font-bold select-none">{name}</p>
+		<p class="unstyled line-clamp-4 text-xl font-bold select-none">{name}</p>
 		<button
 			class="ml-2 rounded-full p-1 hover:bg-stone-800 active:bg-stone-950 transition-all {dropdownVisible
 				? 'bg-stone-800'
@@ -75,9 +75,9 @@
 			<p class="pt-2 text-xl font-bold">$ {price}</p>
 		</div>
 		<button
-			class="btn py-2 {onCart
-				? 'variant-ghost-primary'
-				: 'variant-ringed-primary'}"
+			class="btn {onCart
+				? ' text-stone-400 bg-surface-700 border-surface-400'
+				: 'variant-ringed-primary font-bold'}"
 			on:click={() => {
 				if (!onCart) addToCart(id);
 			}}
@@ -86,4 +86,3 @@
 		</button>
 	</div>
 </div>
-<!--'border-stone-700 text-stone-300'-->
