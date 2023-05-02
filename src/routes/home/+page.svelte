@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { activeProducts } from '$lib/stores';
-	import { fade, scale } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
 	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
@@ -12,11 +11,9 @@
 	import AddButton from '../../components/AddButton.svelte';
 	import AddProduct from '../../components/forms/ProductForm.svelte';
 	import CartProduct from '../../components/CartProduct.svelte';
-	import ConfirmDialog from '../../components/modals/confirmDialog.svelte';
 	import Search from '../../components/inputs/Search.svelte';
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
-	import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-linear';
-	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
+	import SaleForm from '../../components/forms/SaleForm.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
@@ -36,62 +33,10 @@
 	let minimumStock: number;
 	let used: boolean = false;
 
-	let genericClient = true;
-	let paymentType: string;
-	let payment: number;
-
-	const editProduct = (productId: number) => {
-		console.log('Editar producto');
-	};
-
-	const changeStock = (productId: number) => {
-		console.log('Cambiar stock');
-	};
-
-	const deleteProduct = async () => {
-		const { error } = await supabase
-			.from('producto')
-			.update({ producto_activo: false })
-			.eq('producto_id', productToDeleteID)
-			.select()
-			.single();
-		if (error) console.log(error.message);
-		products = products.filter((product: any) => product.producto_id != productToDeleteID);
-	};
-
-	const confirmDelete = (productId: number) => {
-		productToDeleteID = productId;
-	};
-
-	let productToDeleteID: number;
-
 	let addingProduct = false;
 
 	const toggleAddingProduct = () => {
 		addingProduct = !addingProduct;
-	};
-
-	let doingSale = false;
-	let confirmSale = false;
-
-	const toggleSale = () => {
-		doingSale = !doingSale;
-	};
-
-	const toggleSaleConfirmation = () => {
-		confirmSale = !confirmSale;
-	};
-
-	const registerSale = async () => {
-		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
-		if (error) console.log(error);
-		emptyCart();
-	};
-
-	const addProductPlatform = async (productId: number) => {
-		await supabase
-			.from('producto_plataforma')
-			.insert({ producto_id: productId, plataforma_id: platformId });
 	};
 
 	const addProduct = async () => {
@@ -114,7 +59,61 @@
 		toggleAddingProduct();
 	};
 
+	const addProductPlatform = async (productId: number) => {
+		await supabase
+			.from('producto_plataforma')
+			.insert({ producto_id: productId, plataforma_id: platformId });
+	};
+
+	const editProduct = (productId: number) => {
+		console.log('Editar producto');
+	};
+
+	const changeStock = (productId: number) => {
+		console.log('Cambiar stock');
+	};
+
+	let productToDeleteID: number;
+
+	const confirmDelete = (productId: number) => {
+		productToDeleteID = productId;
+	};
+
+	const deleteProduct = async () => {
+		const { error } = await supabase
+			.from('producto')
+			.update({ producto_activo: false })
+			.eq('producto_id', productToDeleteID)
+			.select()
+			.single();
+		if (error) console.log(error.message);
+		products = products.filter((product: any) => product.producto_id != productToDeleteID);
+	};
+
+	let doingSale = false;
+
+	const toggleSale = () => {
+		doingSale = !doingSale;
+	};
+
+	const registerSale = async () => {
+		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
+		if (error) console.log(error);
+		emptyCart();
+	};
+
 	$: cartVisible = cart.length > 0;
+
+	let cartTotal: number = 0;
+	let cartQuantity: number = 0;
+
+	const fetchTotal = async () => {
+		const { data: total }: any = await supabase.rpc('get_total').single();
+		cartTotal = total.total;
+		cartQuantity = total.quantity;
+	};
+
+	fetchTotal();
 
 	const addToCart = async (productId: number) => {
 		await supabase.from('carrito').insert({ producto_id: productId, producto_cantidad: 1 });
@@ -153,17 +152,6 @@
 		updatedItem.producto_cantidad = quantity;
 		fetchTotal();
 	};
-
-	let cartTotal: number = 0;
-	let cartQuantity: number = 0;
-
-	const fetchTotal = async () => {
-		const { data: total }: any = await supabase.rpc('get_total').single();
-		cartTotal = total.total;
-		cartQuantity = total.quantity;
-	};
-
-	fetchTotal();
 
 	let search: string;
 
@@ -258,77 +246,13 @@
 </div>
 {#if doingSale}
 	<DarkenSreen>
-		{#if confirmSale}
-			<ConfirmDialog
-				cancelHandler={toggleSaleConfirmation}
-				confirmHandler={registerSale}
-				title="Confirmar venta"
-				text="¿Está seguro de que desea registrar la venta?"
-			/>
-		{:else}
-			<div
-				class="flex flex-col p-8 space-y-4 bg-stone-950 border border-stone-700 rounded-xl"
-				in:scale={{ duration: 150 }}
-			>
-				<SectionTitle text="Realizar Venta" />
-				<SectionSubtitle text="Cliente" />
-				<SlideToggle
-					bind:checked={genericClient}
-					name="slider-sm"
-					active="bg-primary-500"
-					size="sm"
-				>
-					Cliente genérico
-				</SlideToggle>
-				{#if !genericClient}
-					<select class="input">
-						{#each clients as client}
-							<option value={client.cliente_id}>{client.cliente_nombre}</option>
-						{/each}
-					</select>
-				{/if}
-				<SectionSubtitle text="Pago" />
-				<select bind:value={paymentType} class="input">
-					<option value="Efectivo">Efectivo</option>
-					<option value="Tarjeta">Tarjeta</option>
-				</select>
-				{#if paymentType === 'Efectivo'}
-					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-						<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
-						<input
-							bind:value={payment}
-							type="number"
-							min="0"
-							class="input"
-							placeholder="Cantidad"
-						/>
-					</div>
-					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-						<div class="input-group-shim"><Icon icon={refreshCircleOutline} height={24} /></div>
-						<input
-							class="input"
-							type="number"
-							placeholder="Cambio"
-							value={payment - cartTotal < 0 ? null : payment - cartTotal}
-							readonly
-						/>
-					</div>
-				{/if}
-				<div class="flex justify-between text-lg">
-					<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
-					<p class="unstyled">$ {cartTotal}</p>
-				</div>
-				<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
-					Generar comprobante
-				</SlideToggle>
-				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<button class="btn variant-ringed-primary" on:click={toggleSale}> Cancelar </button>
-					<button class="btn variant-filled-primary font-bold" on:click={toggleSaleConfirmation}>
-						Confirmar
-					</button>
-				</div>
-			</div>
-		{/if}
+		<SaleForm
+			cancelHandler={toggleSale}
+			confirmHandler={registerSale}
+			{clients}
+			{cartTotal}
+			{cartQuantity}
+		/>
 	</DarkenSreen>
 {/if}
 
