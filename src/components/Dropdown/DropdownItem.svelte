@@ -8,7 +8,7 @@
 
 <button
 	on:click
-	class="flex items-center px-4 py-2 space-x-4 hover:bg-stone-800 active:bg-stone-950 rounded-xl transition-all"
+	class="btn variant-filled-surface justify-start"
 >
 	<Icon {icon} height={20} />
 	<p>{text}</p>
