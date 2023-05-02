@@ -70,7 +70,7 @@
 <SectionTitle text="Miembros" />
 <div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl overflow-x-auto">
 	<table>
-		<thead class="border-b border-stone-700">
+		<thead class="border-b border-stone-800">
 			<tr>
 				<th class="p-2 text-left">ID</th>
 				<th class="p-2 text-left">Nombre</th>
