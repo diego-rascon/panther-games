@@ -10,13 +10,8 @@
 	export let email: string;
 	export let phone: string;
 
-	const animDuration = 150;
-
-	let confirmationVisible = false;
-
-	const toggleConfirmation = () => {
-		confirmationVisible = !confirmationVisible;
-	};
+	let inputError = false;
+	let errorMessage: string;
 
 	const namePattern = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]*$/;
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,66 +41,37 @@
 		}
 	};
 
-	let inputError = false;
-	let errorMessage: string;
+	let confirmationVisible = false;
+
+	const toggleConfirmation = () => {
+		confirmationVisible = !confirmationVisible;
+	};
 </script>
 
-<div
-	class="fixed inset-0 flex justify-center items-center bg-black transition-all bg-opacity-75"
-	transition:fade={{ duration: animDuration }}
->
-	<div
-		class="flex flex-col p-8 space-y-8 bg-stone-950 border border-stone-700 rounded-xl transition-all"
-		transition:scale={{ duration: animDuration }}
-	>
-		<SectionTitle text="Registrar Cliente" />
-		<div class="flex flex-col space-y-4 transition-all">
-			<input
-				type="text"
-				required
-				bind:value={name}
-				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Nombre"
-			/>
-			<input
-				type="text"
-				required
-				bind:value={email}
-				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Correo"
-			/>
-			<input
-				type="text"
-				required
-				bind:value={phone}
-				class="bg-stone-900 w-full p-2 px-4 rounded-xl outline-none focus:outline-pink-600 transition-all"
-				placeholder="Teléfono"
-			/>
-			{#if inputError}
-				<InputError text={errorMessage} />
-			{/if}
-		</div>
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-			<button
-				class="py-2 border-2 border-pink-600 hover:bg-stone-900 active:bg-black outline-none focus:outline-pink-600 rounded-xl transition-all select-none"
-				on:click={cancelHandler}
-			>
-				Cancelar
-			</button>
-			<button
-				class="py-2 btn-fill font-bold rounded-xl transition-all select-none"
-				on:click={toggleConfirmation}
-			>
-				Confirmar
-			</button>
-		</div>
-	</div>
-</div>
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
 		confirmHandler={addProduct}
 		title="Confirmar Registro"
-		text="¿Está seguro de que desea registrar el nuevo producto?"
+		text="¿Está seguro de que desea registrar al nuevo cliente?"
 	/>
+{:else}
+	<div
+		class="flex flex-col p-8 space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
+		in:scale={{ duration: 150 }}
+	>
+		<SectionTitle text="Registrar Cliente" />
+		<input bind:value={name} type="text" class="input" placeholder="Nombre" />
+		<input bind:value={email} type="text" class="input" placeholder="Correo" />
+		<input bind:value={phone} type="text" class="input" placeholder="Teléfono" />
+		{#if inputError}
+			<InputError text={errorMessage} />
+		{/if}
+		<div class="grid grid-cols-2 gap-4">
+			<button class="btn variant-ringed-primary" on:click={cancelHandler}>Cancelar</button>
+			<button class="btn variant-filled-primary font-bold" on:click={toggleConfirmation}>
+				Confirmar
+			</button>
+		</div>
+	</div>
 {/if}
