@@ -8,6 +8,7 @@
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
 	import ClientRow from '../../../components/ClientRow.svelte';
+	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 
 	export let data;
 	let { clients } = data;
@@ -33,7 +34,7 @@
 			.select()
 			.single();
 		if (client) clients = [client, ...clients];
-		toggleAddMenu();
+		toggleAddingClient();
 	};
 
 	const searchClient = (search: string) => {
@@ -45,10 +46,10 @@
 		);
 	};
 
-	let addMenuVisible = false;
+	let addingClient = false;
 
-	const toggleAddMenu = () => {
-		addMenuVisible = !addMenuVisible;
+	const toggleAddingClient = () => {
+		addingClient = !addingClient;
 	};
 </script>
 
@@ -58,9 +59,11 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto">
+<div
+	class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto"
+>
 	<table>
-		<thead class="border-b border-stone-700">
+		<thead class="border-b border-stone-800">
 			<tr>
 				<th class="p-2 text-left">ID</th>
 				<th class="p-2 text-left">Nombre</th>
@@ -102,14 +105,16 @@
 	</table>
 </div>
 <div class="fixed bottom-0 right-0">
-	<AddButton on:click={toggleAddMenu} />
+	<AddButton on:click={toggleAddingClient} />
 </div>
-{#if addMenuVisible}
-	<AddClient
-		cancelHandler={toggleAddMenu}
-		confirmHandler={addClient}
-		bind:name
-		bind:email
-		bind:phone
-	/>
+{#if addingClient}
+	<DarkenSreen>
+		<AddClient
+			cancelHandler={toggleAddingClient}
+			confirmHandler={addClient}
+			bind:name
+			bind:email
+			bind:phone
+		/>
+	</DarkenSreen>
 {/if}
