@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { productsStore } from '$lib/stores';
+	import { productsStore, cartStore } from '$lib/stores';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
@@ -24,9 +24,8 @@
 
 	$: filteredProducts = products;
 
-	$: productsStore.set(
-		cart.map((item: any) => ({ productId: item.producto_id, stock: item.producto_cantidad }))
-	);
+	$: productsStore.set(products);
+	$: cartStore.set(cart);
 
 	let categoryId: number;
 	let platformId: number;
@@ -58,8 +57,7 @@
 			.single();
 		if (product) {
 			addProductPlatform(product.producto_id);
-			products.unshift(product);
-			//products = [product, ...products];
+			products = [product, ...products];
 			toastStore.trigger(productAdded);
 		}
 	};
@@ -92,6 +90,7 @@
 		if (error) console.log(error.message);
 		const changedItem = products.find((item: any) => item.producto_id === tempProductId);
 		changedItem.producto_stock = newStock;
+		products = products;
 		toastStore.trigger(stockChanged);
 	};
 
@@ -147,8 +146,7 @@
 			.rpc('products_cart')
 			.eq('producto_id', productId)
 			.single();
-		//cart = [cartItem ?? [], ...cart];
-		cart.unshift(cartItem);
+		cart = [cartItem, ...cart];
 		fetchTotal();
 	};
 
@@ -232,8 +230,6 @@
 				}}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
-				name={product.producto_nombre}
-				stock={product.producto_stock}
 				price={product.producto_precio}
 				platform={product.plataforma_nombre}
 				isNew={product.producto_nuevo}
