@@ -151,6 +151,8 @@
 	};
 
 	const removeFromCart = async (cartId: number, productId: number) => {
+		console.log('hehehe');
+		
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
 		cart = cart.filter((item: any) => item.carrito_id != cartId);
 		const removedItem = products.find((item: any) => item.producto_id === productId);
@@ -228,11 +230,7 @@
 					toggleDeleteConfirmation();
 					tempProductId = productId;
 				}}
-				isGame={product.categoria_id === 1}
 				id={product.producto_id}
-				price={product.producto_precio}
-				platform={product.plataforma_nombre}
-				isNew={product.producto_nuevo}
 			/>
 		{/each}
 	</div>
