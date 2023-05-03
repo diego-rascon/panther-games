@@ -9,7 +9,10 @@ export const load = async () => {
 		return data ?? [];
 	};
 	const fetchProducts = async () => {
-		const { data } = await supabase.rpc('products_platforms').eq('producto_activo', true);
+		const { data } = await supabase
+			.rpc('products_platforms')
+			.eq('producto_activo', true)
+			.order('producto_id', { ascending: false });
 		return data ?? [];
 	};
 	const fetchPlatforms = async () => {
