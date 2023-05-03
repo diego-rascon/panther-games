@@ -12,9 +12,9 @@
 	export let categoryId: number;
 	export let platformId: number;
 	export let name: string;
-	export let price: number;
-	export let stock: number;
-	export let minimumStock: number;
+	export let price: number | undefined;
+	export let stock: number | undefined;
+	export let minimumStock: number | undefined;
 	export let used: boolean;
 
 	let inputError = false;
@@ -30,7 +30,7 @@
 		} else if (!stock || stock < 1) {
 			errorMessage = 'El stock del producto no es válido.';
 			return false;
-		} else if (!minimumStock || minimumStock < 1) {
+		} else if (!minimumStock || minimumStock < 1 || minimumStock >= stock) {
 			errorMessage = 'El stock mínimo del producto no es válido.';
 			return false;
 		} else {
