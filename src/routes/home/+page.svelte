@@ -18,6 +18,7 @@
 	import SaleForm from '../../components/forms/SaleForm.svelte';
 	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
 	import ChangeStock from '../../components/forms/ChangeStock.svelte';
+	import EditProductForm from '../../components/forms/EditProductForm.svelte';
 
 	export let data;
 	$: ({ categories, products, platforms, cart, clients } = data);
@@ -30,10 +31,20 @@
 	let categoryId: number;
 	let platformId: number;
 	let name: string;
-	let price: number;
-	let stock: number;
-	let minimumStock: number;
+	let price: number | undefined;
+	let stock: number | undefined;
+	let minimumStock: number | undefined;
 	let used: boolean = false;
+
+	const clearForm = () => {
+		categoryId = 1;
+		platformId = 1;
+		name = '';
+		price = undefined;
+		stock = undefined;
+		minimumStock = undefined;
+		used = false;
+	};
 
 	let addingProduct = false;
 
@@ -60,6 +71,7 @@
 			products = [product, ...products];
 			toastStore.trigger(productAdded);
 		}
+		clearForm();
 	};
 
 	const addProductPlatform = async (productId: number) => {
@@ -69,10 +81,26 @@
 	};
 
 	let tempProductId: number;
+	let editingProduct: boolean;
 
-	const editProduct = (productId: number) => {
-		console.log('Editar producto');
+	const toggleEditingProduct = () => {
+		editingProduct = !editingProduct;
 	};
+
+	const bindValues = () => {
+		const editedProduct = products.find((item: any) => item.producto_id === tempProductId);
+		categoryId = editedProduct.categoria_id;
+		platformId = editedProduct.plataforma_id;
+		name = editedProduct.producto_nombre;
+		price = editedProduct.producto_precio;
+		stock = editedProduct.producto_stock;
+		minimumStock = editedProduct.producto_minimo;
+		used = !editedProduct.producto_nuevo;
+	};
+
+	const editProduct = () => {
+		console.log('editar producto');
+	}
 
 	let tempProductStock: number;
 	let changingStock = false;
@@ -88,8 +116,8 @@
 			.update({ producto_stock: newStock })
 			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		const changedItem = products.find((item: any) => item.producto_id === tempProductId);
-		changedItem.producto_stock = newStock;
+		const changedProduct = products.find((item: any) => item.producto_id === tempProductId);
+		changedProduct.producto_stock = newStock;
 		products = products;
 		toastStore.trigger(stockChanged);
 	};
@@ -151,8 +179,6 @@
 	};
 
 	const removeFromCart = async (cartId: number, productId: number) => {
-		console.log('hehehe');
-		
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
 		cart = cart.filter((item: any) => item.carrito_id != cartId);
 		const removedItem = products.find((item: any) => item.producto_id === productId);
@@ -220,7 +246,11 @@
 		{#each filteredProducts as product}
 			<Product
 				{addToCart}
-				{editProduct}
+				editProduct={(productId) => {
+					toggleEditingProduct();
+					tempProductId = productId;
+					bindValues();
+				}}
 				changeStock={(productId, currentStock) => {
 					toggleChangingStock();
 					tempProductId = productId;
@@ -295,7 +325,10 @@
 {#if addingProduct}
 	<DarkenSreen>
 		<AddProduct
-			cancelHandler={toggleAddingProduct}
+			cancelHandler={() => {
+				toggleAddingProduct();
+				clearForm();
+			}}
 			confirmHandler={addProduct}
 			{categories}
 			{platforms}
@@ -309,14 +342,23 @@
 		/>
 	</DarkenSreen>
 {/if}
-{#if doingSale}
+{#if editingProduct}
 	<DarkenSreen>
-		<SaleForm
-			cancelHandler={toggleSale}
-			confirmHandler={registerSale}
-			{clients}
-			{cartTotal}
-			{cartQuantity}
+		<EditProductForm
+			cancelHandler={() => {
+				toggleEditingProduct();
+				clearForm();
+			}}
+			confirmHandler={editProduct}
+			productId={tempProductId}
+			{platforms}
+			bind:categoryId
+			bind:platformId
+			bind:name
+			bind:price
+			bind:stock
+			bind:minimumStock
+			bind:used
 		/>
 	</DarkenSreen>
 {/if}
@@ -336,6 +378,17 @@
 			confirmHandler={deleteProduct}
 			title="Eliminar Producto"
 			text="¿Seguro de que desea eliminar el producto?"
+		/>
+	</DarkenSreen>
+{/if}
+{#if doingSale}
+	<DarkenSreen>
+		<SaleForm
+			cancelHandler={toggleSale}
+			confirmHandler={registerSale}
+			{clients}
+			{cartTotal}
+			{cartQuantity}
 		/>
 	</DarkenSreen>
 {/if}
