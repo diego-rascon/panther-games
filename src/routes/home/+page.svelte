@@ -84,17 +84,11 @@
 	let tempProductStock: number;
 	let changingStock = false;
 
-	const startStockChange = (productId: number, stock: number) => {
-		toggleChangingStock();
-		tempProductId = productId;
-		tempProductStock = stock;
-	};
-
 	const toggleChangingStock = () => {
 		changingStock = !changingStock;
 	};
 
-	const changeStock = (productId: number) => {
+	const changeStock = (productId: number, newStock: number) => {
 		console.log('Cambiar stock');
 	};
 
@@ -110,6 +104,7 @@
 	};
 
 	const deleteProduct = async () => {
+		toggleDeleteConfirmation();
 		const { error } = await supabase
 			.from('producto')
 			.update({ producto_activo: false })
@@ -118,7 +113,12 @@
 			.single();
 		if (error) console.log(error.message);
 		products = products.filter((product: any) => product.producto_id != tempProductId);
-		toggleDeleteConfirmation();
+		toastStore.trigger(productDeleted);
+	};
+
+	const productDeleted: ToastSettings = {
+		message: 'Un producto fue eliminado exitosamente.',
+		background: 'variant-filled-primary'
 	};
 
 	let doingSale = false;
@@ -213,7 +213,11 @@
 			<Product
 				{addToCart}
 				{editProduct}
-				changeStock={startStockChange}
+				changeStock={(productId, newStock) => {
+					toggleChangingStock();
+					tempProductId = productId;
+					tempProductStock = newStock;
+				}}
 				deleteProduct={confirmDelete}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
@@ -315,7 +319,7 @@
 	<DarkenSreen>
 		<ChangeStock
 			cancelHandler={toggleChangingStock}
-			confirmHandler={toggleChangingStock}
+			confirmHandler={changeStock}
 			productId={tempProductId}
 			currentStock={tempProductStock}
 		/>
