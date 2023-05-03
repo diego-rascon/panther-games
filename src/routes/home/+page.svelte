@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { activeProducts } from '$lib/stores';
+	import { productsStore } from '$lib/stores';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
@@ -20,13 +20,12 @@
 	import ChangeStock from '../../components/forms/ChangeStock.svelte';
 
 	export let data;
-	let { categories, products, platforms, cart, clients } = data;
 	$: ({ categories, products, platforms, cart, clients } = data);
 
 	$: filteredProducts = products;
 
-	$: activeProducts.set(
-		cart.map((item: any) => ({ productId: item.producto_id, quantity: item.producto_cantidad }))
+	$: productsStore.set(
+		cart.map((item: any) => ({ productId: item.producto_id, stock: item.producto_cantidad }))
 	);
 
 	let categoryId: number;
@@ -59,14 +58,10 @@
 			.single();
 		if (product) {
 			addProductPlatform(product.producto_id);
-			products = [product, ...products];
+			products.unshift(product);
+			//products = [product, ...products];
 			toastStore.trigger(productAdded);
 		}
-	};
-
-	const productAdded: ToastSettings = {
-		message: 'Un nuevo producto fue registrado exitosamente.',
-		background: 'variant-filled-primary'
 	};
 
 	const addProductPlatform = async (productId: number) => {
@@ -88,16 +83,19 @@
 		changingStock = !changingStock;
 	};
 
-	const changeStock = (productId: number, newStock: number) => {
-		console.log('Cambiar stock');
+	const changeStock = async (newStock: number) => {
+		toggleChangingStock();
+		const { error } = await supabase
+			.from('producto')
+			.update({ producto_stock: newStock })
+			.eq('producto_id', tempProductId);
+		if (error) console.log(error.message);
+		const changedItem = products.find((item: any) => item.producto_id === tempProductId);
+		changedItem.producto_stock = newStock;
+		toastStore.trigger(stockChanged);
 	};
 
 	let deleteConfirmation = false;
-
-	const confirmDelete = (productId: number) => {
-		toggleDeleteConfirmation();
-		tempProductId = productId;
-	};
 
 	const toggleDeleteConfirmation = () => {
 		deleteConfirmation = !deleteConfirmation;
@@ -116,11 +114,6 @@
 		toastStore.trigger(productDeleted);
 	};
 
-	const productDeleted: ToastSettings = {
-		message: 'Un producto fue eliminado exitosamente.',
-		background: 'variant-filled-primary'
-	};
-
 	let doingSale = false;
 
 	const toggleSale = () => {
@@ -133,11 +126,6 @@
 		if (error) console.log(error);
 		else toastStore.trigger(saleAdded);
 		emptyCart();
-	};
-
-	const saleAdded: ToastSettings = {
-		message: 'Una nueva venta fue registrada exitosamente.',
-		background: 'variant-filled-primary'
 	};
 
 	$: cartVisible = cart.length > 0;
@@ -159,8 +147,8 @@
 			.rpc('products_cart')
 			.eq('producto_id', productId)
 			.single();
-		cart = [cartItem ?? [], ...cart];
-
+		//cart = [cartItem ?? [], ...cart];
+		cart.unshift(cartItem);
 		fetchTotal();
 	};
 
@@ -198,6 +186,26 @@
 			product.producto_nombre.toLowerCase().includes(search.toLowerCase())
 		);
 	};
+
+	const productAdded: ToastSettings = {
+		message: 'Un nuevo producto fue registrado exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const stockChanged: ToastSettings = {
+		message: 'Se actualizó el stock del producto exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const productDeleted: ToastSettings = {
+		message: 'Un producto fue eliminado exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const saleAdded: ToastSettings = {
+		message: 'Una nueva venta fue registrada exitosamente.',
+		background: 'variant-filled-primary'
+	};
 </script>
 
 <div class="mt-[60px] mb-20 space-y-4 transition-all {cartVisible ? 'mr-64' : ''}">
@@ -213,12 +221,15 @@
 			<Product
 				{addToCart}
 				{editProduct}
-				changeStock={(productId, newStock) => {
+				changeStock={(productId, currentStock) => {
 					toggleChangingStock();
 					tempProductId = productId;
-					tempProductStock = newStock;
+					tempProductStock = currentStock;
 				}}
-				deleteProduct={confirmDelete}
+				deleteProduct={(productId) => {
+					toggleDeleteConfirmation();
+					tempProductId = productId;
+				}}
 				isGame={product.categoria_id === 1}
 				id={product.producto_id}
 				name={product.producto_nombre}
@@ -320,7 +331,6 @@
 		<ChangeStock
 			cancelHandler={toggleChangingStock}
 			confirmHandler={changeStock}
-			productId={tempProductId}
 			currentStock={tempProductStock}
 		/>
 	</DarkenSreen>
