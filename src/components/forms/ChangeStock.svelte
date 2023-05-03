@@ -8,7 +8,7 @@
 	import arrowDownOutline from '@iconify/icons-solar/arrow-down-outline';
 
 	export let cancelHandler: () => void;
-	export let confirmHandler: () => void;
+	export let confirmHandler: (id: number, stock: number) => void;
 	export let productId: number;
 	export let currentStock: number;
 
@@ -35,7 +35,9 @@
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
-		{confirmHandler}
+		confirmHandler={() => {
+			confirmHandler(productId, newStock);
+		}}
 		title="Confirmar Cambio"
 		text="¿Está seguro de que desea cambiar el stock del producto de {currentStock} a {newStock}?"
 	/>
