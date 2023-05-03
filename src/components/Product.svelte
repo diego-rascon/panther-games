@@ -14,17 +14,15 @@
 	export let editProduct: (productId: number) => void;
 	export let changeStock: (productId: number, currentStock: number) => void;
 	export let deleteProduct: (productId: number) => void;
-	export let isGame: boolean;
 	export let id: number;
-	//export let name: string;
-	//export let stock: number;
-	export let price: number;
-	export let platform: string;
-	export let isNew: boolean;
 
 	$: product = $productsStore.find((item: any) => item.producto_id === id);
 	$: name = product?.producto_nombre;
 	$: stock = Number(product?.producto_stock);
+	$: price = Number(product?.producto_precio);
+	$: isGame = product?.categoria_id === 1;
+	$: platform = product?.plataforma_nombre;
+	$: isNew = product?.producto_nuevo;
 	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
 
 	let dropdown: any = {
