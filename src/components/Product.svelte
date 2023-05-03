@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { productsStore } from '$lib/stores';
+	import { cartStore, productsStore } from '$lib/stores';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import Dropdown from './dropdown/Dropdown.svelte';
@@ -16,14 +16,16 @@
 	export let deleteProduct: (productId: number) => void;
 	export let isGame: boolean;
 	export let id: number;
-	export let name: string;
-	export let stock: number;
+	//export let name: string;
+	//export let stock: number;
 	export let price: number;
 	export let platform: string;
 	export let isNew: boolean;
 
-	$: currentItem = $productsStore.find((item: any) => item.productId == id);
-	$: onCart = $productsStore.some((item: any) => item.productId == id);
+	$: product = $productsStore.find((item: any) => item.producto_id === id);
+	$: name = product?.producto_nombre;
+	$: stock = Number(product?.producto_stock);
+	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
 
 	let dropdown: any = {
 		placement: 'bottom-end',
@@ -71,9 +73,6 @@
 				/>
 			</Dropdown>
 		</div>
-		<!--
-			
-			-->
 	</div>
 	<div class="flex flex-col mt-auto">
 		<div class="py-4">
