@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { activeProducts } from '$lib/stores';
+	import { toastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
@@ -42,6 +44,7 @@
 	};
 
 	const addProduct = async () => {
+		toggleAddingProduct();
 		const { data: product } = await supabase
 			.from('producto')
 			.insert({
@@ -57,8 +60,13 @@
 		if (product) {
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
+			toastStore.trigger(productAdded);
 		}
-		toggleAddingProduct();
+	};
+
+	const productAdded: ToastSettings = {
+		message: 'Un nuevo producto fue registrado exitosamente.',
+		background: 'variant-filled-primary'
 	};
 
 	const addProductPlatform = async (productId: number) => {
@@ -120,9 +128,16 @@
 	};
 
 	const registerSale = async () => {
+		toggleSale();
 		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
 		if (error) console.log(error);
+		else toastStore.trigger(saleAdded);
 		emptyCart();
+	};
+
+	const saleAdded: ToastSettings = {
+		message: 'Una nueva venta fue registrada exitosamente.',
+		background: 'variant-filled-primary'
 	};
 
 	$: cartVisible = cart.length > 0;
