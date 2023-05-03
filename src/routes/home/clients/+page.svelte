@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { Toast, toastStore } from '@skeletonlabs/skeleton';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/forms/ClientForm.svelte';
@@ -20,6 +20,7 @@
 	let phone: string;
 
 	const addClient = async () => {
+		toggleAddingClient();
 		const { data: client } = await supabase
 			.from('cliente')
 			.insert({
@@ -32,7 +33,6 @@
 			.single();
 		if (client) {
 			clients = [client, ...clients];
-			toggleAddingClient();
 			toastStore.trigger(clientAdded);
 		}
 	};
@@ -55,7 +55,7 @@
 	};
 
 	const clientAdded: ToastSettings = {
-		message: 'Se agregó a un nuevo cliente con éxito',
+		message: 'Un nuevo cliente fue registrado exitosamente',
 		background: 'variant-filled-primary'
 	};
 </script>
