@@ -93,14 +93,46 @@
 		platformId = editedProduct.plataforma_id;
 		name = editedProduct.producto_nombre;
 		price = editedProduct.producto_precio;
-		stock = editedProduct.producto_stock;
 		minimumStock = editedProduct.producto_minimo;
 		used = !editedProduct.producto_nuevo;
 	};
 
-	const editProduct = () => {
-		console.log('editar producto');
-	}
+	const editProduct = async () => {
+		toggleEditingProduct();
+		const { error } = await supabase
+			.from('producto')
+			.update({
+				producto_nombre: name,
+				producto_precio: price,
+				producto_stock: stock,
+				producto_minimo: minimumStock,
+				producto_nuevo: !used
+			})
+			.eq('producto_id', tempProductId);
+		if (error) console.log(error.message);
+		const editedProduct = products.find((item: any) => item.producto_id === tempProductId);
+		editedProduct.producto_nombre = name;
+		editedProduct.producto_precio = price;
+		editedProduct.producto_minimo = minimumStock;
+		editedProduct.producto_nuevo = !used;
+		if (categoryId === 1) {
+			const { error: categoryError } = await supabase
+				.from('producto_plataforma')
+				.update({ plataforma_id: platformId })
+				.eq('producto_id', tempProductId);
+			if (categoryError) console.log(categoryError.message);
+			const { data: platformName, error: platformError } = await supabase
+				.from('plataforma')
+				.select('plataforma_nombre')
+				.eq('plataforma_id', platformId)
+				.single();
+			if (platformError) console.log(platformError.message);
+			editedProduct.plataforma_id = platformId;
+			editedProduct.plataforma_nombre = platformName?.plataforma_nombre;
+		}
+		products = products;
+		toastStore.trigger(productEdited);
+	};
 
 	let tempProductStock: number;
 	let changingStock = false;
@@ -150,7 +182,7 @@
 	const registerSale = async () => {
 		toggleSale();
 		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
-		if (error) console.log(error);
+		if (error) console.log(error.message);
 		else toastStore.trigger(saleAdded);
 		emptyCart();
 	};
@@ -215,6 +247,11 @@
 
 	const productAdded: ToastSettings = {
 		message: 'Un nuevo producto fue registrado exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const productEdited: ToastSettings = {
+		message: 'Se actualizaron los datos del producto exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
@@ -356,7 +393,6 @@
 			bind:platformId
 			bind:name
 			bind:price
-			bind:stock
 			bind:minimumStock
 			bind:used
 		/>
