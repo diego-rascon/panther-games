@@ -27,17 +27,13 @@
 		} else if (!price || price < 1) {
 			errorMessage = 'El precio del producto no es válido.';
 			return false;
-		} else if (!stock || stock < 1) {
-			errorMessage = 'El stock del producto no es válido.';
-			return false;
-		} else if (!minimumStock || minimumStock < 1 || minimumStock >= stock) {
+		} else if (!minimumStock || minimumStock < 1) {
 			errorMessage = 'El stock mínimo del producto no es válido.';
 			return false;
 		} else {
 			return true;
 		}
 	};
-
 	let confirmationVisible = false;
 
 	const toggleConfirmation = () => {
@@ -74,7 +70,6 @@
 		{/if}
 		<input type="text" bind:value={name} class="input" placeholder="Nombre" />
 		<input type="number" bind:value={price} class="input" placeholder="Precio" />
-		<input type="number" bind:value={stock} class="input" placeholder="Stock" />
 		<input type="number" bind:value={minimumStock} class="input" placeholder="Mínimo de stock" />
 		<SlideToggle bind:checked={used} name="slider-sm" active="bg-primary-500" size="sm">
 			Producto usado
