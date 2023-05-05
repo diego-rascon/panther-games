@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { cartStore, productsStore } from '$lib/stores';
 	import { popup } from '@skeletonlabs/skeleton';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import Dropdown from './dropdown/Dropdown.svelte';
 	import DropdownItem from './dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
