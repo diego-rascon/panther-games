@@ -19,7 +19,7 @@
 
 	const clearSearch = () => {
 		search = '';
-		searchHandler(search);
+		searchHandler(search.trim());
 	};
 </script>
 
@@ -35,7 +35,7 @@
 		on:focus={searchFocusGain}
 		on:blur={searchFocusLoss}
 		on:input={() => {
-			searchHandler(search);
+			searchHandler(search.trim());
 		}}
 	/>
 	<button on:click={clearSearch} class="btn hover:variant-soft">
