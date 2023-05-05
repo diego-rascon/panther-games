@@ -12,6 +12,7 @@
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import { clientsStore } from '$lib/stores';
 	import { nfd, nfc } from 'unorm';
+	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 
 	export let data;
 	let { clients } = data;
@@ -60,12 +61,14 @@
 		filteredActiveClients = activeClients.filter(
 			(client) =>
 				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
+				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
 				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
 		);
 		filteredDeactivatedClients = deactivatedClients.filter(
 			(client) =>
 				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
+				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
 				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
 		);
@@ -115,61 +118,69 @@
 	<Search searchHandler={searchClient} bind:search />
 </div>
 <div class="mt-[60px] flex-col mb-20 space-y-4">
-	<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-		<table class="bg-stone-900">
-			<thead>
-				<tr class="text-lg">
-					<th class="p-4 text-left">ID</th>
-					<th class="text-left">Nombre</th>
-					<th class="text-left">Correo</th>
-					<th class="text-left">Telefono</th>
-					<th class="" />
-					<th class="" />
-				</tr>
-			</thead>
-			<tbody>
-				{#each filteredActiveClients as client}
-					<tr class="border-t border-stone-800 hover:variant-soft-primary">
-						<ClientRow
-							deleteClient={(clientId) => {
-								toggleDeleteConfirmation();
-								tempClientId = clientId;
-							}}
-							id={client.cliente_id}
-						/>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
-	<SectionSubtitle text="Clientes Desactivados" />
-	<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-		<table class="bg-stone-900">
-			<thead>
-				<tr class="text-lg">
-					<th class="p-4 text-left">ID</th>
-					<th class="text-left">Nombre</th>
-					<th class="text-left">Correo</th>
-					<th class="text-left">Telefono</th>
-					<th />
-					<th />
-				</tr>
-			</thead>
-			<tbody>
-				{#each filteredDeactivatedClients as client}
-					<tr class="border-t border-stone-800 hover:variant-soft-primary">
-						<ClientRow
-							deleteClient={(clientId) => {
-								toggleDeleteConfirmation();
-								tempClientId = clientId;
-							}}
-							id={client.cliente_id}
-						/>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+	{#if filteredActiveClients.length === 0 && filteredDeactivatedClients.length === 0}
+		<NoResultsMessage />
+	{:else}
+		{#if filteredActiveClients.length !== 0}
+			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+				<table class="bg-stone-900">
+					<thead>
+						<tr class="text-lg">
+							<th class="p-4 text-left">ID</th>
+							<th class="text-left">Nombre</th>
+							<th class="text-left">Correo</th>
+							<th class="text-left">Telefono</th>
+							<th class="" />
+							<th class="" />
+						</tr>
+					</thead>
+					<tbody>
+						{#each filteredActiveClients as client}
+							<tr class="border-t border-stone-800 hover:variant-soft-primary">
+								<ClientRow
+									deleteClient={(clientId) => {
+										toggleDeleteConfirmation();
+										tempClientId = clientId;
+									}}
+									id={client.cliente_id}
+								/>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+		{#if filteredDeactivatedClients.length !== 0}
+			<SectionSubtitle text="Clientes Desactivados" />
+			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+				<table class="bg-stone-900">
+					<thead>
+						<tr class="text-lg">
+							<th class="p-4 text-left">ID</th>
+							<th class="text-left">Nombre</th>
+							<th class="text-left">Correo</th>
+							<th class="text-left">Telefono</th>
+							<th />
+							<th />
+						</tr>
+					</thead>
+					<tbody>
+						{#each filteredDeactivatedClients as client}
+							<tr class="border-t border-stone-800 hover:variant-soft-primary">
+								<ClientRow
+									deleteClient={(clientId) => {
+										toggleDeleteConfirmation();
+										tempClientId = clientId;
+									}}
+									id={client.cliente_id}
+								/>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	{/if}
 </div>
 <div class="fixed bottom-0 right-0">
 	<AddButton on:click={toggleAddingClient} />
