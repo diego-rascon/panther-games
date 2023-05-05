@@ -60,6 +60,7 @@
 	const searchClient = (search: string) => {
 		filteredActiveClients = activeClients.filter(
 			(client) =>
+				client.cliente_id.toString().includes(search) ||
 				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,6 +68,7 @@
 		);
 		filteredDeactivatedClients = deactivatedClients.filter(
 			(client) =>
+				client.cliente_id.toString().includes(search) ||
 				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
