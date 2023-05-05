@@ -9,7 +9,7 @@
 	import DropdownItem from './dropdown/DropdownItem.svelte';
 	import { clientsStore } from '$lib/stores';
 
-	//export let editClient: (productId: number) => void;
+	export let editClient: (productId: number) => void;
 	export let deleteClient: (productId: number) => void;
 	export let id: number;
 
@@ -49,7 +49,7 @@
 			text="Editar"
 			icon={pen2Linear}
 			on:click={() => {
-				//editClient(id);
+				editClient(id);
 			}}
 		/>
 		<DropdownItem
