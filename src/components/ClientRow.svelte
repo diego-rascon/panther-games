@@ -1,28 +1,63 @@
 <script lang="ts">
-	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
-	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import { popup } from '@skeletonlabs/skeleton';
 	import Icon from '@iconify/svelte';
+	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
+	import Dropdown from './dropdown/Dropdown.svelte';
+	import DropdownItem from './dropdown/DropdownItem.svelte';
+	import { clientsStore } from '$lib/stores';
 
+	//export let editClient: (productId: number) => void;
+	export let deleteClient: (productId: number) => void;
 	export let id: number;
-	export let name: string;
-	export let email: string;
-	export let phone: string;
-	export let member: boolean;
+
+	$: client = $clientsStore.find((item: any) => item.cliente_id === id);
+	$: name = client?.cliente_nombre;
+	$: email = client?.cliente_email;
+	$: phone = client?.cliente_telefono;
+	$: member = client?.cliente_miembro;
+
+	let dropdown: any = {
+		placement: 'bottom-end',
+		event: 'focus-click'
+	};
 </script>
 
-<td class="p-2 text-left">{id}</td>
-<td class="p-2 text-left">{name}</td>
-<td class="p-2 text-left">{email}</td>
-<td class="p-2 text-left">{phone}</td>
-<td class="p-2 text-center">
+<td class="p-4 text-left">{id}</td>
+<td class="text-left">{name}</td>
+<td class="text-left">{email}</td>
+<td class="text-left">{phone}</td>
+<td class="text-center">
 	{#if member}
 		<Icon icon={crownMinimalisticBold} color="#e6d92e" />
 	{/if}
 </td>
-<td class="relative py-2 text-right">
-	<button class="rounded-full p-2 hover:bg-stone-800 active:bg-stone-950 transition-all">
-		<Icon icon={menuDotsBold} rotate={1} height={24} />
+<td class="p-4 text-right">
+	<button
+		on:click
+		use:popup={{ ...dropdown, target: `dropdown-${id}` }}
+		class="btn p-1 rounded-full"
+	>
+		<Icon icon={menuDotsBold} rotate={1} height={20} />
 	</button>
 </td>
+<div data-popup={`dropdown-${id}`}>
+	<Dropdown>
+		<DropdownItem
+			text="Editar"
+			icon={pen2Linear}
+			on:click={() => {
+				//editClient(id);
+			}}
+		/>
+		<DropdownItem
+			text="Eliminar"
+			icon={trashBinMinimalisticLinear}
+			on:click={() => {
+				deleteClient(id);
+			}}
+		/>
+	</Dropdown>
+</div>
