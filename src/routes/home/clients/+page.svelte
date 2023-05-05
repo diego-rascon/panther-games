@@ -1,25 +1,27 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { toastStore, type TableSource, tableMapperValues, Table } from '@skeletonlabs/skeleton';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import Dropdown from '../../../components/dropdown/Dropdown.svelte';
-	import DropdownItem from '../../../components/dropdown/DropdownItem.svelte';
-	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
-	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ClientRow from '../../../components/ClientRow.svelte';
+	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import { clientsStore } from '$lib/stores';
+	import { nfd, nfc } from 'unorm';
 
 	export let data;
 	let { clients } = data;
 	$: ({ clients } = data);
 
-	$: filteredClients = clients;
 	$: clientsStore.set(clients);
+	$: activeClients = clients.filter((client) => client.cliente_activo);
+	$: deactivatedClients = clients.filter((client: any) => !client.cliente_activo);
+	$: filteredActiveClients = activeClients;
+	$: filteredDeactivatedClients = deactivatedClients;
 
 	let name: string;
 	let email: string;
@@ -43,12 +45,27 @@
 		}
 	};
 
+	let tempClientId: number;
+	let editingClient = false;
+
+	const toggleEditingClient = () => {
+		editingClient = !editingClient;
+	};
+
+	const bindValues = () => {};
+
 	let search: string;
 
 	const searchClient = (search: string) => {
-		filteredClients = clients.filter(
+		filteredActiveClients = activeClients.filter(
 			(client) =>
-				client.cliente_nombre.toLowerCase().includes(search.toLowerCase()) ||
+				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
+				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
+				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
+		);
+		filteredDeactivatedClients = deactivatedClients.filter(
+			(client) =>
+				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
 				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
 				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
 		);
@@ -60,8 +77,33 @@
 		addingClient = !addingClient;
 	};
 
+	let deleteConfirmation = false;
+
+	const toggleDeleteConfirmation = () => {
+		console.log(clients);
+		deleteConfirmation = !deleteConfirmation;
+	};
+
+	const deleteClient = async () => {
+		toggleDeleteConfirmation();
+		const { error } = await supabase
+			.from('cliente')
+			.update({ cliente_activo: false })
+			.eq('cliente_id', tempClientId);
+		if (error) console.log(error.message);
+		const removedClient = clients.find((client: any) => client.cliente_id === tempClientId);
+		if (removedClient) removedClient.cliente_activo = false;
+		clients = clients;
+		toastStore.trigger(clientDeleted);
+	};
+
 	const clientAdded: ToastSettings = {
 		message: 'Un nuevo cliente fue registrado exitosamente',
+		background: 'variant-filled-primary'
+	};
+
+	const clientDeleted: ToastSettings = {
+		message: 'Se eliminó a un cliente exitosamente',
 		background: 'variant-filled-primary'
 	};
 </script>
@@ -72,50 +114,62 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 rounded-xl overflow-x-auto">
-	<table>
-		<thead>
-			<tr class="text-lg">
-				<th class="p-4 text-left">ID</th>
-				<th class="text-left">Nombre</th>
-				<th class="text-left">Correo</th>
-				<th class="text-left">Telefono</th>
-				<th class="" />
-				<th class="" />
-			</tr>
-		</thead>
-		<tbody>
-			{#each filteredClients as client}
-				<tr class="border-t border-stone-800 hover:variant-soft-primary">
-					<ClientRow
-						id={client.cliente_id}
-						name={client.cliente_nombre}
-						email={client.cliente_email}
-						phone={client.cliente_telefono}
-						member={client.cliente_miembro}
-					/>
+<div class="mt-[60px] flex-col mb-20 space-y-4">
+	<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+		<table class="bg-stone-900">
+			<thead>
+				<tr class="text-lg">
+					<th class="p-4 text-left">ID</th>
+					<th class="text-left">Nombre</th>
+					<th class="text-left">Correo</th>
+					<th class="text-left">Telefono</th>
+					<th class="" />
+					<th class="" />
 				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
-<div data-popup="dropdown">
-	<Dropdown>
-		<DropdownItem
-			text="Editar"
-			icon={pen2Linear}
-			on:click={() => {
-				console.log('Editar');
-			}}
-		/>
-		<DropdownItem
-			text="Eliminar"
-			icon={trashBinMinimalisticLinear}
-			on:click={() => {
-				console.log('Eliminar');
-			}}
-		/>
-	</Dropdown>
+			</thead>
+			<tbody>
+				{#each filteredActiveClients as client}
+					<tr class="border-t border-stone-800 hover:variant-soft-primary">
+						<ClientRow
+							deleteClient={(clientId) => {
+								toggleDeleteConfirmation();
+								tempClientId = clientId;
+							}}
+							id={client.cliente_id}
+						/>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+	<SectionSubtitle text="Clientes Desactivados" />
+	<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+		<table class="bg-stone-900">
+			<thead>
+				<tr class="text-lg">
+					<th class="p-4 text-left">ID</th>
+					<th class="text-left">Nombre</th>
+					<th class="text-left">Correo</th>
+					<th class="text-left">Telefono</th>
+					<th />
+					<th />
+				</tr>
+			</thead>
+			<tbody>
+				{#each filteredDeactivatedClients as client}
+					<tr class="border-t border-stone-800 hover:variant-soft-primary">
+						<ClientRow
+							deleteClient={(clientId) => {
+								toggleDeleteConfirmation();
+								tempClientId = clientId;
+							}}
+							id={client.cliente_id}
+						/>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </div>
 <div class="fixed bottom-0 right-0">
 	<AddButton on:click={toggleAddingClient} />
@@ -128,6 +182,16 @@
 			bind:name
 			bind:email
 			bind:phone
+		/>
+	</DarkenSreen>
+{/if}
+{#if deleteConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleDeleteConfirmation}
+			confirmHandler={deleteClient}
+			title="Eliminar Cliente"
+			text="¿Seguro de que desea eliminar al cliente?"
 		/>
 	</DarkenSreen>
 {/if}
