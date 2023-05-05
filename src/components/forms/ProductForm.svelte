@@ -61,10 +61,10 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
+		class="flex flex-col p-8 w-full max-w-md space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
 		in:scale={{ duration: 150 }}
 	>
-		<SectionTitle text="Registrar Producto" />
+		<SectionTitle centered={true} text="Registrar Producto" />
 		<select class="input" bind:value={categoryId}>
 			{#each categories as category}
 				<option value={category.categoria_id}>{category.categoria_nombre}</option>

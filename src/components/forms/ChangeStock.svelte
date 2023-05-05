@@ -42,10 +42,10 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
+		class="flex flex-col p-8 w-full max-w-md space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
 		in:scale={{ duration: 150 }}
 	>
-		<SectionTitle text="Cambiar Stock" />
+		<SectionTitle centered={true} text="Cambiar Stock" />
 		<RadioGroup class="justify-center" active="variant-filled-primary">
 			<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={0}
 				>Reducir</RadioItem
