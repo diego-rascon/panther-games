@@ -1,19 +1,25 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { toastStore } from '@skeletonlabs/skeleton';
+	import { toastStore, type TableSource, tableMapperValues, Table } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
+	import Dropdown from '../../../components/dropdown/Dropdown.svelte';
+	import DropdownItem from '../../../components/dropdown/DropdownItem.svelte';
+	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
+	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import AddButton from '../../../components/AddButton.svelte';
 	import AddClient from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
-	import ClientRow from '../../../components/ClientRow.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
+	import ClientRow from '../../../components/ClientRow.svelte';
+	import { clientsStore } from '$lib/stores';
 
 	export let data;
 	let { clients } = data;
 	$: ({ clients } = data);
 
 	$: filteredClients = clients;
+	$: clientsStore.set(clients);
 
 	let name: string;
 	let email: string;
@@ -66,23 +72,21 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div
-	class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 px-4 py-2 rounded-xl overflow-x-auto"
->
+<div class="mt-[60px] flex flex-col min-w-full mb-20 bg-stone-900 rounded-xl overflow-x-auto">
 	<table>
-		<thead class="border-b border-stone-800">
-			<tr>
-				<th class="p-2 text-left">ID</th>
-				<th class="p-2 text-left">Nombre</th>
-				<th class="p-2 text-left">Correo</th>
-				<th class="p-2 text-left">Telefono</th>
-				<th class="py-2" />
-				<th class="py-2" />
+		<thead>
+			<tr class="text-lg">
+				<th class="p-4 text-left">ID</th>
+				<th class="text-left">Nombre</th>
+				<th class="text-left">Correo</th>
+				<th class="text-left">Telefono</th>
+				<th class="" />
+				<th class="" />
 			</tr>
 		</thead>
 		<tbody>
 			{#each filteredClients as client}
-				<tr>
+				<tr class="border-t border-stone-800 hover:variant-soft-primary">
 					<ClientRow
 						id={client.cliente_id}
 						name={client.cliente_nombre}
@@ -94,6 +98,24 @@
 			{/each}
 		</tbody>
 	</table>
+</div>
+<div data-popup="dropdown">
+	<Dropdown>
+		<DropdownItem
+			text="Editar"
+			icon={pen2Linear}
+			on:click={() => {
+				console.log('Editar');
+			}}
+		/>
+		<DropdownItem
+			text="Eliminar"
+			icon={trashBinMinimalisticLinear}
+			on:click={() => {
+				console.log('Eliminar');
+			}}
+		/>
+	</Dropdown>
 </div>
 <div class="fixed bottom-0 right-0">
 	<AddButton on:click={toggleAddingClient} />
