@@ -3,7 +3,7 @@
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import AddButton from '../../../components/AddButton.svelte';
-	import AddClient from '../../../components/forms/ClientForm.svelte';
+	import ClientForm from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
@@ -15,7 +15,6 @@
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 
 	export let data;
-	let { clients } = data;
 	$: ({ clients } = data);
 
 	$: clientsStore.set(clients);
@@ -27,6 +26,12 @@
 	let name: string;
 	let email: string;
 	let phone: string;
+
+	const clearForm = () => {
+		name = '';
+		email = '';
+		phone = '';
+	};
 
 	const addClient = async () => {
 		toggleAddingClient();
@@ -44,6 +49,7 @@
 			clients = [client, ...clients];
 			toastStore.trigger(clientAdded);
 		}
+		clearForm();
 	};
 
 	let tempClientId: number;
@@ -53,7 +59,33 @@
 		editingClient = !editingClient;
 	};
 
-	const bindValues = () => {};
+	const bindValues = () => {
+		const editedClient = clients.find((client: any) => client.cliente_id === tempClientId);
+		name = editedClient?.cliente_nombre;
+		email = editedClient?.cliente_email;
+		phone = editedClient?.cliente_telefono;
+	};
+
+	const editClient = async () => {
+		toggleEditingClient();
+		const { error } = await supabase
+			.from('cliente')
+			.update({
+				cliente_nombre: name,
+				cliente_email: email,
+				cliente_telefono: phone
+			})
+			.eq('cliente_id', tempClientId);
+		if (error) console.log(error.message);
+		const editedClient = clients.find((client: any) => client.cliente_id === tempClientId);
+		if (editedClient) {
+			editedClient.cliente_nombre = name;
+			editedClient.cliente_email = email;
+			editedClient.cliente_telefono = phone;
+		}
+		clients = clients;
+		toastStore.trigger(clientEdited);
+	};
 
 	let search: string;
 
@@ -114,6 +146,11 @@
 		background: 'variant-filled-primary'
 	};
 
+	const clientEdited: ToastSettings = {
+		message: 'Se actualizaron los datos del cliente exitosamente',
+		background: 'variant-filled-primary'
+	};
+
 	const clientDeleted: ToastSettings = {
 		message: 'Se eliminó a un cliente exitosamente',
 		background: 'variant-filled-primary'
@@ -147,6 +184,11 @@
 						{#each filteredActiveClients as client}
 							<tr class="border-t border-stone-800 hover:variant-soft-primary">
 								<ClientRow
+									editClient={(clientId) => {
+										toggleEditingClient();
+										tempClientId = clientId;
+										bindValues();
+									}}
 									deleteClient={(clientId) => {
 										toggleDeleteConfirmation();
 										tempClientId = clientId;
@@ -177,6 +219,11 @@
 						{#each filteredDeactivatedClients as client}
 							<tr class="border-t border-stone-800 hover:variant-soft-primary">
 								<ClientRow
+									editClient={(clientId) => {
+										toggleEditingClient();
+										tempClientId = clientId;
+										bindValues();
+									}}
 									deleteClient={(clientId) => {
 										toggleDeleteConfirmation();
 										tempClientId = clientId;
@@ -196,9 +243,27 @@
 </div>
 {#if addingClient}
 	<DarkenSreen>
-		<AddClient
-			cancelHandler={toggleAddingClient}
+		<ClientForm
+			cancelHandler={() => {
+				toggleAddingClient();
+				clearForm();
+			}}
 			confirmHandler={addClient}
+			bind:name
+			bind:email
+			bind:phone
+		/>
+	</DarkenSreen>
+{/if}
+{#if editingClient}
+	<DarkenSreen>
+		<ClientForm
+			editing={true}
+			cancelHandler={() => {
+				toggleEditingClient();
+				clearForm();
+			}}
+			confirmHandler={editClient}
 			bind:name
 			bind:email
 			bind:phone
