@@ -14,3 +14,7 @@ declare global {
 		// interface Platform {}
 	}
 }
+declare module 'unorm' {
+	export function nfd(str: string): string;
+  }
+  
