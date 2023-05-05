@@ -169,7 +169,7 @@
 			.select()
 			.single();
 		if (error) console.log(error.message);
-		products = products.filter((product: any) => product.producto_id != tempProductId);
+		products = products.filter((product: any) => product.producto_id !== tempProductId);
 		toastStore.trigger(productDeleted);
 	};
 
@@ -212,7 +212,7 @@
 
 	const removeFromCart = async (cartId: number, productId: number) => {
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
-		cart = cart.filter((item: any) => item.carrito_id != cartId);
+		cart = cart.filter((item: any) => item.carrito_id !== cartId);
 		const removedItem = products.find((item: any) => item.producto_id === productId);
 		removedItem.on_cart = false;
 		fetchTotal();
