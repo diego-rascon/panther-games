@@ -58,21 +58,22 @@
 	let search: string;
 
 	const searchClient = (search: string) => {
+		const searchWords = search.split(' ');
 		filteredActiveClients = activeClients.filter(
 			(client) =>
 				client.cliente_id.toString().includes(search) ||
-				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
-				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
-				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
-				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
+				nfd(client.cliente_nombre.toLowerCase()).includes(search) ||
+				nfc(client.cliente_nombre.toLowerCase()).includes(search) ||
+				client.cliente_email.toLowerCase().includes(search) ||
+				client.cliente_telefono.toLowerCase().includes(search)
 		);
 		filteredDeactivatedClients = deactivatedClients.filter(
 			(client) =>
 				client.cliente_id.toString().includes(search) ||
-				nfd(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
-				nfc(client.cliente_nombre.toLowerCase()).includes(search.toLowerCase()) ||
-				client.cliente_email.toLowerCase().includes(search.toLowerCase()) ||
-				client.cliente_telefono.toLowerCase().includes(search.toLowerCase())
+				nfd(client.cliente_nombre.toLowerCase()).includes(search) ||
+				nfc(client.cliente_nombre.toLowerCase()).includes(search) ||
+				client.cliente_email.toLowerCase().includes(search) ||
+				client.cliente_telefono.toLowerCase().includes(search)
 		);
 	};
 
