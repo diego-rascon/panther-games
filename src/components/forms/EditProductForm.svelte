@@ -4,6 +4,10 @@
 	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 	import InputError from '../utils/InputError.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import textCircleOutline from '@iconify/icons-solar/text-circle-outline';
+	import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-linear';
+	import archiveDownMinimlisticOutline from '@iconify/icons-solar/archive-down-minimlistic-outline';
+	import Icon from '@iconify/svelte';
 
 	export let cancelHandler: () => void;
 	export let confirmHandler: (productId: number) => void;
@@ -13,7 +17,6 @@
 	export let platforms: any;
 	export let name: string;
 	export let price: number | undefined;
-	export let stock: number | undefined;
 	export let minimumStock: number | undefined;
 	export let used: boolean;
 
@@ -68,9 +71,18 @@
 				{/each}
 			</select>
 		{/if}
-		<input type="text" bind:value={name} class="input" placeholder="Nombre" />
-		<input type="number" bind:value={price} class="input" placeholder="Precio" />
-		<input type="number" bind:value={minimumStock} class="input" placeholder="Mínimo de stock" />
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+			<div class="input-group-shim"><Icon icon={textCircleOutline} height={24} /></div>
+			<input type="text" bind:value={name} class="input" placeholder="Nombre" />
+		</div>
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+			<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
+			<input type="number" bind:value={price} class="input" placeholder="Precio" />
+		</div>
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+			<div class="input-group-shim"><Icon icon={archiveDownMinimlisticOutline} height={24} /></div>
+			<input type="number" bind:value={minimumStock} class="input" placeholder="Mínimo de stock" />
+		</div>
 		<SlideToggle bind:checked={used} name="slider-sm" active="bg-primary-500" size="sm">
 			Producto usado
 		</SlideToggle>
