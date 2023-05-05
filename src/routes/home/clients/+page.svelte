@@ -59,21 +59,27 @@
 
 	const searchClient = (search: string) => {
 		const searchWords = search.split(' ');
-		filteredActiveClients = activeClients.filter(
-			(client) =>
-				client.cliente_id.toString().includes(search) ||
-				nfd(client.cliente_nombre.toLowerCase()).includes(search) ||
-				nfc(client.cliente_nombre.toLowerCase()).includes(search) ||
-				client.cliente_email.toLowerCase().includes(search) ||
-				client.cliente_telefono.toLowerCase().includes(search)
+
+		filteredActiveClients = activeClients.filter((client) =>
+			searchWords.every(
+				(word) =>
+					client.cliente_id.toString().includes(word) ||
+					nfd(client.cliente_nombre.toLowerCase()).includes(word) ||
+					nfc(client.cliente_nombre.toLowerCase()).includes(word) ||
+					client.cliente_email.toLowerCase().includes(word) ||
+					client.cliente_telefono.toLowerCase().includes(word)
+			)
 		);
-		filteredDeactivatedClients = deactivatedClients.filter(
-			(client) =>
-				client.cliente_id.toString().includes(search) ||
-				nfd(client.cliente_nombre.toLowerCase()).includes(search) ||
-				nfc(client.cliente_nombre.toLowerCase()).includes(search) ||
-				client.cliente_email.toLowerCase().includes(search) ||
-				client.cliente_telefono.toLowerCase().includes(search)
+
+		filteredDeactivatedClients = deactivatedClients.filter((client) =>
+			searchWords.every(
+				(word) =>
+					client.cliente_id.toString().includes(word) ||
+					nfd(client.cliente_nombre.toLowerCase()).includes(word) ||
+					nfc(client.cliente_nombre.toLowerCase()).includes(word) ||
+					client.cliente_email.toLowerCase().includes(word) ||
+					client.cliente_telefono.toLowerCase().includes(word)
+			)
 		);
 	};
 
