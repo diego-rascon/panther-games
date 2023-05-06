@@ -182,7 +182,7 @@
 					</thead>
 					<tbody>
 						{#each filteredActiveClients as client}
-							<tr class="border-t border-stone-800 hover:variant-soft-primary">
+							<tr class="border-t border-stone-800 hover:bg-stone-800">
 								<ClientRow
 									editClient={(clientId) => {
 										toggleEditingClient();
@@ -217,7 +217,7 @@
 					</thead>
 					<tbody>
 						{#each filteredDeactivatedClients as client}
-							<tr class="border-t border-stone-800 hover:variant-soft-primary">
+							<tr class="border-t border-stone-800 hover:bg-stone-800">
 								<ClientRow
 									editClient={(clientId) => {
 										toggleEditingClient();
