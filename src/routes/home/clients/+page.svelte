@@ -15,6 +15,7 @@
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 
 	export let data;
+	let { clients } = data;
 	$: ({ clients } = data);
 
 	$: clientsStore.set(clients);
