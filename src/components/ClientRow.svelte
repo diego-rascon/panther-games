@@ -1,16 +1,18 @@
 <script lang="ts">
+	import { clientsStore } from '$lib/stores';
 	import { popup } from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
-	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
-	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
-	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import Dropdown from './dropdown/Dropdown.svelte';
 	import DropdownItem from './dropdown/DropdownItem.svelte';
-	import { clientsStore } from '$lib/stores';
+	import Icon from '@iconify/svelte';
+	import crownMinimalisticBold from '@iconify/icons-solar/crown-minimalistic-bold';
+	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
+	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
+	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
+	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 
 	export let editClient: (productId: number) => void;
 	export let deleteClient: (productId: number) => void;
+	export let activateClient: (productId: number) => void = () => {};
 	export let id: number;
 
 	$: client = $clientsStore.find((item: any) => item.cliente_id === id);
@@ -18,9 +20,10 @@
 	$: email = client?.cliente_email;
 	$: phone = client?.cliente_telefono;
 	$: member = client?.cliente_miembro;
+	$: active = client?.cliente_activo;
 
 	let dropdown: any = {
-		placement: 'bottom-end',
+		placement: 'top-end',
 		event: 'focus-click'
 	};
 </script>
@@ -52,12 +55,22 @@
 				editClient(id);
 			}}
 		/>
-		<DropdownItem
-			text="Eliminar"
-			icon={trashBinMinimalisticLinear}
-			on:click={() => {
-				deleteClient(id);
-			}}
-		/>
+		{#if active}
+			<DropdownItem
+				text="Eliminar"
+				icon={trashBinMinimalisticLinear}
+				on:click={() => {
+					deleteClient(id);
+				}}
+			/>
+		{:else}
+			<DropdownItem
+				text="Activar"
+				icon={userCheckOutline}
+				on:click={() => {
+					activateClient(id);
+				}}
+			/>
+		{/if}
 	</Dropdown>
 </div>
