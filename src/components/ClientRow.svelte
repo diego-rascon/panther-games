@@ -11,7 +11,7 @@
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 
 	export let editClient: (productId: number) => void;
-	export let deleteClient: (productId: number) => void;
+	export let deleteClient: (productId: number) => void = () => {};
 	export let activateClient: (productId: number) => void = () => {};
 	export let id: number;
 
