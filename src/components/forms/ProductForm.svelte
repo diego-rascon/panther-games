@@ -36,14 +36,15 @@
 			errorMessage = 'El precio del producto no es válido.';
 			return false;
 		} else if (!stock || stock < 1) {
-			errorMessage = 'El stock del producto no es válido.';
-			return false;
+			if (!editing) {
+				errorMessage = 'El stock del producto no es válido.';
+				return false;
+			}
 		} else if (!minimumStock || minimumStock < 1 || minimumStock >= stock) {
 			errorMessage = 'El stock mínimo del producto no es válido.';
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	};
 
 	let confirmationVisible = false;
@@ -66,7 +67,7 @@
 		}}
 		title={editing ? 'Editar Registro' : 'Confirmar Registro'}
 		text={editing
-			? '¿Está seguro de que desea editar al producto?'
+			? '¿Está seguro de que desea editar el producto?'
 			: '¿Está seguro de que desea registrar el nuevo producto?'}
 	/>
 {:else}
@@ -104,10 +105,12 @@
 				<div class="input-group-shim"><Icon icon={tagPriceOutline} height={24} /></div>
 				<input type="number" bind:value={price} class="input" placeholder="Precio" />
 			</div>
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={boxOutline} height={24} /></div>
-				<input type="number" bind:value={stock} class="input" placeholder="Stock" />
-			</div>
+			{#if !editing}
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={boxOutline} height={24} /></div>
+					<input type="number" bind:value={stock} class="input" placeholder="Stock" />
+				</div>
+			{/if}
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<div class="input-group-shim">
 					<Icon icon={archiveDownMinimlisticOutline} height={24} />
