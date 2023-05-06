@@ -20,6 +20,7 @@
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
 
 	export let data;
+	let { categories, products, platforms, cart, clients } = data;
 	$: ({ categories, products, platforms, cart, clients } = data);
 
 	$: filteredProducts = products;
