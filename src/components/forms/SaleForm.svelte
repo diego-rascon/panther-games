@@ -1,9 +1,9 @@
 <script lang="ts">
-	import dollarMinimalisticLinear from '@iconify/icons-solar/dollar-minimalistic-linear';
-	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
 	import Icon from '@iconify/svelte';
-
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import userOutline from '@iconify/icons-solar/user-outline';
+	import wadOfMoneyOutline from '@iconify/icons-solar/wad-of-money-outline';
+	import cashOutOutline from '@iconify/icons-solar/cash-out-outline';
+	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import SectionSubtitle from '../titles/SectionSubtitle.svelte';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 	import { scale } from 'svelte/transition';
@@ -16,7 +16,7 @@
 	export let cartQuantity: number;
 
 	let genericClient = true;
-	let paymentType: string;
+	let paymentType = 0;
 	let payment: number;
 
 	let confirmationVisible = false;
@@ -39,30 +39,33 @@
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text="Realizar Venta" />
-		<div class="space-y-4">
+		<div class="flex flex-col space-y-4">
 			<SectionSubtitle text="Cliente" />
 			<SlideToggle bind:checked={genericClient} name="slider-sm" active="bg-primary-500" size="sm">
 				Cliente genérico
 			</SlideToggle>
 			{#if !genericClient}
-				<select class="select">
-					{#each clients as client}
-						<option value={client.cliente_id}>{client.cliente_nombre}</option>
-					{/each}
-				</select>
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
+					<select class="select">
+						{#each clients as client}
+							<option value={client.cliente_id}>{client.cliente_nombre}</option>
+						{/each}
+					</select>
+				</div>
 			{/if}
 			<SectionSubtitle text="Pago" />
-			<select bind:value={paymentType} class="select">
-				<option value="Efectivo">Efectivo</option>
-				<option value="Tarjeta">Tarjeta</option>
-			</select>
-			{#if paymentType === 'Efectivo'}
+			<RadioGroup class="justify-center" active="variant-filled-primary">
+				<RadioItem bind:group={paymentType} name="justify" value={0}>Efectivo</RadioItem>
+				<RadioItem bind:group={paymentType} name="justify" value={1}>Tarjeta</RadioItem>
+			</RadioGroup>
+			{#if paymentType === 0}
 				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-					<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
+					<div class="input-group-shim"><Icon icon={wadOfMoneyOutline} height={24} /></div>
 					<input bind:value={payment} type="number" min="0" class="input" placeholder="Cantidad" />
 				</div>
 				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-					<div class="input-group-shim"><Icon icon={refreshCircleOutline} height={24} /></div>
+					<div class="input-group-shim"><Icon icon={cashOutOutline} height={24} /></div>
 					<input
 						class="input"
 						type="number"

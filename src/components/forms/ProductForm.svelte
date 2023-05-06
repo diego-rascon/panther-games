@@ -1,10 +1,18 @@
 <script lang="ts">
-	import { scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 	import InputError from '../utils/InputError.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import Icon from '@iconify/svelte';
+	import tagOutline from '@iconify/icons-solar/tag-outline';
+	import gameboyOutline from '@iconify/icons-solar/gameboy-outline';
+	import textCircleOutline from '@iconify/icons-solar/text-circle-outline';
+	import tagPriceOutline from '@iconify/icons-solar/tag-price-outline';
+	import boxOutline from '@iconify/icons-solar/box-outline';
+	import archiveDownMinimlisticOutline from '@iconify/icons-solar/archive-down-minimlistic-outline';
+	import { scale } from 'svelte/transition';
 
+	export let editing = false;
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;
 	export let categories: any;
@@ -56,32 +64,61 @@
 				toggleConfirmation();
 			}
 		}}
-		title="Confirmar Registro"
-		text="¿Está seguro de que desea registrar el nuevo producto?"
+		title={editing ? 'Editar Registro' : 'Confirmar Registro'}
+		text={editing
+			? '¿Está seguro de que desea editar al producto?'
+			: '¿Está seguro de que desea registrar el nuevo producto?'}
 	/>
 {:else}
 	<div
 		class="flex flex-col p-8 w-full max-w-md space-y-8 bg-stone-950 border border-stone-800 rounded-xl transition-all"
 		in:scale={{ duration: 150 }}
 	>
-		<SectionTitle centered={true} text="Registrar Producto" />
+		<SectionTitle centered={true} text={editing ? 'Editar Producto' : 'Registrar Producto'} />
 		<div class="space-y-4">
-			<select class="select" bind:value={categoryId}>
-				{#each categories as category}
-					<option value={category.categoria_id}>{category.categoria_nombre}</option>
-				{/each}
-			</select>
-			{#if categoryId === 1}
-				<select class="select" bind:value={platformId}>
-					{#each platforms as platform}
-						<option value={platform.plataforma_id}>{platform.plataforma_nombre}</option>
-					{/each}
-				</select>
+			{#if !editing}
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={tagOutline} height={24} /></div>
+					<select class="select" bind:value={categoryId}>
+						{#each categories as category}
+							<option value={category.categoria_id}>{category.categoria_nombre}</option>
+						{/each}
+					</select>
+				</div>
 			{/if}
-			<input type="text" bind:value={name} class="input" placeholder="Nombre" />
-			<input type="number" bind:value={price} class="input" placeholder="Precio" />
-			<input type="number" bind:value={stock} class="input" placeholder="Stock" />
-			<input type="number" bind:value={minimumStock} class="input" placeholder="Mínimo de stock" />
+			{#if categoryId === 1}
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={gameboyOutline} height={24} /></div>
+					<select class="select" bind:value={platformId}>
+						{#each platforms as platform}
+							<option value={platform.plataforma_id}>{platform.plataforma_nombre}</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={textCircleOutline} height={24} /></div>
+				<input type="text" bind:value={name} class="input" placeholder="Nombre" />
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={tagPriceOutline} height={24} /></div>
+				<input type="number" bind:value={price} class="input" placeholder="Precio" />
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={boxOutline} height={24} /></div>
+				<input type="number" bind:value={stock} class="input" placeholder="Stock" />
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim">
+					<Icon icon={archiveDownMinimlisticOutline} height={24} />
+				</div>
+				<input
+					type="number"
+					bind:value={minimumStock}
+					class="input"
+					placeholder="Mínimo de stock"
+				/>
+			</div>
 			<SlideToggle bind:checked={used} name="slider-sm" active="bg-primary-500" size="sm">
 				Producto usado
 			</SlideToggle>
