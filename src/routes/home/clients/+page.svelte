@@ -18,7 +18,7 @@
 	$: ({ clients } = data);
 
 	$: clientsStore.set(clients);
-	$: activeClients = clients.filter((client) => client.cliente_activo);
+	$: activeClients = clients.filter((client: any) => client.cliente_activo);
 	$: deactivatedClients = clients.filter((client: any) => !client.cliente_activo);
 	$: filteredActiveClients = activeClients;
 	$: filteredDeactivatedClients = deactivatedClients;
