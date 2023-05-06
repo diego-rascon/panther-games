@@ -15,7 +15,7 @@
 	export let activateClient: (productId: number) => void = () => {};
 	export let id: number;
 
-	$: client = $clientsStore.find((item: any) => item.cliente_id === id);
+	$: client = $clientsStore.find((clientEntry: any) => clientEntry.cliente_id === id);
 	$: name = client?.cliente_nombre;
 	$: email = client?.cliente_email;
 	$: phone = client?.cliente_telefono;
