@@ -45,14 +45,14 @@
 				Cliente genérico
 			</SlideToggle>
 			{#if !genericClient}
-				<select class="input">
+				<select class="select">
 					{#each clients as client}
 						<option value={client.cliente_id}>{client.cliente_nombre}</option>
 					{/each}
 				</select>
 			{/if}
 			<SectionSubtitle text="Pago" />
-			<select bind:value={paymentType} class="input">
+			<select bind:value={paymentType} class="select">
 				<option value="Efectivo">Efectivo</option>
 				<option value="Tarjeta">Tarjeta</option>
 			</select>
@@ -73,7 +73,7 @@
 				</div>
 			{/if}
 			<div class="flex justify-between text-lg">
-				<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
+				<p class="unstyled font-bold">Total ({cartQuantity})</p>
 				<p class="unstyled">$ {cartTotal}</p>
 			</div>
 			<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">

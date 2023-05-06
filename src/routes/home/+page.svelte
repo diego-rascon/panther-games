@@ -346,7 +346,7 @@
 	<!--Buttons-->
 	<div class="mt-auto space-y-4">
 		<div class="flex justify-between text-lg">
-			<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
+			<p class="unstyled font-bold">Total ({cartQuantity})</p>
 			<p class="unstyled">$ {cartTotal}</p>
 		</div>
 		<div class="flex flex-col space-y-4">

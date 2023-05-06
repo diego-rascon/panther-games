@@ -66,13 +66,13 @@
 	>
 		<SectionTitle centered={true} text="Registrar Producto" />
 		<div class="space-y-4">
-			<select class="input" bind:value={categoryId}>
+			<select class="select" bind:value={categoryId}>
 				{#each categories as category}
 					<option value={category.categoria_id}>{category.categoria_nombre}</option>
 				{/each}
 			</select>
 			{#if categoryId === 1}
-				<select class="input" bind:value={platformId}>
+				<select class="select" bind:value={platformId}>
 					{#each platforms as platform}
 						<option value={platform.plataforma_id}>{platform.plataforma_nombre}</option>
 					{/each}

@@ -28,7 +28,7 @@
 >
 	<div><Icon icon={magniferLinear} height={iconHeight} /></div>
 	<input
-		class="input select-none"
+		class="input"
 		type="text"
 		placeholder="Search..."
 		bind:value={search}

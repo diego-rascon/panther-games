@@ -33,7 +33,7 @@
 <div class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
 	<div class="flex items-start justify-between">
 		<div class="flex flex-col items-start space-y-2">
-			<p class="unstyled line-clamp-4 text-xl font-bold select-none">{name}</p>
+			<p class="unstyled line-clamp-4 text-xl font-bold">{name}</p>
 			{#if !isNew}
 				<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">Usado</p>
 			{/if}
