@@ -63,25 +63,27 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 w-full max-w-md space-y-4 bg-stone-950 border border-stone-800 rounded-xl transition-all"
+		class="flex flex-col p-8 w-full max-w-md space-y-8 bg-stone-950 border border-stone-800 rounded-xl transition-all"
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text={editing ? 'Editar Cliente' : 'Registrar Cliente'} />
-		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-			<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
-			<input bind:value={name} type="text" class="input" placeholder="Nombre" />
+		<div class="space-y-4">
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
+				<input bind:value={name} type="text" class="input" placeholder="Nombre" />
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={letterOutline} height={24} /></div>
+				<input bind:value={email} type="text" class="input" placeholder="Correo" />
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={phoneCallingRoundedOutline} height={24} /></div>
+				<input bind:value={phone} type="text" class="input" placeholder="Teléfono" />
+			</div>
+			{#if inputError}
+				<InputError text={errorMessage} />
+			{/if}
 		</div>
-		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-			<div class="input-group-shim"><Icon icon={letterOutline} height={24} /></div>
-			<input bind:value={email} type="text" class="input" placeholder="Correo" />
-		</div>
-		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-			<div class="input-group-shim"><Icon icon={phoneCallingRoundedOutline} height={24} /></div>
-			<input bind:value={phone} type="text" class="input" placeholder="Teléfono" />
-		</div>
-		{#if inputError}
-			<InputError text={errorMessage} />
-		{/if}
 		<div class="grid grid-cols-2 gap-4">
 			<button class="btn variant-ringed-primary" on:click={cancelHandler}>Cancelar</button>
 			<button class="btn variant-filled-primary font-bold" on:click={toggleConfirmation}>

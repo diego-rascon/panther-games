@@ -35,49 +35,51 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 w-full max-w-md space-y-4 bg-stone-950 border border-stone-800 rounded-xl"
+		class="flex flex-col p-8 w-full max-w-md space-y-8 bg-stone-950 border border-stone-800 rounded-xl"
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text="Realizar Venta" />
-		<SectionSubtitle text="Cliente" />
-		<SlideToggle bind:checked={genericClient} name="slider-sm" active="bg-primary-500" size="sm">
-			Cliente genérico
-		</SlideToggle>
-		{#if !genericClient}
-			<select class="input">
-				{#each clients as client}
-					<option value={client.cliente_id}>{client.cliente_nombre}</option>
-				{/each}
+		<div class="space-y-4">
+			<SectionSubtitle text="Cliente" />
+			<SlideToggle bind:checked={genericClient} name="slider-sm" active="bg-primary-500" size="sm">
+				Cliente genérico
+			</SlideToggle>
+			{#if !genericClient}
+				<select class="input">
+					{#each clients as client}
+						<option value={client.cliente_id}>{client.cliente_nombre}</option>
+					{/each}
+				</select>
+			{/if}
+			<SectionSubtitle text="Pago" />
+			<select bind:value={paymentType} class="input">
+				<option value="Efectivo">Efectivo</option>
+				<option value="Tarjeta">Tarjeta</option>
 			</select>
-		{/if}
-		<SectionSubtitle text="Pago" />
-		<select bind:value={paymentType} class="input">
-			<option value="Efectivo">Efectivo</option>
-			<option value="Tarjeta">Tarjeta</option>
-		</select>
-		{#if paymentType === 'Efectivo'}
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
-				<input bind:value={payment} type="number" min="0" class="input" placeholder="Cantidad" />
+			{#if paymentType === 'Efectivo'}
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={dollarMinimalisticLinear} height={24} /></div>
+					<input bind:value={payment} type="number" min="0" class="input" placeholder="Cantidad" />
+				</div>
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={refreshCircleOutline} height={24} /></div>
+					<input
+						class="input"
+						type="number"
+						placeholder="Cambio"
+						value={payment - cartTotal < 0 ? null : payment - cartTotal}
+						readonly
+					/>
+				</div>
+			{/if}
+			<div class="flex justify-between text-lg">
+				<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
+				<p class="unstyled">$ {cartTotal}</p>
 			</div>
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={refreshCircleOutline} height={24} /></div>
-				<input
-					class="input"
-					type="number"
-					placeholder="Cambio"
-					value={payment - cartTotal < 0 ? null : payment - cartTotal}
-					readonly
-				/>
-			</div>
-		{/if}
-		<div class="flex justify-between text-lg">
-			<p class="unstyled font-bold select-none">Total ({cartQuantity})</p>
-			<p class="unstyled">$ {cartTotal}</p>
+			<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
+				Generar comprobante
+			</SlideToggle>
 		</div>
-		<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
-			Generar comprobante
-		</SlideToggle>
 		<div class="grid grid-cols-2 gap-4">
 			<button class="btn variant-ringed-primary" on:click={cancelHandler}> Cancelar </button>
 			<button class="btn variant-filled-primary font-bold" on:click={toggleConfirmation}>
