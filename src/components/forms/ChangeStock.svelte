@@ -46,7 +46,7 @@
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text="Cambiar Stock" />
-		<div class="space-y-4">
+		<div class="flex flex-col space-y-4">
 			<RadioGroup class="justify-center" active="variant-filled-primary">
 				<RadioItem on:change={calculateNewStock} bind:group={changeType} name="justify" value={0}
 					>Reducir</RadioItem
