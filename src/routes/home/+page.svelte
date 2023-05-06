@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { productsStore, cartStore } from '$lib/stores';
-	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
 	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
@@ -10,15 +10,14 @@
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
-	import AddButton from '../../components/AddButton.svelte';
-	import AddProduct from '../../components/forms/ProductForm.svelte';
 	import CartProduct from '../../components/CartProduct.svelte';
-	import Search from '../../components/inputs/Search.svelte';
-	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
+	import ProductForm from '../../components/forms/ProductForm.svelte';
 	import SaleForm from '../../components/forms/SaleForm.svelte';
-	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
+	import AddButton from '../../components/AddButton.svelte';
+	import Search from '../../components/inputs/Search.svelte';
 	import ChangeStock from '../../components/forms/ChangeStock.svelte';
-	import EditProductForm from '../../components/forms/EditProductForm.svelte';
+	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
+	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
 
 	export let data;
 	$: ({ categories, products, platforms, cart, clients } = data);
@@ -361,7 +360,7 @@
 </div>
 {#if addingProduct}
 	<DarkenSreen>
-		<AddProduct
+		<ProductForm
 			cancelHandler={() => {
 				toggleAddingProduct();
 				clearForm();
@@ -381,18 +380,20 @@
 {/if}
 {#if editingProduct}
 	<DarkenSreen>
-		<EditProductForm
+		<ProductForm
+			editing={true}
 			cancelHandler={() => {
 				toggleEditingProduct();
 				clearForm();
 			}}
 			confirmHandler={editProduct}
-			productId={tempProductId}
+			{categories}
 			{platforms}
 			bind:categoryId
 			bind:platformId
 			bind:name
 			bind:price
+			bind:stock
 			bind:minimumStock
 			bind:used
 		/>
