@@ -25,11 +25,11 @@
 	};
 </script>
 
-<td class="p-4 text-left">{id}</td>
-<td class="text-left">{name}</td>
-<td class="text-left">{email}</td>
-<td class="text-left">{phone}</td>
-<td class="text-center">
+<td class="p-4 text-left select-text">{id}</td>
+<td class="text-left select-text">{name}</td>
+<td class="text-left select-text">{email}</td>
+<td class="text-left select-text">{phone}</td>
+<td class="text-right">
 	{#if member}
 		<Icon icon={crownMinimalisticBold} color="#e6d92e" />
 	{/if}
