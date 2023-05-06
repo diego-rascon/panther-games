@@ -136,9 +136,9 @@
 	const searchClient = (search: string) => {
 		const searchWords = search.split(' ');
 
-		filteredActiveClients = activeClients.filter((client) =>
+		filteredActiveClients = activeClients.filter((client: any) =>
 			searchWords.every(
-				(word) =>
+				(word: string) =>
 					client.cliente_id.toString().includes(word) ||
 					nfd(client.cliente_nombre.toLowerCase()).includes(word) ||
 					nfc(client.cliente_nombre.toLowerCase()).includes(word) ||
@@ -147,9 +147,9 @@
 			)
 		);
 
-		filteredDeactivatedClients = deactivatedClients.filter((client) =>
+		filteredDeactivatedClients = deactivatedClients.filter((client: any) =>
 			searchWords.every(
-				(word) =>
+				(word: string) =>
 					client.cliente_id.toString().includes(word) ||
 					nfd(client.cliente_nombre.toLowerCase()).includes(word) ||
 					nfc(client.cliente_nombre.toLowerCase()).includes(word) ||
@@ -232,30 +232,24 @@
 							<th class="text-left">Nombre</th>
 							<th class="text-left">Correo</th>
 							<th class="text-left">Telefono</th>
-							<th />
-							<th />
+							<th class="" />
+							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
 						{#each filteredDeactivatedClients as client}
-							<tr class="border-t border-stone-800 hover:bg-stone-800">
-								<ClientRow
-									editClient={(clientId) => {
-										toggleEditingClient();
-										tempClientId = clientId;
-										bindValues();
-									}}
-									deleteClient={(clientId) => {
-										toggleDeleteConfirmation();
-										tempClientId = clientId;
-									}}
-									activateClient={(clientId) => {
-										toggleActivateConfirmation();
-										tempClientId = clientId;
-									}}
-									id={client.cliente_id}
-								/>
-							</tr>
+							<ClientRow
+								editClient={(clientId) => {
+									toggleEditingClient();
+									tempClientId = clientId;
+									bindValues();
+								}}
+								activateClient={(clientId) => {
+									toggleActivateConfirmation();
+									tempClientId = clientId;
+								}}
+								id={client.cliente_id}
+							/>
 						{/each}
 					</tbody>
 				</table>
