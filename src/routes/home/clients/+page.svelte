@@ -33,6 +33,12 @@
 		phone = '';
 	};
 
+	let addingClient = false;
+
+	const toggleAddingClient = () => {
+		addingClient = !addingClient;
+	};
+
 	const addClient = async () => {
 		toggleAddingClient();
 		const { data: client } = await supabase
@@ -87,6 +93,26 @@
 		toastStore.trigger(clientEdited);
 	};
 
+	let deleteConfirmation = false;
+
+	const toggleDeleteConfirmation = () => {
+		console.log(clients);
+		deleteConfirmation = !deleteConfirmation;
+	};
+
+	const deleteClient = async () => {
+		toggleDeleteConfirmation();
+		const { error } = await supabase
+			.from('cliente')
+			.update({ cliente_activo: false })
+			.eq('cliente_id', tempClientId);
+		if (error) console.log(error.message);
+		const removedClient = clients.find((client: any) => client.cliente_id === tempClientId);
+		if (removedClient) removedClient.cliente_activo = false;
+		clients = clients;
+		toastStore.trigger(clientDeleted);
+	};
+
 	let search: string;
 
 	const searchClient = (search: string) => {
@@ -113,32 +139,6 @@
 					client.cliente_telefono.toLowerCase().includes(word)
 			)
 		);
-	};
-
-	let addingClient = false;
-
-	const toggleAddingClient = () => {
-		addingClient = !addingClient;
-	};
-
-	let deleteConfirmation = false;
-
-	const toggleDeleteConfirmation = () => {
-		console.log(clients);
-		deleteConfirmation = !deleteConfirmation;
-	};
-
-	const deleteClient = async () => {
-		toggleDeleteConfirmation();
-		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: false })
-			.eq('cliente_id', tempClientId);
-		if (error) console.log(error.message);
-		const removedClient = clients.find((client: any) => client.cliente_id === tempClientId);
-		if (removedClient) removedClient.cliente_activo = false;
-		clients = clients;
-		toastStore.trigger(clientDeleted);
 	};
 
 	const clientAdded: ToastSettings = {
