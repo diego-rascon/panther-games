@@ -38,7 +38,7 @@
 	<button
 		on:click
 		use:popup={{ ...dropdown, target: `dropdown-${id}` }}
-		class="btn p-1 rounded-full"
+		class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
 	>
 		<Icon icon={menuDotsBold} rotate={1} height={20} />
 	</button>
