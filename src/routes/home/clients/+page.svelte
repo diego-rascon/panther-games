@@ -125,7 +125,7 @@
 			.update({ cliente_activo: true })
 			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const activatedClient= clients.find((client: any) => client.cliente_id === tempClientId);
+		const activatedClient = clients.find((client: any) => client.cliente_id === tempClientId);
 		if (activatedClient) activatedClient.cliente_activo = true;
 		clients = clients;
 		toastStore.trigger(clientActivated);
@@ -205,20 +205,18 @@
 					</thead>
 					<tbody>
 						{#each filteredActiveClients as client}
-							<tr class="border-t border-stone-800 hover:bg-stone-800">
-								<ClientRow
-									editClient={(clientId) => {
-										toggleEditingClient();
-										tempClientId = clientId;
-										bindValues();
-									}}
-									deleteClient={(clientId) => {
-										toggleDeleteConfirmation();
-										tempClientId = clientId;
-									}}
-									id={client.cliente_id}
-								/>
-							</tr>
+							<ClientRow
+								editClient={(clientId) => {
+									toggleEditingClient();
+									tempClientId = clientId;
+									bindValues();
+								}}
+								deleteClient={(clientId) => {
+									toggleDeleteConfirmation();
+									tempClientId = clientId;
+								}}
+								id={client.cliente_id}
+							/>
 						{/each}
 					</tbody>
 				</table>

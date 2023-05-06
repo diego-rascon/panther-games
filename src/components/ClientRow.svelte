@@ -22,55 +22,64 @@
 	$: member = client?.cliente_miembro;
 	$: active = client?.cliente_activo;
 
+	let selected = false;
+
 	let dropdown: any = {
 		placement: 'top-end',
-		event: 'focus-click'
+		event: 'focus-click',
+		state: () => (selected = !selected)
 	};
 </script>
 
-<td class="p-4 text-left select-text">{id}</td>
-<td class="text-left select-text">{name}</td>
-<td class="text-left select-text">{email}</td>
-<td class="text-left select-text">{phone}</td>
-<td class="text-right">
-	{#if member}
-		<Icon icon={crownMinimalisticBold} color="#e6d92e" />
-	{/if}
-</td>
-<td class="p-4 text-right">
-	<button
-		on:click
-		use:popup={{ ...dropdown, target: `dropdown-${id}` }}
-		class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
-	>
-		<Icon icon={menuDotsBold} rotate={1} height={20} />
-	</button>
-</td>
-<div data-popup={`dropdown-${id}`}>
-	<Dropdown>
-		<DropdownItem
-			text="Editar"
-			icon={pen2Linear}
-			on:click={() => {
-				editClient(id);
-			}}
-		/>
-		{#if active}
-			<DropdownItem
-				text="Eliminar"
-				icon={trashBinMinimalisticLinear}
-				on:click={() => {
-					deleteClient(id);
-				}}
-			/>
-		{:else}
-			<DropdownItem
-				text="Activar"
-				icon={userCheckOutline}
-				on:click={() => {
-					activateClient(id);
-				}}
-			/>
+<tr
+	class="border-t border-stone-800 transition-all {selected
+		? 'variant-soft-primary'
+		: 'hover:bg-stone-800'}"
+>
+	<td class="p-4 text-left select-text">{id}</td>
+	<td class="text-left select-text">{name}</td>
+	<td class="text-left select-text">{email}</td>
+	<td class="text-left select-text">{phone}</td>
+	<td class="text-right">
+		{#if member}
+			<Icon icon={crownMinimalisticBold} color="#e6d92e" />
 		{/if}
-	</Dropdown>
-</div>
+	</td>
+	<td class="p-4 text-right">
+		<button
+			on:click
+			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
+			class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
+		>
+			<Icon icon={menuDotsBold} rotate={1} height={20} />
+		</button>
+	</td>
+	<div data-popup={`dropdown-${id}`}>
+		<Dropdown>
+			<DropdownItem
+				text="Editar"
+				icon={pen2Linear}
+				on:click={() => {
+					editClient(id);
+				}}
+			/>
+			{#if active}
+				<DropdownItem
+					text="Eliminar"
+					icon={trashBinMinimalisticLinear}
+					on:click={() => {
+						deleteClient(id);
+					}}
+				/>
+			{:else}
+				<DropdownItem
+					text="Activar"
+					icon={userCheckOutline}
+					on:click={() => {
+						activateClient(id);
+					}}
+				/>
+			{/if}
+		</Dropdown>
+	</div>
+</tr>
