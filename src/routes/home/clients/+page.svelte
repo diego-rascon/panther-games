@@ -96,7 +96,6 @@
 	let deleteConfirmation = false;
 
 	const toggleDeleteConfirmation = () => {
-		console.log(clients);
 		deleteConfirmation = !deleteConfirmation;
 	};
 
@@ -111,6 +110,25 @@
 		if (removedClient) removedClient.cliente_activo = false;
 		clients = clients;
 		toastStore.trigger(clientDeleted);
+	};
+
+	let activateConfirmation = false;
+
+	const toggleActivateConfirmation = () => {
+		activateConfirmation = !activateConfirmation;
+	};
+
+	const activateClient = async () => {
+		toggleActivateConfirmation();
+		const { error } = await supabase
+			.from('cliente')
+			.update({ cliente_activo: true })
+			.eq('cliente_id', tempClientId);
+		if (error) console.log(error.message);
+		const activatedClient= clients.find((client: any) => client.cliente_id === tempClientId);
+		if (activatedClient) activatedClient.cliente_activo = true;
+		clients = clients;
+		toastStore.trigger(clientActivated);
 	};
 
 	let search: string;
@@ -152,7 +170,12 @@
 	};
 
 	const clientDeleted: ToastSettings = {
-		message: 'Se eliminó a un cliente exitosamente',
+		message: 'Se eliminó al cliente exitosamente',
+		background: 'variant-filled-primary'
+	};
+
+	const clientActivated: ToastSettings = {
+		message: 'Se activó al cliente exitosamente',
 		background: 'variant-filled-primary'
 	};
 </script>
@@ -228,6 +251,10 @@
 										toggleDeleteConfirmation();
 										tempClientId = clientId;
 									}}
+									activateClient={(clientId) => {
+										toggleActivateConfirmation();
+										tempClientId = clientId;
+									}}
 									id={client.cliente_id}
 								/>
 							</tr>
@@ -277,6 +304,16 @@
 			confirmHandler={deleteClient}
 			title="Eliminar Cliente"
 			text="¿Seguro de que desea eliminar al cliente?"
+		/>
+	</DarkenSreen>
+{/if}
+{#if activateConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleActivateConfirmation}
+			confirmHandler={activateClient}
+			title="Activar Cliente"
+			text="¿Seguro de que desea activar al cliente?"
 		/>
 	</DarkenSreen>
 {/if}
