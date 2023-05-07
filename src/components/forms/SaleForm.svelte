@@ -38,11 +38,11 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 w-full max-w-md space-y-8 bg-stone-950 border border-stone-800 rounded-xl"
+		class="flex flex-col p-8 w-full max-w-md max-h-[90%] space-y-8 bg-stone-950 border border-stone-800 rounded-xl"
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text="Realizar Venta" />
-		<div class="flex flex-col space-y-4">
+		<div class="flex flex-col space-y-4 overflow-y-auto">
 			<SectionSubtitle text="Cliente" />
 			<SlideToggle bind:checked={genericClient} name="slider-sm" active="bg-primary-500" size="sm">
 				Cliente genérico
