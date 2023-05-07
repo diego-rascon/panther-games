@@ -27,7 +27,7 @@
 	let dropdown: any = {
 		placement: 'top-end',
 		event: 'focus-click',
-		state: () => (selected = !selected)
+		state: (e: { state: boolean }) => selected = e.state
 	};
 </script>
 
@@ -47,7 +47,6 @@
 	</td>
 	<td class="pr-4 text-right">
 		<button
-			on:click
 			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
 			class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
 		>
