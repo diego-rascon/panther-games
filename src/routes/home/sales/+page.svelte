@@ -79,8 +79,9 @@
 			searchWords.every(
 				(word: string) =>
 					sale.venta_id.toString().includes(word) ||
-					sale.venta_fecha.toString().includes(word) ||
+					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
 					sale.venta_monto.toString().includes(word) ||
+					sale.venta_cantidad.toString().includes(word) ||
 					sale.venta_descuento.toString().includes(word) ||
 					sale.cliente_id.toString().includes(word)
 			)
@@ -90,8 +91,9 @@
 			searchWords.every(
 				(word: string) =>
 					sale.venta_id.toString().includes(word) ||
-					sale.venta_fecha.toString().includes(word) ||
+					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
 					sale.venta_monto.toString().includes(word) ||
+					sale.venta_cantidad.toString().includes(word) ||
 					sale.venta_descuento.toString().includes(word) ||
 					sale.cliente_id.toString().includes(word)
 			)
@@ -178,7 +180,7 @@
 									tempSaleId = saleID;
 									tempSaleTotal = saleTotal;
 									tempSaleQuantity = saleQuantity;
-									console.log(saleQuantity)
+									console.log(saleQuantity);
 								}}
 								toggleSale={(clientId) => {
 									toggleActivateConfirmation();
