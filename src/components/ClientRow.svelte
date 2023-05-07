@@ -27,7 +27,7 @@
 	let dropdown: any = {
 		placement: 'top-end',
 		event: 'focus-click',
-		state: (e: { state: boolean }) => selected = e.state
+		state: (e: { state: boolean }) => (selected = e.state)
 	};
 </script>
 
@@ -47,13 +47,15 @@
 	</td>
 	<td class="pr-4 text-right">
 		<button
-			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
-			class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
+			use:popup={{ ...dropdown, target: `client-dropdown-${id}` }}
+			class="btn p-1 rounded-full {selected
+				? 'variant-soft-primary'
+				: 'hover:variant-filled-surface'}"
 		>
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
 	</td>
-	<div data-popup={`dropdown-${id}`}>
+	<div data-popup={`client-dropdown-${id}`}>
 		<Dropdown>
 			<DropdownItem
 				text="Editar"
