@@ -29,6 +29,9 @@
 	};
 
 	let tempSaleId: number;
+	let tempSaleTotal: number;
+	let tempSaleQuantity: number;
+
 	let deleteConfirmation = false;
 
 	const toggleDeleteConfirmation = () => {
@@ -134,9 +137,11 @@
 					<tbody>
 						{#each filteredActiveSales as sale}
 							<SaleRow
-								toggleDetail={(clientId) => {
+								toggleDetail={(clientId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
 									tempSaleId = clientId;
+									tempSaleTotal = saleTotal;
+									tempSaleQuantity = saleQuantity;
 								}}
 								toggleSale={(saleId) => {
 									toggleDeleteConfirmation();
@@ -168,9 +173,12 @@
 					<tbody>
 						{#each filteredDeactivatedSales as sale}
 							<SaleRow
-								toggleDetail={(clientId) => {
+								toggleDetail={(saleID, saleTotal, saleQuantity) => {
 									toggleShowDetail();
-									tempSaleId = clientId;
+									tempSaleId = saleID;
+									tempSaleTotal = saleTotal;
+									tempSaleQuantity = saleQuantity;
+									console.log(saleQuantity)
 								}}
 								toggleSale={(clientId) => {
 									toggleActivateConfirmation();
@@ -187,7 +195,12 @@
 </div>
 {#if showingDetail}
 	<DarkenSreen>
-		<SaleDetail saleId={tempSaleId} closeHandler={toggleShowDetail} />
+		<SaleDetail
+			closeHandler={toggleShowDetail}
+			saleId={tempSaleId}
+			total={tempSaleTotal}
+			quantity={tempSaleQuantity}
+		/>
 	</DarkenSreen>
 {/if}
 {#if deleteConfirmation}
