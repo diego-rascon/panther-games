@@ -45,7 +45,7 @@
 			<Icon icon={crownMinimalisticBold} color="#e6d92e" />
 		{/if}
 	</td>
-	<td class="p-4 text-right">
+	<td class="pr-4 text-right">
 		<button
 			on:click
 			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
