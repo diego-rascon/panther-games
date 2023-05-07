@@ -179,9 +179,9 @@
 		doingSale = !doingSale;
 	};
 
-	const registerSale = async () => {
+	const registerSale = async (clientId: number) => {
 		toggleSale();
-		const { error } = await supabase.rpc('register_sale', { cliente_id: 1 });
+		const { error } = await supabase.rpc('register_sale', { cliente_id: clientId });
 		if (error) console.log(error.message);
 		else toastStore.trigger(saleAdded);
 		emptyCart();
