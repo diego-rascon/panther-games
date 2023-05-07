@@ -18,15 +18,19 @@
 	import ChangeStock from '../../components/forms/ChangeStock.svelte';
 	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
+	import NoResultsMessage from '../../components/utils/NoResultsMessage.svelte';
+	import { nfc, nfd } from 'unorm';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
 	$: ({ categories, products, platforms, cart, clients } = data);
 
-	$: filteredProducts = products;
-
-	$: productsStore.set(products);
 	$: cartStore.set(cart);
+	$: productsStore.set(products);
+	$: activeProducts = products.filter((product: any) => product.producto_activo);
+	$: deactivatedProducts = products.filter((product: any) => !product.producto_activo);
+	$: filteredActiveProducts = activeProducts;
+	$: filteredDeactivatedProducts = deactivatedProducts;
 
 	let categoryId: number;
 	let platformId: number;
@@ -242,8 +246,32 @@
 	let search: string;
 
 	const searchProduct = (search: string) => {
-		filteredProducts = products.filter((product: any) =>
-			product.producto_nombre.toLowerCase().includes(search.toLowerCase())
+		const searchWords = search.split(' ');
+
+		filteredActiveProducts = activeProducts.filter((product: any) =>
+			searchWords.every(
+				(word: string) =>
+					product.producto_id.toString().includes(word) ||
+					product.producto_nombre.toLowerCase().includes(word) ||
+					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					product.producto_stock.toString().includes(word) ||
+					product.producto_minimo.toString().includes(word) ||
+					product.producto_precio.toString().includes(word)
+			)
+		);
+
+		filteredDeactivatedProducts = deactivatedProducts.filter((product: any) =>
+			searchWords.every(
+				(word: string) =>
+					product.producto_id.toString().includes(word) ||
+					product.producto_nombre.toLowerCase().includes(word) ||
+					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					product.producto_stock.toString().includes(word) ||
+					product.producto_minimo.toString().includes(word) ||
+					product.producto_precio.toString().includes(word)
+			)
 		);
 	};
 
@@ -280,29 +308,60 @@
 			<Category text={category.categoria_nombre} />
 		{/each}
 	</div>
-	<SectionSubtitle text="Inventario" />
-	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-		{#each filteredProducts as product}
-			<Product
-				{addToCart}
-				editProduct={(productId) => {
-					toggleEditingProduct();
-					tempProductId = productId;
-					bindValues();
-				}}
-				changeStock={(productId, currentStock) => {
-					toggleChangingStock();
-					tempProductId = productId;
-					tempProductStock = currentStock;
-				}}
-				deleteProduct={(productId) => {
-					toggleDeleteConfirmation();
-					tempProductId = productId;
-				}}
-				id={product.producto_id}
-			/>
-		{/each}
-	</div>
+	{#if filteredActiveProducts.length === 0 && filteredDeactivatedProducts.length === 0}
+		<NoResultsMessage />
+	{:else}
+		{#if filteredActiveProducts.length !== 0}
+			<SectionSubtitle text="Inventario" />
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
+				{#each filteredActiveProducts as activeProduct}
+					<Product
+						{addToCart}
+						editProduct={(productId) => {
+							toggleEditingProduct();
+							tempProductId = productId;
+							bindValues();
+						}}
+						changeStock={(productId, currentStock) => {
+							toggleChangingStock();
+							tempProductId = productId;
+							tempProductStock = currentStock;
+						}}
+						deleteProduct={(productId) => {
+							toggleDeleteConfirmation();
+							tempProductId = productId;
+						}}
+						id={activeProduct.producto_id}
+					/>
+				{/each}
+			</div>
+		{/if}
+		{#if filteredDeactivatedProducts.length !== 0}
+			<SectionSubtitle text="Inventario Desactivado" />
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
+				{#each filteredDeactivatedProducts as deactivatedProduct}
+					<Product
+						{addToCart}
+						editProduct={(productId) => {
+							toggleEditingProduct();
+							tempProductId = productId;
+							bindValues();
+						}}
+						changeStock={(productId, currentStock) => {
+							toggleChangingStock();
+							tempProductId = productId;
+							tempProductStock = currentStock;
+						}}
+						deleteProduct={(productId) => {
+							toggleDeleteConfirmation();
+							tempProductId = productId;
+						}}
+						id={deactivatedProduct.producto_id}
+					/>
+				{/each}
+			</div>
+		{/if}
+	{/if}
 </div>
 
 <div
