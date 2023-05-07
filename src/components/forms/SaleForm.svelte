@@ -15,6 +15,8 @@
 	export let cartTotal: number;
 	export let cartQuantity: number;
 
+	$: formattedPrice = cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
 	let genericClient = true;
 	let clientId: number;
 	let paymentType = 0;
@@ -80,7 +82,7 @@
 			{/if}
 			<div class="flex justify-between text-lg">
 				<p class="unstyled font-bold">Total ({cartQuantity})</p>
-				<p class="unstyled">$ {cartTotal}</p>
+				<p class="unstyled">{formattedPrice}</p>
 			</div>
 			<SlideToggle name="slider-sm" checked active="bg-primary-500" size="sm">
 				Generar comprobante
