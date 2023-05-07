@@ -10,12 +10,13 @@
 	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 
 	export let cancelHandler: () => void;
-	export let confirmHandler: () => void;
+	export let confirmHandler: (clientId: number) => void;
 	export let clients: { [x: string]: any }[];
 	export let cartTotal: number;
 	export let cartQuantity: number;
 
 	let genericClient = true;
+	let clientId: number;
 	let paymentType = 0;
 	let payment: number;
 
@@ -29,7 +30,9 @@
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
-		{confirmHandler}
+		confirmHandler={() => {
+			confirmHandler(genericClient ? 0 : clientId);
+		}}
 		title="Confirmar venta"
 		text="¿Está seguro de que desea registrar la venta?"
 	/>
@@ -47,7 +50,7 @@
 			{#if !genericClient}
 				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 					<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
-					<select class="select">
+					<select class="select" bind:value={clientId}>
 						{#each clients as client}
 							<option value={client.cliente_id}>{client.cliente_nombre}</option>
 						{/each}
