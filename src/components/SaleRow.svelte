@@ -7,8 +7,12 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
+	import { stop_propagation } from 'svelte/internal';
 
-	export let toggleSale: (saleId: number) => void = () => {};
+	type saleAction = (saleId: number) => void;
+
+	export let toggleDetail: saleAction;
+	export let toggleSale: saleAction;
 	export let id: number;
 
 	$: sale = $salesStore.find((saleEntry: any) => saleEntry.venta_id === id);
@@ -25,12 +29,15 @@
 	let dropdown: any = {
 		placement: 'top-end',
 		event: 'focus-click',
-		state: () => (selected = !selected)
+		state: (e: { state: boolean }) => (selected = e.state)
 	};
 </script>
 
 <tr
-	class="border-t border-stone-800 transition-all {selected
+	on:click={() => {
+		toggleDetail(id);
+	}}
+	class="border-t border-stone-800 transition-all cursor-pointer active:variant-soft-primary {selected
 		? 'variant-soft-primary'
 		: 'hover:bg-stone-800'}"
 >
@@ -42,14 +49,16 @@
 	<td class="text-left select-text">{client}</td>
 	<td class="pr-4 text-right">
 		<button
-			on:click
-			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
-			class="btn hover:variant-filled-surface activea:variant-filled-surface p-1 rounded-full"
+			on:click|stopPropagation
+			use:popup={{ ...dropdown, target: `sale-dropdown-${id}` }}
+			class="btn p-1 rounded-full {selected
+				? 'variant-soft-primary'
+				: 'hover:variant-filled-surface'}"
 		>
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
 	</td>
-	<div data-popup={`dropdown-${id}`}>
+	<div data-popup={`sale-dropdown-${id}`}>
 		<Dropdown>
 			{#if active}
 				<DropdownItem
