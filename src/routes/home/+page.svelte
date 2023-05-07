@@ -192,7 +192,7 @@
 	let cartTotal: number = 0;
 	let cartQuantity: number = 0;
 
-	$: formattedPrice = cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+	$: formattedPrice = cartTotal?.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 	const fetchTotal = async () => {
 		const { data: total }: any = await supabase.rpc('get_total').single();
