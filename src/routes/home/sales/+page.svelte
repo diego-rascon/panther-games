@@ -10,6 +10,7 @@
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
+	import SaleDetail from '../../../components/SaleDetail.svelte';
 
 	export let data;
 	let { sales } = data;
@@ -20,6 +21,12 @@
 	$: deactivatedSales = sales.filter((sale: any) => !sale.venta_activa);
 	$: filteredActiveSales = activeSales;
 	$: filteredDeactivatedSales = deactivatedSales;
+
+	let showingDetail = false;
+
+	const toggleShowDetail = () => {
+		showingDetail = !showingDetail;
+	};
 
 	let tempSaleId: number;
 	let deleteConfirmation = false;
@@ -105,7 +112,7 @@
 	<SectionTitle text="Ventas" />
 	<Search searchHandler={searchSale} bind:search />
 </div>
-<div class="mt-[60px] flex-col mb-20 space-y-4">
+<div class="mt-[60px] flex-col space-y-4">
 	{#if filteredActiveSales.length === 0 && filteredDeactivatedSales.length === 0}
 		<NoResultsMessage />
 	{:else}
@@ -126,6 +133,10 @@
 					<tbody>
 						{#each filteredActiveSales as sale}
 							<SaleRow
+								toggleDetail={(clientId) => {
+									toggleShowDetail();
+									tempSaleId = clientId;
+								}}
 								toggleSale={(saleId) => {
 									toggleDeleteConfirmation();
 									tempSaleId = saleId;
@@ -155,6 +166,10 @@
 					<tbody>
 						{#each filteredDeactivatedSales as sale}
 							<SaleRow
+								toggleDetail={(clientId) => {
+									toggleShowDetail();
+									tempSaleId = clientId;
+								}}
 								toggleSale={(clientId) => {
 									toggleActivateConfirmation();
 									tempSaleId = clientId;
@@ -168,6 +183,11 @@
 		{/if}
 	{/if}
 </div>
+{#if showingDetail}
+	<DarkenSreen>
+		<SaleDetail saleId={tempSaleId} closeHandler={toggleShowDetail} />
+	</DarkenSreen>
+{/if}
 {#if deleteConfirmation}
 	<DarkenSreen>
 		<ConfirmDialog
