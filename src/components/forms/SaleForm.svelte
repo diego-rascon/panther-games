@@ -84,7 +84,7 @@
 			</SlideToggle>
 		</div>
 		<div class="grid grid-cols-2 gap-4">
-			<button class="btn variant-ringed-primary" on:click={cancelHandler}> Cancelar </button>
+			<button class="btn variant-ringed-primary" on:click={cancelHandler}>Cancelar</button>
 			<button class="btn variant-filled-primary font-bold" on:click={toggleConfirmation}>
 				Confirmar
 			</button>
