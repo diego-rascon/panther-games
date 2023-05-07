@@ -7,23 +7,22 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
-	import { stop_propagation } from 'svelte/internal';
 
-	type saleAction = (saleId: number) => void;
-
-	export let toggleDetail: saleAction;
-	export let toggleSale: saleAction;
+	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
+	export let toggleSale: (saleId: number) => void;
 	export let id: number;
 
 	$: sale = $salesStore.find((saleEntry: any) => saleEntry.venta_id === id);
 	$: originalDate = new Date(String(sale?.venta_fecha));
 	$: formattedDate = originalDate.toLocaleDateString('en-GB');
-	$: total = sale?.venta_monto;
-	$: quantity = sale?.venta_cantidad;
+	$: total = Number(sale?.venta_monto);
+	$: quantity = Number(sale?.venta_cantidad);
 	$: discount = sale?.venta_descuento;
 	$: paymentType = sale?.venta_tarjeta ? 'Tarjeta' : 'Efectivo';
 	$: client = sale?.cliente_id;
 	$: active = sale?.venta_activa;
+
+	$: formattedPrice = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 	let selected = false;
 
@@ -36,7 +35,7 @@
 
 <tr
 	on:click={() => {
-		toggleDetail(id);
+		toggleDetail(id, total, quantity);
 	}}
 	class="border-t border-stone-800 transition-all cursor-pointer active:variant-soft-primary {selected
 		? 'variant-soft-primary'
@@ -44,7 +43,7 @@
 >
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{formattedDate}</td>
-	<td class="text-left select-text">$ {total}</td>
+	<td class="text-left select-text">{formattedPrice}</td>
 	<td class="text-left select-text">{quantity}</td>
 	<td class="text-left select-text">{discount}%</td>
 	<td class="text-left select-text">{paymentType}</td>

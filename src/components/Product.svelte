@@ -24,6 +24,8 @@
 	$: isNew = product?.producto_nuevo;
 	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
 
+	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
 	let dropdown: any = {
 		placement: 'bottom-end',
 		event: 'focus-click'
@@ -77,7 +79,7 @@
 				<p class="unstyled text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
 			<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
-			<p class="unstyled pt-2 text-xl font-bold">$ {price}</p>
+			<p class="unstyled pt-2 text-xl font-bold">{formattedPrice}</p>
 		</div>
 		<button
 			class="btn {onCart

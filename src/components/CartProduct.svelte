@@ -10,12 +10,15 @@
 	export let price: number;
 	export let stock: number;
 	export let quantity: number;
+
+	$: price *= quantity;
+	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 </script>
 
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
 	<div class="flex justify-between">
 		<p class="line-clamp-2 w-32">{name}</p>
-		<p>$ {quantity * price}</p>
+		<p class="mr-1 flex-shrink-0">{formattedPrice}</p>
 	</div>
 	<div class="flex justify-end space-x-2">
 		<input

@@ -192,6 +192,8 @@
 	let cartTotal: number = 0;
 	let cartQuantity: number = 0;
 
+	$: formattedPrice = cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
 	const fetchTotal = async () => {
 		const { data: total }: any = await supabase.rpc('get_total').single();
 		cartTotal = total.total;
@@ -347,7 +349,7 @@
 	<div class="mt-auto space-y-4">
 		<div class="flex justify-between text-lg">
 			<p class="unstyled font-bold">Total ({cartQuantity})</p>
-			<p class="unstyled">$ {cartTotal}</p>
+			<p class="unstyled">{formattedPrice}</p>
 		</div>
 		<div class="flex flex-col space-y-4">
 			<button class="btn variant-filled-success font-bold" on:click={toggleSale}>
