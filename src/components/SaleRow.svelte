@@ -19,6 +19,7 @@
 	$: originalDate = new Date(String(sale?.venta_fecha));
 	$: formattedDate = originalDate.toLocaleDateString('en-GB');
 	$: total = sale?.venta_monto;
+	$: quantity = sale?.venta_cantidad;
 	$: discount = sale?.venta_descuento;
 	$: paymentType = sale?.venta_tarjeta ? 'Tarjeta' : 'Efectivo';
 	$: client = sale?.cliente_id;
@@ -44,6 +45,7 @@
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{formattedDate}</td>
 	<td class="text-left select-text">$ {total}</td>
+	<td class="text-left select-text">{quantity}</td>
 	<td class="text-left select-text">{discount}%</td>
 	<td class="text-left select-text">{paymentType}</td>
 	<td class="text-left select-text">{client}</td>

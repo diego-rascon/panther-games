@@ -124,6 +124,7 @@
 							<th class="p-4 text-left">Folio</th>
 							<th class="text-left">Fecha</th>
 							<th class="text-left">Monto</th>
+							<th class="text-left">Cantidad</th>
 							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
 							<th class="text-left">Cliente</th>
@@ -157,6 +158,7 @@
 							<th class="p-4 text-left">Folio</th>
 							<th class="text-left">Fecha</th>
 							<th class="text-left">Monto</th>
+							<th class="text-left">Cantidad</th>
 							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
 							<th class="text-left">Cliente</th>
