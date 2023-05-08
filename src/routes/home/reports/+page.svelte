@@ -4,16 +4,83 @@
 	import { Datepicker } from 'svelte-calendar';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import { supabase } from '$lib/db';
 
 	export let data;
-	let { games, consolas, ventas } = data;
-	$: ({ games, consolas, ventas } = data);
+	let { ventas } = data;
+	$: ({ ventas } = data);
 
 	let dateBeginMoment: string;
 	let dateFinalMoment: string;
 	let dateFinal = new Date();
 	let dateBegin = new Date(dateFinal.getFullYear(), dateFinal.getMonth(), 1);
 	let reporteGenerado: boolean = false;
+
+	let gameReport: {
+		producto_id: number;
+		producto_nombre: string;
+		producto_stock: number;
+		producto_precio: number;
+		cantidad_vendida: number;
+		plataforma_id: number;
+		total_producto: number;
+	}[] = [];
+
+	let consoleReport: {
+		producto_id: number;
+		producto_nombre: string;
+		producto_stock: number;
+		producto_precio: number;
+		cantidad_vendida: number;
+		total_producto: number;
+	}[] = [];
+
+	const dateFinalConst = dateFinal;
+
+	const getGamesReport = async (tempDateBegin: string, tempDateFinal: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportgamesdate', {
+				start_date: tempDateBegin,
+				end_date: tempDateFinal
+			});
+			console.log(data);
+			gameReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getGamesReportToday = async () => {
+		try {
+			const { data } = await supabase.rpc('generalreportgamesdate');
+			gameReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getConsolesReport = async (tempDateBegin: string, tempDateFinal: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportconsolasdate', {
+				start_date: tempDateBegin,
+				end_date: tempDateFinal
+			});
+			console.log(data);
+			consoleReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getConsolesReportToday = async () => {
+		try {
+			const { data } = await supabase.rpc('generalreportconsolasdate');
+			console.log(data);
+			consoleReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const calendarTheme = {
 		calendar: {
@@ -44,8 +111,17 @@
 
 	const getReport = () => {
 		reporteGenerado = true;
-		dateBeginMoment = moment(dateBegin).format('DD/MM/YYYY');
-		dateFinalMoment = moment(dateFinal).format('DD/MM/YYYY');
+		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
+		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
+		console.log(dateBeginMoment);
+		console.log(dateFinalMoment);
+		if (dateBeginMoment === dateFinalMoment) {
+			getGamesReportToday();
+			getConsolesReportToday();
+		} else {
+			getGamesReport(dateBeginMoment, dateFinalMoment);
+			getConsolesReport(dateBeginMoment, dateFinalMoment);
+		}
 	};
 
 	const getExcel = () => {
@@ -161,17 +237,15 @@
 							<th class="p-2 text-left">Total</th>
 						</tr>
 					</thead>
-					<tbody>
-						{#each games as game}
-							<tr class={getColor(game.plataforma_id)}>
-								<td class="p-2 text-left">{game.producto_nombre}</td>
-								<td class="p-2 text-left">{game.producto_stock}</td>
-								<td class="p-2 text-left">{game.producto_precio}</td>
-								<td class="p-2 text-left">{game.cantidad_vendida}</td>
-								<td class="p-2 text-left">{game.total_producto}</td>
-							</tr>
-						{/each}
-					</tbody>
+					{#each gameReport as game}
+						<tr class={getColor(game.plataforma_id)}>
+							<td class="p-2 text-left">{game.producto_nombre}</td>
+							<td class="p-2 text-left">{game.producto_stock}</td>
+							<td class="p-2 text-left">{game.producto_precio}</td>
+							<td class="p-2 text-left">{game.cantidad_vendida}</td>
+							<td class="p-2 text-left">{game.total_producto}</td>
+						</tr>
+					{/each}
 				</table>
 			</div>
 		</div>
@@ -191,8 +265,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each consolas as consola}
-							<tr class={getColor(consola.plataforma_id)}>
+						{#each consoleReport as consola}
+							<tr>
 								<td class="p-2 text-left">{consola.producto_nombre}</td>
 								<td class="p-2 text-left">{consola.producto_stock}</td>
 								<td class="p-2 text-left">{consola.producto_precio}</td>
@@ -211,12 +285,12 @@
 		<div class="grid grid-cols-2 gap-4 w-full">
 			<div class="space-y-2">
 				<SectionSubtitle text="Fecha Inicial" />
-				<input type="date" class="input" />
+				<input type="date" class="input" bind:value={dateBegin} />
 				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateBegin} />-->
 			</div>
 			<div class="space-y-2">
 				<SectionSubtitle text="Fecha Final" />
-				<input type="date" class="input" />
+				<input type="date" class="input" bind:value={dateFinal} />
 				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateFinal} />-->
 			</div>
 		</div>
