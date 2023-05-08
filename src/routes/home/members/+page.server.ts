@@ -8,5 +8,16 @@ export const load = async () => {
 		return data ?? [];
 	};
 
-	return { members: fetchMembers() };
+	const fetchClients = async () => {
+		const { data } = await supabase
+			.rpc('get_clients')
+			.eq('cliente_miembro', false)
+			.order('cliente_nombre', { ascending: true });
+		return data ?? [];
+	};
+
+	return {
+		members: fetchMembers(),
+		clients: fetchClients()
+	};
 };
