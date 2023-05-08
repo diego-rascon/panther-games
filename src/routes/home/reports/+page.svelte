@@ -1,20 +1,53 @@
-<!-- import DatePicker y declaración de fecha-->
 <script lang="ts">
 	import * as XLSX from 'xlsx';
 	import moment from 'moment';
-	import { DateInput } from 'date-picker-svelte';
+	import { Datepicker } from 'svelte-calendar';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+
+	export let data;
+	let { games, consolas, ventas } = data;
+	$: ({ games, consolas, ventas } = data);
+
 	let dateBeginMoment: string;
 	let dateFinalMoment: string;
 	let dateFinal = new Date();
 	let dateBegin = new Date(dateFinal.getFullYear(), dateFinal.getMonth(), 1);
 	let reporteGenerado: boolean = false;
+
+	const calendarTheme = {
+		calendar: {
+			width: '300px',
+			maxWidth: '100vw',
+			legend: {
+				height: '32px'
+			},
+			shadow: '0px 10px 26px rgba(0, 0, 0, 0.25)',
+			colors: {
+				text: {
+					primary: 'white',
+					highlight: 'white'
+				},
+				background: {
+					primary: '#1c1917',
+					highlight: '#8f1246',
+					hover: '#32302b'
+				},
+				border: '#291D24'
+			},
+			font: {
+				regular: '0.875em',
+				large: '0.875em'
+			}
+		}
+	};
+
 	const getReport = () => {
 		reporteGenerado = true;
 		dateBeginMoment = moment(dateBegin).format('DD/MM/YYYY');
 		dateFinalMoment = moment(dateFinal).format('DD/MM/YYYY');
 	};
+
 	const getExcel = () => {
 		try {
 			const tables = document.querySelectorAll('table');
@@ -29,9 +62,7 @@
 			console.error(error);
 		}
 	};
-	export let data;
-	let { games, consolas, ventas } = data;
-	$: ({ games, consolas, ventas } = data);
+
 	const getColor = (plataforma: number): string => {
 		switch (plataforma) {
 			case 1:
@@ -182,12 +213,13 @@
 			<!-- Izquierda -->
 			<div class="m-2">
 				<SectionSubtitle text="Fecha inicial" />
-				<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateBegin} />
+				<Datepicker format="YYYY/MM/DD" theme={calendarTheme} />
+				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateBegin} />-->
 			</div>
 			<!-- Derecha -->
 			<div class="m-2">
 				<SectionSubtitle text="Fecha final" />
-				<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateFinal} />
+				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateFinal} />-->
 			</div>
 		</div>
 		<div>
