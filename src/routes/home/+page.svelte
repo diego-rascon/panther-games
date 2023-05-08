@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
 	import { productsStore, cartStore } from '$lib/stores';
-	import type { ToastSettings } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem, type ToastSettings } from '@skeletonlabs/skeleton';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
@@ -177,6 +177,7 @@
 		toastStore.trigger(productDeleted);
 	};
 
+	let rent = false;
 	let doingSale = false;
 
 	const toggleSale = () => {
@@ -405,16 +406,18 @@
 		{/each}
 	</div>
 	<!--Buttons-->
-	<div class="mt-auto space-y-4">
+	<div class="flex flex-col mt-auto space-y-4">
 		<div class="flex justify-between text-lg">
 			<p class="unstyled font-bold">Total ({cartQuantity})</p>
 			<p class="unstyled">{formattedPrice}</p>
 		</div>
-		<div class="flex flex-col space-y-4">
-			<button class="btn variant-filled-success font-bold" on:click={toggleSale}>
-				Realizar venta
-			</button>
-		</div>
+		<RadioGroup class="justify-center" active="variant-filled-success">
+			<RadioItem bind:group={rent} name="justify" value={false}>Venta</RadioItem>
+			<RadioItem bind:group={rent} name="justify" value={true}>Renta</RadioItem>
+		</RadioGroup>
+		<button class="btn variant-filled-success font-bold" on:click={toggleSale}>
+			Realizar {rent ? 'renta' : 'venta'}
+		</button>
 	</div>
 </div>
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
