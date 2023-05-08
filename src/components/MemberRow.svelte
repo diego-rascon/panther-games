@@ -12,7 +12,7 @@
 
 	export let editMember: (memberId: number) => void;
 	export let deleteMember: (memberId: number) => void = () => {};
-	export let activateClient: (memberId: number) => void = () => {};
+	export let activateMember: (memberId: number) => void = () => {};
 	export let id: number;
 
 	$: member = $membersStore.find((memberEntry: any) => memberEntry.miembro_id === id);
@@ -77,7 +77,7 @@
 					text="Activar"
 					icon={userCheckOutline}
 					on:click={() => {
-						activateClient(id);
+						activateMember(id);
 					}}
 				/>
 			{/if}
