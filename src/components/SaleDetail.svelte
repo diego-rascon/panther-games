@@ -25,7 +25,7 @@
 	<SectionTitle centered={true} text="Detalles de Venta" />
 	<div class="pt-4 flex flex-col space-y-4 overflow-y-auto">
 		{#await saleDetailsPromise}
-			<p>Loading...</p>
+			<div class="placeholder animate-pulse p-11" />
 		{:then saleDetails}
 			{#each saleDetails as saleProduct}
 				<div class="flex justify-between bg-stone-900 rounded-xl p-4 items-top">
@@ -34,14 +34,16 @@
 							<strong>{saleProduct.producto_nombre}</strong>
 							({saleProduct.venta_detalle_cantidad})
 						</p>
-						{#if saleProduct.categoria_nombre === 'Juego'}
-							<p class="unstyled px-2 p-1 variant-soft-success rounded-full text-xs">
-								{saleProduct.plataforma_nombre}
+						<div class="flex flex-row space-x-2">
+							<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">
+								{saleProduct.categoria_nombre}
 							</p>
-						{/if}
-						<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">
-							{saleProduct.categoria_nombre}
-						</p>
+							{#if saleProduct.categoria_nombre === 'Juego'}
+								<p class="unstyled px-2 p-1 variant-soft-success rounded-full text-xs">
+									{saleProduct.plataforma_nombre}
+								</p>
+							{/if}
+						</div>
 					</div>
 					<p class=" flex-shrink-0">
 						{saleProduct.producto_precio.toLocaleString('en-US', {
