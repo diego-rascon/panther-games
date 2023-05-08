@@ -37,7 +37,7 @@
 		}
 	};
 
-	const addProduct = () => {
+	const addClient = () => {
 		if (validInput()) {
 			confirmHandler();
 		} else {
@@ -56,7 +56,7 @@
 {#if confirmationVisible}
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
-		confirmHandler={addProduct}
+		confirmHandler={addClient}
 		title={editing ? 'Confirmar Edición' : 'Confirmar Registro'}
 		text={editing
 			? '¿Está seguro de que desea editar al cliente?'
@@ -64,11 +64,11 @@
 	/>
 {:else}
 	<div
-		class="flex flex-col p-8 w-full max-w-md space-y-8 bg-stone-950 border border-stone-800 rounded-xl transition-all"
+		class="flex flex-col p-8 w-full max-w-md max-h-[95%] space-y-8 bg-stone-950 border border-stone-800 rounded-xl transition-all overflow-y-auto"
 		in:scale={{ duration: 150 }}
 	>
 		<SectionTitle centered={true} text={editing ? 'Editar Cliente' : 'Registrar Cliente'} />
-		<div class="space-y-4">
+		<div class="flex flex-col space-y-4">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
 				<input bind:value={name} type="text" class="input" placeholder="Nombre" />
