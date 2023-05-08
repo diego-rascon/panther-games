@@ -19,8 +19,8 @@
 	$: name = client?.cliente_nombre;
 	$: email = client?.cliente_email;
 	$: phone = client?.cliente_telefono;
-	$: member = client?.cliente_miembro;
 	$: active = client?.cliente_activo;
+	$: member = client?.cliente_miembro;
 
 	let selected = false;
 
@@ -40,9 +40,9 @@
 	<td class="text-left select-text">{name}</td>
 	<td class="text-left select-text">{email}</td>
 	<td class="text-left select-text">{phone}</td>
-	<td class="text-right">
+	<td class="text-right text-primary-500">
 		{#if member}
-			<Icon icon={crownMinimalisticBold} color="#e6d92e" />
+			<Icon icon={crownMinimalisticBold} />
 		{/if}
 	</td>
 	<td class="pr-4 text-right">
