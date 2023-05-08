@@ -207,28 +207,21 @@
 	</div>
 {:else}
 	<!-- Panel gris claro -->
-	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-		<!-- División de 2 columnas -->
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
-			<!-- Izquierda -->
-			<div class="m-2">
-				<SectionSubtitle text="Fecha inicial" />
-				<Datepicker format="YYYY/MM/DD" theme={calendarTheme} />
+	<div class="flex flex-col w-full mt-4 p-4 space-y-4 bg-stone-900 rounded-xl items-end">
+		<div class="grid grid-cols-2 gap-4 w-full">
+			<div class="space-y-2">
+				<SectionSubtitle text="Fecha Inicial" />
+				<input type="date" class="input" />
 				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateBegin} />-->
 			</div>
-			<!-- Derecha -->
-			<div class="m-2">
-				<SectionSubtitle text="Fecha final" />
+			<div class="space-y-2">
+				<SectionSubtitle text="Fecha Final" />
+				<input type="date" class="input" />
 				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateFinal} />-->
 			</div>
 		</div>
-		<div>
-			<button
-				on:click={getReport}
-				class="bottom-0 flex m-4 p-4 items-center space-x-2 btn-fill rounded-xl shadow-xl transition-all"
-			>
-				<p class="font-bold">Generar reporte</p>
-			</button>
-		</div>
+		<button on:click={getReport} class="btn variant-filled-primary min-w-max max-w-md"
+			>Generar reporte</button
+		>
 	</div>
 {/if}
