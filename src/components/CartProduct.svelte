@@ -11,8 +11,10 @@
 	export let stock: number;
 	export let quantity: number;
 
-	$: price *= quantity;
-	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+	$: formattedPrice = (price * quantity).toLocaleString('en-US', {
+		style: 'currency',
+		currency: 'USD'
+	});
 </script>
 
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
