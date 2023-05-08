@@ -7,14 +7,15 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
+	import dayjs from 'dayjs';
 
 	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
 	export let toggleSale: (saleId: number) => void;
 	export let id: number;
 
 	$: sale = $salesStore.find((saleEntry: any) => saleEntry.venta_id === id);
-	$: originalDate = new Date(String(sale?.venta_fecha));
-	$: formattedDate = originalDate.toLocaleDateString('en-GB');
+	$: originalDate = dayjs(String(sale?.venta_fecha));
+	$: formattedDate = originalDate.format('DD/MM/YYYY');
 	$: total = Number(sale?.venta_monto);
 	$: quantity = Number(sale?.venta_cantidad);
 	$: discount = sale?.venta_descuento;
