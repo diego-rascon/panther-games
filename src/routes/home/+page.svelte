@@ -32,6 +32,20 @@
 	$: filteredActiveProducts = activeProducts;
 	$: filteredDeactivatedProducts = deactivatedProducts;
 
+	enum Filter {
+		None,
+		Game = 'Juegos',
+		Console = 'Consola',
+		Accesory = 'Accesorio',
+		Other = 'Otro'
+	}
+
+	let currentFilter = Filter.None;
+
+	const filter = () => {
+		console.log(currentFilter.toString());
+	};
+
 	let categoryId: number;
 	let platformId: number;
 	let name: string;
@@ -310,7 +324,7 @@
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
-			<Category text={category.categoria_nombre} />
+			<Category on:click={filter} text={category.categoria_nombre} />
 		{/each}
 	</div>
 	{#if filteredActiveProducts.length === 0 && filteredDeactivatedProducts.length === 0}
