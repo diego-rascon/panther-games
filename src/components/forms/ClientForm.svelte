@@ -7,6 +7,7 @@
 	import userOutline from '@iconify/icons-solar/user-outline';
 	import letterOutline from '@iconify/icons-solar/letter-outline';
 	import phoneCallingRoundedOutline from '@iconify/icons-solar/phone-calling-rounded-outline';
+	
 	export let editing = false;
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;
