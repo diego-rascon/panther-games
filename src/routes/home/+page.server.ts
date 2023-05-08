@@ -8,12 +8,14 @@ export const load = async () => {
 			.order('categoria_id', { ascending: true });
 		return data ?? [];
 	};
+
 	const fetchProducts = async () => {
 		const { data } = await supabase
 			.rpc('products_platforms')
 			.order('producto_id', { ascending: false });
 		return data ?? [];
 	};
+
 	const fetchPlatforms = async () => {
 		const { data } = await supabase
 			.from('plataforma')
@@ -21,10 +23,12 @@ export const load = async () => {
 			.order('plataforma_id', { ascending: true });
 		return data ?? [];
 	};
+
 	const fetchCart = async () => {
 		const { data } = await supabase.rpc('products_cart');
 		return data ?? [];
 	};
+
 	const fetchClients = async () => {
 		const { data } = await supabase
 			.from('cliente')
@@ -32,6 +36,7 @@ export const load = async () => {
 			.order('cliente_id', { ascending: false });
 		return data ?? [];
 	};
+
 	return {
 		categories: fetchCategories(),
 		products: fetchProducts(),
