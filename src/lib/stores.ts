@@ -4,3 +4,4 @@ export const productsStore = writable<{ [key: string]: number | string | boolean
 export const cartStore = writable<{ [key: string]: number | string | boolean }[]>([]);
 export const salesStore = writable<{ [key: string]: number | string | boolean }[]>([]);
 export const clientsStore = writable<{ [key: string]: number | string | boolean }[]>([]);
+export const membersStore = writable<{ [key: string]: number | string | boolean }[]>([]);
