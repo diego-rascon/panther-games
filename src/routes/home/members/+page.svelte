@@ -3,7 +3,6 @@
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import AddButton from '../../../components/AddButton.svelte';
-	import ClientForm from '../../../components/forms/ClientForm.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Search from '../../../components/inputs/Search.svelte';
@@ -14,10 +13,11 @@
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 	import MemberRow from '../../../components/MemberRow.svelte';
 	import dayjs from 'dayjs';
+	import MemberForm from '../../../components/forms/MemberForm.svelte';
 
 	export let data;
-	let { members } = data;
-	$: ({ members } = data);
+	let { members, clients } = data;
+	$: ({ members, clients } = data);
 
 	$: membersStore.set(members);
 	$: activeMembers = members.filter((member: any) => member.miembro_activo);
@@ -25,11 +25,10 @@
 	$: filteredActiveMembers = activeMembers;
 	$: filteredDeactivatedMembers = deactivatedMembers;
 
-	console.log(members);
-
 	let name: string;
 	let email: string;
 	let phone: string;
+	let startDate: string;
 
 	const clearForm = () => {
 		name = '';
@@ -268,7 +267,7 @@
 									tempMemberId = memberId;
 									bindValues();
 								}}
-								activateClient={(memberId) => {
+								activateMember={(memberId) => {
 									toggleActivateConfirmation();
 									tempMemberId = memberId;
 								}}
@@ -286,30 +285,34 @@
 </div>
 {#if addingMember}
 	<DarkenSreen>
-		<ClientForm
+		<MemberForm
 			cancelHandler={() => {
 				toggleAddingMember();
 				clearForm();
 			}}
 			confirmHandler={addMember}
+			{clients}
 			bind:name
 			bind:email
 			bind:phone
+			bind:startDate
 		/>
 	</DarkenSreen>
 {/if}
 {#if editingMember}
 	<DarkenSreen>
-		<ClientForm
+		<MemberForm
 			editing={true}
 			cancelHandler={() => {
 				toggleEditingMember();
 				clearForm();
 			}}
 			confirmHandler={editMember}
+			{clients}
 			bind:name
 			bind:email
 			bind:phone
+			bind:startDate
 		/>
 	</DarkenSreen>
 {/if}
