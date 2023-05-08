@@ -27,7 +27,7 @@
 	let errorMessage: string;
 
 	const validInput = (): boolean => {
-		if (!payment || payment < cartTotal) {
+		if (cashPayment && !payment || payment < cartTotal) {
 			errorMessage = 'La cantidad de efectivo introducia no es válida';
 			return false;
 		} else {
@@ -37,7 +37,7 @@
 
 	const registerSale = () => {
 		if (validInput()) {
-			confirmHandler(genericClient ? 0 : clientId, cashPayment);
+			confirmHandler(genericClient ? 1 : clientId, cashPayment);
 		} else {
 			inputError = true;
 			toggleConfirmation();
