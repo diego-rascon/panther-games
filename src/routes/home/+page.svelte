@@ -20,6 +20,7 @@
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';
 	import NoResultsMessage from '../../components/utils/NoResultsMessage.svelte';
 	import { nfc, nfd } from 'unorm';
+	import RentForm from '../../components/forms/RentForm.svelte';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
@@ -209,10 +210,19 @@
 		emptyCart();
 	};
 
+	let doingRent = false;
 	let rent = false;
 	$: validRent = validRentProducts && validRentQuantity;
 	$: validRentProducts = rent && cart.every((cartProduct: any) => cartProduct.plataforma_id === 3);
 	$: validRentQuantity = cart.length <= 3;
+
+	const toggleRent = () => {
+		doingRent = !doingRent;
+	};
+
+	const registerRent = () => {
+		console.log('Register Rent');
+	};
 
 	let cartVisible = cart.length > 0;
 	$: cartVisible = cart.length > 0;
@@ -486,7 +496,7 @@
 					? 'variant-filled-success'
 					: 'text-stone-400 bg-surface-700 border-surface-400'}"
 				on:click={() => {
-					if (validRent) toggleSale();
+					if (validRent) toggleRent();
 				}}
 			>
 				Realizar renta
@@ -570,5 +580,10 @@
 			{cartTotal}
 			{cartQuantity}
 		/>
+	</DarkenSreen>
+{/if}
+{#if doingRent}
+	<DarkenSreen>
+		<RentForm cancelHandler={toggleRent} confirmHandler={registerRent} {clients} {cartQuantity} />
 	</DarkenSreen>
 {/if}
