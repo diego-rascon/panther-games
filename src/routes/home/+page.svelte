@@ -214,6 +214,7 @@
 	$: validRentProducts = rent && cart.every((cartProduct: any) => cartProduct.plataforma_id === 3);
 	$: validRentQuantity = cart.length <= 3;
 
+	let cartVisible = cart.length > 0;
 	$: cartVisible = cart.length > 0;
 
 	let cartTotal: number = 0;
@@ -445,10 +446,12 @@
 	</div>
 	<!--Buttons-->
 	<div class="flex flex-col mt-auto space-y-4">
-		<div class="flex justify-between text-lg">
-			<p class="unstyled font-bold">Total ({cartQuantity})</p>
-			<p class="unstyled">{formattedPrice}</p>
-		</div>
+		{#if !rent}
+			<div class="flex justify-between text-lg">
+				<p class="unstyled font-bold">Total ({cartQuantity})</p>
+				<p class="unstyled">{formattedPrice}</p>
+			</div>
+		{/if}
 		{#if rent}
 			{#if !validRentProducts}
 				<p class="unstyled text-sm text-warning-700">
