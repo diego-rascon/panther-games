@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import type { ToastSettings } from '@skeletonlabs/skeleton';
 
 	export let removeHandler: (cartId: number, productId: number) => void;
 	export let quantityHandler: (cartId: number, quantity: number) => void;
