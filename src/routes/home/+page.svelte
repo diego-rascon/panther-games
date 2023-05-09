@@ -191,7 +191,6 @@
 		toastStore.trigger(productDeleted);
 	};
 
-	let rent = false;
 	let doingSale = false;
 
 	const toggleSale = () => {
@@ -209,6 +208,11 @@
 		else toastStore.trigger(saleAdded);
 		emptyCart();
 	};
+
+	let rent = false;
+	$: validRent = validRentProducts && validRentQuantity;
+	$: validRentProducts = rent && cart.every((cartProduct: any) => cartProduct.plataforma_id === 3);
+	$: validRentQuantity = cart.length <= 3;
 
 	$: cartVisible = cart.length > 0;
 
@@ -244,6 +248,7 @@
 	};
 
 	const emptyCart = async () => {
+		rent = false;
 		await supabase.from('carrito').delete().neq('carrito_id', 0);
 		cart = [];
 		fetchTotal();
@@ -316,6 +321,16 @@
 
 	const saleAdded: ToastSettings = {
 		message: 'Una nueva venta fue registrada exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const saleMode: ToastSettings = {
+		message: 'Ahora se está registrando una venta.',
+		background: 'variant-filled-primary'
+	};
+
+	const rentMode: ToastSettings = {
+		message: 'Ahora se está registrando una renta.',
 		background: 'variant-filled-primary'
 	};
 </script>
@@ -413,6 +428,7 @@
 				<CartProduct
 					removeHandler={removeFromCart}
 					quantityHandler={updateQuantity}
+					bind:rent
 					cartId={cartProduct.carrito_id}
 					productId={cartProduct.producto_id}
 					categoryId={cartProduct.categoria_id}
@@ -433,13 +449,50 @@
 			<p class="unstyled font-bold">Total ({cartQuantity})</p>
 			<p class="unstyled">{formattedPrice}</p>
 		</div>
+		{#if rent}
+			{#if !validRentProducts}
+				<p class="unstyled text-sm text-warning-700">
+					Solo juegos para Switch pueden participar en una renta.
+				</p>
+			{/if}
+			{#if !validRentQuantity}
+				<p class="unstyled text-sm text-warning-700">Solo se puede rentar un máximo de 3 juegos.</p>
+			{/if}
+		{/if}
 		<RadioGroup class="justify-center" active="variant-filled-success">
-			<RadioItem bind:group={rent} name="justify" value={false}>Venta</RadioItem>
-			<RadioItem bind:group={rent} name="justify" value={true}>Renta</RadioItem>
+			<RadioItem
+				bind:group={rent}
+				name="justify"
+				value={false}
+				on:click={() => {
+					if (rent) toastStore.trigger(saleMode);
+				}}>Venta</RadioItem
+			>
+			<RadioItem
+				bind:group={rent}
+				name="justify"
+				value={true}
+				on:click={() => {
+					if (!rent) toastStore.trigger(rentMode);
+				}}>Renta</RadioItem
+			>
 		</RadioGroup>
-		<button class="btn variant-filled-success font-bold" on:click={toggleSale}>
-			Realizar {rent ? 'renta' : 'venta'}
-		</button>
+		{#if rent}
+			<button
+				class="btn font-bold {validRent
+					? 'variant-filled-success'
+					: 'text-stone-400 bg-surface-700 border-surface-400'}"
+				on:click={() => {
+					if (validRent) toggleSale();
+				}}
+			>
+				Realizar renta
+			</button>
+		{:else}
+			<button class="btn font-bold variant-filled-success" on:click={toggleSale}>
+				Realizar venta
+			</button>
+		{/if}
 	</div>
 </div>
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
