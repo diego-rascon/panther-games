@@ -37,7 +37,7 @@
 		<div class="flex flex-col items-start space-y-2">
 			<p class="unstyled line-clamp-4 text-xl font-bold">{name}</p>
 			{#if !isNew}
-				<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">Usado</p>
+				<p class="unstyled px-2 p-1 variant-soft-warning rounded-full text-xs">Usado</p>
 			{/if}
 		</div>
 		<button
@@ -83,7 +83,7 @@
 		</div>
 		<button
 			class="btn {onCart
-				? ' text-stone-400 bg-surface-700 border-surface-400'
+				? 'text-stone-400 bg-surface-700 border-surface-400'
 				: 'variant-ringed-primary font-bold'}"
 			on:click={() => {
 				if (!onCart) addToCart(id);
