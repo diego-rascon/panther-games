@@ -87,6 +87,12 @@
 			.single();
 		if (product && categoryId === 1) {
 			addProductPlatform(product.producto_id);
+			const { data } = await supabase
+				.from('plataforma')
+				.select()
+				.eq('plataforma_id', platformId)
+				.single();
+			if (data) product.plataforma_nombre = data.plataforma_nombre;
 			products = [product, ...products];
 			toastStore.trigger(productAdded);
 		}
