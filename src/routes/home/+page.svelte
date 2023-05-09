@@ -84,7 +84,7 @@
 			})
 			.select()
 			.single();
-		if (product) {
+		if (product && categoryId === 1) {
 			addProductPlatform(product.producto_id);
 			products = [product, ...products];
 			toastStore.trigger(productAdded);
@@ -408,17 +408,21 @@
 	<div
 		class="my-4 grid grid-cols-1 gap-4 overflow-y-auto scrollbar-thin scrollbar-thumb-stone-700 scrollbar-thumb-rounded-full transition-all"
 	>
-		{#each cart as product}
+		{#each cart as cartProduct}
 			<div transition:fade={{ duration: 150 }}>
 				<CartProduct
 					removeHandler={removeFromCart}
 					quantityHandler={updateQuantity}
-					cartId={product.carrito_id}
-					productId={product.producto_id}
-					name={product.producto_nombre}
-					price={product.producto_precio}
-					stock={product.producto_stock}
-					quantity={product.producto_cantidad}
+					cartId={cartProduct.carrito_id}
+					productId={cartProduct.producto_id}
+					categoryId={cartProduct.categoria_id}
+					categoryName={cartProduct.categoria_nombre}
+					platformName={cartProduct.plataforma_nombre}
+					name={cartProduct.producto_nombre}
+					newProduct={cartProduct.producto_nuevo}
+					price={cartProduct.producto_precio}
+					stock={cartProduct.producto_stock}
+					quantity={cartProduct.producto_cantidad}
 				/>
 			</div>
 		{/each}
