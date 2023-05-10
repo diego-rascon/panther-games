@@ -28,7 +28,13 @@
 	let name: string;
 	let email: string;
 	let phone: string;
-	let startDate: string;
+
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = String(today.getMonth() + 1).padStart(2, '0');
+	const day = String(today.getDate()).padStart(2, '0');
+
+	let startDate = `${year}-${month}-${day}`;
 
 	const clearForm = () => {
 		name = '';
@@ -44,24 +50,12 @@
 
 	const addMember = async () => {
 		toggleAddingMember();
-		const { data: client } = await supabase
-			.from('cliente')
-			.insert({
-				cliente_nombre: name,
-				cliente_email: email,
-				cliente_telefono: phone,
-				cliente_miembro: false
-			})
-			.select()
-			.single();
-		if (client) {
-			members = [client, ...members];
-			toastStore.trigger(memberAdded);
-		}
+
 		clearForm();
 	};
 
 	let tempMemberId: number;
+	let tempClientId: number;
 	let editingMember = false;
 
 	const toggleEditingMember = () => {
@@ -69,7 +63,7 @@
 	};
 
 	const bindValues = () => {
-		const editedMember = members.find((member: any) => member.miembro_id === tempMemberId);
+		const editedMember = members.find((member: any) => member.cliente_id === tempClientId);
 		name = editedMember?.cliente_nombre;
 		email = editedMember?.cliente_email;
 		phone = editedMember?.cliente_telefono;
@@ -84,9 +78,9 @@
 				cliente_email: email,
 				cliente_telefono: phone
 			})
-			.eq('cliente_id', tempMemberId);
+			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const editedClient = members.find((member: any) => member.miembro_id === tempMemberId);
+		const editedClient = members.find((member: any) => member.cliente_id === tempClientId);
 		if (editedClient) {
 			editedClient.cliente_nombre = name;
 			editedClient.cliente_email = email;
@@ -105,12 +99,12 @@
 	const deleteMember = async () => {
 		toggleDeleteConfirmation();
 		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: false })
-			.eq('cliente_id', tempMemberId);
+			.from('miembro')
+			.update({ miembro_activo: false })
+			.eq('miembro_id', tempMemberId);
 		if (error) console.log(error.message);
-		const removedClient = members.find((client: any) => client.cliente_id === tempMemberId);
-		if (removedClient) removedClient.cliente_activo = false;
+		const removedMember = members.find((member: any) => member.miembro_id === tempMemberId);
+		if (removedMember) removedMember.miembro_activo = false;
 		members = members;
 		toastStore.trigger(memberDeleted);
 	};
@@ -124,12 +118,12 @@
 	const activateMember = async () => {
 		toggleActivateConfirmation();
 		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: true })
-			.eq('cliente_id', tempMemberId);
+			.from('miembro')
+			.update({ miembro_activo: true })
+			.eq('miembro_id', tempMemberId);
 		if (error) console.log(error.message);
-		const activatedClient = members.find((client: any) => client.cliente_id === tempMemberId);
-		if (activatedClient) activatedClient.cliente_activo = true;
+		const activatedMemer = members.find((member: any) => member.miembro_id === tempMemberId);
+		if (activatedMemer) activatedMemer.miembro_activo = true;
 		members = members;
 		toastStore.trigger(memberActivated);
 	};
@@ -228,16 +222,17 @@
 					<tbody>
 						{#each filteredActiveMembers as activeMember}
 							<MemberRow
-								editMember={(memberID) => {
+								editMember={(clientId) => {
 									toggleEditingMember();
-									tempMemberId = memberID;
+									tempClientId = clientId;
 									bindValues();
 								}}
-								deleteMember={(memberID) => {
+								toggleMember={(memberID) => {
 									toggleDeleteConfirmation();
 									tempMemberId = memberID;
 								}}
-								id={activeMember.miembro_id}
+								memberId={activeMember.miembro_id}
+								clientId={activeMember.cliente_id}
 							/>
 						{/each}
 					</tbody>
@@ -260,18 +255,19 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredDeactivatedMembers as deactivadedClient}
+						{#each filteredDeactivatedMembers as deactivadedMember}
 							<MemberRow
-								editMember={(memberId) => {
+								editMember={(clientId) => {
 									toggleEditingMember();
-									tempMemberId = memberId;
+									tempClientId = clientId;
 									bindValues();
 								}}
-								activateMember={(memberId) => {
+								toggleMember={(memberId) => {
 									toggleActivateConfirmation();
 									tempMemberId = memberId;
 								}}
-								id={deactivadedClient.miembro_id}
+								memberId={deactivadedMember.miembro_id}
+								clientId={deactivadedMember.cliente_id}
 							/>
 						{/each}
 					</tbody>
