@@ -10,32 +10,57 @@
 	import handMoneyOutline from '@iconify/icons-solar/hand-money-outline';
 	import { cajaTotalStore } from '$lib/stores';
 	import { supabase } from '$lib/db';
+	import { toastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import moment from 'moment';
 	import CashRow from '../../../components/CashRow.svelte';
+	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
+	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 
 	export let data;
 	let { caja } = data;
 	$: ({ caja } = data);
-
-	enum Action {
-		None,
-		Retirar,
-		Ingresar,
-		Corte,
-		Fondo
-	}
-
-	let currentAction = Action.None;
-
-	const changeAction = (newAction: Action) => {
-		currentAction = currentAction === newAction ? Action.None : newAction;
-	};
 
 	let cajaTotal: number;
 	let cajaInicial: number;
 	let cajaFinal: number;
 	let fechaActual = new Date();
 	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
+
+	enum Action {
+		None,
+		Corte,
+		Fondo,
+		Retirar,
+		Ingresar
+	}
+
+	let currentAction = Action.Corte;
+
+	const changeAction = (newAction: Action) => {
+		currentAction = currentAction === newAction ? Action.None : newAction;
+	};
+
+	let tempCajaId: number;
+	let deleteConfirmation = false;
+
+	const toggleDeleteConfirmation = () => {
+		deleteConfirmation = !deleteConfirmation;
+	};
+
+	const deleteCaja = async () => {
+		toggleDeleteConfirmation();
+		const { data, error } = await supabase
+			.from('caja')
+			.delete()
+			.eq('caja_id', tempCajaId)
+			.select()
+			.single();
+		if (error) console.log(error.message);
+		if (data) caja = caja.filter((cajaEntry: any) => cajaEntry.caja_id != tempCajaId);
+		cajaTotal = caja[0].caja_total;
+		toastStore.trigger(cajaDeleted);
+	};
 
 	const setFondoInicial = async () => {
 		const { data, error } = await supabase
@@ -47,10 +72,11 @@
 			})
 			.select()
 			.single();
-		if (error) {
-			console.log(error.message);
+		if (error) console.log(error.message);
+		if (data) {
+			cajaTotal = data.caja_total;
+			caja = [data, ...caja];
 		}
-		if (data) cajaTotal = data.caja_total;
 	};
 
 	const depositMoney = async (dineroEntrada: number) => {
@@ -81,6 +107,11 @@
 	};
 
 	getCajaTotalFromDate();
+
+	const cajaDeleted: ToastSettings = {
+		message: 'Se eliminó una entrada de la caja.',
+		background: 'variant-filled-primary'
+	};
 </script>
 
 <div class="fixed top-0 inset-x-0 p-4 ml-64 bg-gradient-to-b from-stone-950">
@@ -132,7 +163,10 @@
 				<tbody>
 					{#each caja as cajaEntry}
 						<CashRow
-							deleteCaja={() => {console.log('hehe')}}
+							deleteCaja={(cajaId) => {
+								toggleDeleteConfirmation();
+								tempCajaId = cajaId;
+							}}
 							id={cajaEntry.caja_id}
 							date={cajaEntry.caja_fecha}
 							cajaStart={cajaEntry.caja_fondo_inicio}
@@ -173,3 +207,13 @@
 		</div>
 	{/if}
 </div>
+{#if deleteConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleDeleteConfirmation}
+			confirmHandler={deleteCaja}
+			title="Eliminar de Caja"
+			text="¿Seguro de que desea eliminar el registro de la caja?"
+		/>
+	</DarkenSreen>
+{/if}
