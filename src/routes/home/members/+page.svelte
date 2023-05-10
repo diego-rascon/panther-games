@@ -2,10 +2,10 @@
 	import { supabase } from '$lib/db';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import AddButton from '../../../components/AddButton.svelte';
+	import AddButton from '../../../components/utils/AddButton.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
-	import Search from '../../../components/inputs/Search.svelte';
+	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import { membersStore } from '$lib/stores';

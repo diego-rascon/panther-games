@@ -10,11 +10,11 @@
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
 	import Category from '../../components/Category.svelte';
 	import Product from '../../components/Product.svelte';
-	import CartProduct from '../../components/CartProduct.svelte';
+	import CartProduct from '../../components/data/CartProduct.svelte';
 	import ProductForm from '../../components/forms/ProductForm.svelte';
 	import SaleForm from '../../components/forms/SaleForm.svelte';
-	import AddButton from '../../components/AddButton.svelte';
-	import Search from '../../components/inputs/Search.svelte';
+	import AddButton from '../../components/utils/AddButton.svelte';
+	import Search from '../../components/utils/Search.svelte';
 	import ChangeStock from '../../components/forms/ChangeStock.svelte';
 	import ConfirmDialog from '../../components/modals/ConfirmDialog.svelte';
 	import DarkenSreen from '../../components/modals/DarkenSreen.svelte';

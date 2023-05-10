@@ -6,7 +6,7 @@
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import SaleRow from '../../../components/SaleRow.svelte';
-	import Search from '../../../components/inputs/Search.svelte';
+	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
