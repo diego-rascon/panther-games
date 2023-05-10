@@ -13,6 +13,7 @@
 	let reporteGenerado: boolean = false;
 
 	let gameReport: {
+		venta_id: number;
 		producto_id: number;
 		producto_nombre: string;
 		producto_stock: number;
@@ -23,6 +24,7 @@
 	}[] = [];
 
 	let consoleReport: {
+		venta_id: number;
 		producto_id: number;
 		producto_nombre: string;
 		producto_stock: number;
@@ -121,8 +123,6 @@
 		reporteGenerado = true;
 		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
 		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
-		console.log(dateBeginMoment);
-		console.log(dateFinalMoment);
 		if (dateBeginMoment === dateFinalMoment) {
 			getGamesReportOneDate(dateBeginMoment);
 			getConsolesReportOneDate(dateBeginMoment);
@@ -271,6 +271,7 @@
 				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-800">
 						<tr>
+							<th class="p-2 text-left">Folio</th>
 							<th class="p-2 text-left">Nombre</th>
 							<th class="p-2 text-left">Stock</th>
 							<th class="p-2 text-left">Precio venta</th>
@@ -280,6 +281,7 @@
 					</thead>
 					{#each gameReport as game}
 						<tr class={getColor(game.plataforma_id)}>
+							<td class="p-2 text-left">{game.venta_id}</td>
 							<td class="p-2 text-left">{game.producto_nombre}</td>
 							<td class="p-2 text-left">{game.producto_stock}</td>
 							<td class="p-2 text-left">{game.producto_precio}</td>
@@ -298,6 +300,7 @@
 				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-800">
 						<tr>
+							<th class="p-2 text-left">Folio</th>
 							<th class="p-2 text-left">Nombre</th>
 							<th class="p-2 text-left">Stock</th>
 							<th class="p-2 text-left">Precio venta</th>
@@ -308,6 +311,7 @@
 					<tbody>
 						{#each consoleReport as consola}
 							<tr>
+								<td class="p-2 text-left">{consola.venta_id}</td>
 								<td class="p-2 text-left">{consola.producto_nombre}</td>
 								<td class="p-2 text-left">{consola.producto_stock}</td>
 								<td class="p-2 text-left">{consola.producto_precio}</td>
