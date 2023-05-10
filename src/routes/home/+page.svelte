@@ -21,6 +21,7 @@
 	import NoResultsMessage from '../../components/utils/NoResultsMessage.svelte';
 	import { nfc, nfd } from 'unorm';
 	import RentForm from '../../components/forms/RentForm.svelte';
+	import moment from 'moment';
 
 	export let data;
 	let { categories, products, platforms, cart, clients } = data;
@@ -92,6 +93,39 @@
 				break;
 		}
 	}
+
+	let search = '';
+
+	const searchProduct = (search: string) => {
+		currentFilter = Filter.None;
+		const searchWords = search.split(' ');
+
+		filteredActiveProducts = activeProducts.filter((product: any) =>
+			searchWords.every(
+				(word: string) =>
+					product.producto_id.toString().includes(word) ||
+					product.producto_nombre.toLowerCase().includes(word) ||
+					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					product.producto_stock.toString().includes(word) ||
+					product.producto_minimo.toString().includes(word) ||
+					product.producto_precio.toString().includes(word)
+			)
+		);
+
+		filteredDeactivatedProducts = deactivatedProducts.filter((product: any) =>
+			searchWords.every(
+				(word: string) =>
+					product.producto_id.toString().includes(word) ||
+					product.producto_nombre.toLowerCase().includes(word) ||
+					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					product.producto_stock.toString().includes(word) ||
+					product.producto_minimo.toString().includes(word) ||
+					product.producto_precio.toString().includes(word)
+			)
+		);
+	};
 
 	let categoryId: number;
 	let platformId: number;
@@ -271,15 +305,17 @@
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
 		toggleSale();
-		lowerStock();
-		const { error } = await supabase.rpc('register_sale', {
-			input_cliente_id: clientId,
-			input_descuento: 0,
-			input_venta_tarjeta: !cashPayment
-		});
-		if (error) console.log(error.message);
-		else toastStore.trigger(saleAdded);
-		emptyCart();
+		if (await updateCaja()) {
+			lowerStock();
+			const { error } = await supabase.rpc('register_sale', {
+				input_cliente_id: clientId,
+				input_descuento: 0,
+				input_venta_tarjeta: !cashPayment
+			});
+			if (error) console.log(error.message);
+			else toastStore.trigger(saleAdded);
+			emptyCart();
+		}
 	};
 
 	const lowerStock = () => {
@@ -360,37 +396,35 @@
 		fetchTotal();
 	};
 
-	let search = '';
+	let fechaActual = new Date();
+	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
 
-	const searchProduct = (search: string) => {
-		currentFilter = Filter.None;
-		const searchWords = search.split(' ');
+	const updateCaja = async () => {
+		const { data, error } = await supabase
+			.from('caja')
+			.update({ caja_total: (await getCajaValue()) + cartTotal })
+			.eq('caja_fecha', fechaActualFormat)
+			.select()
+			.single();
+		if (error) {
+			console.error('error updateando caja', error);
+			return false;
+		} else {
+			return true;
+		}
+	};
 
-		filteredActiveProducts = activeProducts.filter((product: any) =>
-			searchWords.every(
-				(word: string) =>
-					product.producto_id.toString().includes(word) ||
-					product.producto_nombre.toLowerCase().includes(word) ||
-					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
-					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
-					product.producto_stock.toString().includes(word) ||
-					product.producto_minimo.toString().includes(word) ||
-					product.producto_precio.toString().includes(word)
-			)
-		);
-
-		filteredDeactivatedProducts = deactivatedProducts.filter((product: any) =>
-			searchWords.every(
-				(word: string) =>
-					product.producto_id.toString().includes(word) ||
-					product.producto_nombre.toLowerCase().includes(word) ||
-					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
-					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
-					product.producto_stock.toString().includes(word) ||
-					product.producto_minimo.toString().includes(word) ||
-					product.producto_precio.toString().includes(word)
-			)
-		);
+	const getCajaValue = async () => {
+		const { data, error } = await supabase
+			.from('caja')
+			.select('caja_total')
+			.eq('caja_fecha', fechaActualFormat)
+			.single();
+		if (error) {
+			toastStore.trigger(cajaNotFound);
+			return;
+		}
+		return data.caja_total;
 	};
 
 	const productAdded: ToastSettings = {
@@ -430,6 +464,11 @@
 
 	const rentMode: ToastSettings = {
 		message: 'Ahora se está registrando una renta.',
+		background: 'variant-filled-primary'
+	};
+
+	const cajaNotFound: ToastSettings = {
+		message: 'No existe ó hay mas de una caja establecida para el dia de hoy',
 		background: 'variant-filled-primary'
 	};
 </script>
