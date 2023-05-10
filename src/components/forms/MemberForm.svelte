@@ -17,13 +17,16 @@
 	export let cancelHandler: () => void;
 	export let confirmHandler: () => void;
 	export let clients: { [x: string]: any }[];
+	export let newClient: boolean;
+	export let clientId: number | undefined;
 	export let name: string;
 	export let email: string;
 	export let phone: string;
+	export let date: string;
 	export let startDate: string;
 
-	let newClient = false;
-	let clientId: number;
+	date = startDate;
+
 	let cashPayment = true;
 	let payment: number;
 	let total = 300;
@@ -37,18 +40,23 @@
 	$: formattedTotal = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
 	const validInput = (): boolean => {
-		if (!name || !namePattern.test(name)) {
-			errorMessage = 'El nombre del miembro no es válido';
+		if ((!editing && cashPayment && !payment) || payment < total) {
+			errorMessage = 'La cantidad de efectivo introducia no es válida';
 			return false;
-		} else if (!email || !emailPattern.test(email)) {
-			errorMessage = 'El correo del miembro no es válido.';
-			return false;
-		} else if (!phone || !phonePattern.test(phone)) {
-			errorMessage = 'El teléfono del miembro no es válido.';
-			return false;
-		} else {
-			return true;
 		}
+		if (newClient) {
+			if (!name || !namePattern.test(name)) {
+				errorMessage = 'El nombre del miembro no es válido';
+				return false;
+			} else if (!email || !emailPattern.test(email)) {
+				errorMessage = 'El correo del miembro no es válido.';
+				return false;
+			} else if (!phone || !phonePattern.test(phone)) {
+				errorMessage = 'El teléfono del miembro no es válido.';
+				return false;
+			}
+		}
+		return true;
 	};
 
 	const addMember = () => {
@@ -118,7 +126,7 @@
 				<SectionSubtitle text="Fecha inicial" />
 				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 					<div class="input-group-shim"><Icon icon={calendarOutline} height={24} /></div>
-					<input bind:value={startDate} type="date" class="input" placeholder="Fecha inicial" />
+					<input bind:value={date} type="date" class="input" placeholder="Fecha inicial" />
 				</div>
 			{/if}
 			{#if !editing}
