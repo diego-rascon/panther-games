@@ -224,7 +224,7 @@
 			</div>
 		{/if}
 		{#if filteredDeactivatedClients.length !== 0}
-			<SectionSubtitle text="Clientes Desactivados" />
+			<SectionSubtitle text="Clientes no Activos" />
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
 				<table class="bg-stone-900">
 					<thead>
