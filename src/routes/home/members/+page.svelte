@@ -25,9 +25,13 @@
 	$: filteredActiveMembers = activeMembers;
 	$: filteredDeactivatedMembers = deactivatedMembers;
 
+	let newClient = true;
+	let clientId: number | undefined;
 	let name: string;
 	let email: string;
 	let phone: string;
+	let date: string;
+	$: endDate = dayjs(date).add(1, 'year').format('YYYY-MM-DD');
 
 	const today = new Date();
 	const year = today.getFullYear();
@@ -37,6 +41,7 @@
 	let startDate = `${year}-${month}-${day}`;
 
 	const clearForm = () => {
+		clientId = undefined;
 		name = '';
 		email = '';
 		phone = '';
@@ -50,8 +55,40 @@
 
 	const addMember = async () => {
 		toggleAddingMember();
-
+		if (newClient) {
+			const { data: client, error: clientError } = await supabase
+				.from('cliente')
+				.insert({ cliente_nombre: name, cliente_email: email, cliente_telefono: phone })
+				.select()
+				.single();
+			if (clientError) console.log(clientError.message);
+			if (client) {
+				const { error: errorMessage } = await supabase.from('miembro').insert({
+					cliente_id: client.cliente_id,
+					miembro_fecha_inicio: date,
+					miembro_fecha_final: endDate
+				});
+				if (errorMessage) console.log(errorMessage.message);
+				const newMember = client;
+				newMember.miembro_activo = true;
+				newMember.miembro_fecha_inicio = date;
+				newMember.miembro_fecha_final = endDate;
+				members = [newMember, ...members];
+			}
+		} else {
+			const { error } = await supabase
+				.from('miembro')
+				.insert({ cliente_id: clientId, miembro_fecha_inicio: date, miembro_fecha_final: endDate });
+			if (error) console.log(error.message);
+			const newMember = clients.find((clientEntry: any) => clientEntry.cliente_id === clientId);
+			newMember.miembro_activo = true;
+			newMember.miembro_fecha_inicio = date;
+			newMember.miembro_fecha_final = endDate;
+			members = [newMember, ...members];
+			clients = clients.filter((clientEntry: any) => clientEntry.cliente_id !== clientId);
+		}
 		clearForm();
+		toastStore.trigger(memberAdded);
 	};
 
 	let tempMemberId: number;
@@ -288,10 +325,13 @@
 			}}
 			confirmHandler={addMember}
 			{clients}
+			bind:newClient
+			bind:clientId
 			bind:name
 			bind:email
 			bind:phone
-			bind:startDate
+			bind:date
+			{startDate}
 		/>
 	</DarkenSreen>
 {/if}
@@ -305,10 +345,13 @@
 			}}
 			confirmHandler={editMember}
 			{clients}
+			bind:newClient
+			bind:clientId
 			bind:name
 			bind:email
 			bind:phone
-			bind:startDate
+			bind:date
+			{startDate}
 		/>
 	</DarkenSreen>
 {/if}
