@@ -11,14 +11,15 @@
 	import dayjs from 'dayjs';
 
 	export let editMember: (clientId: number) => void;
-	export let toggleMember: (clientId: number) => void = () => {};
+	export let toggleMember: (memberId: number) => void = () => {};
+	export let memberId: number;
 	export let clientId: number;
 
 	$: member = $membersStore.find((memberEntry: any) => memberEntry.cliente_id === clientId);
 	$: name = member?.cliente_nombre;
 	$: email = member?.cliente_email;
 	$: phone = member?.cliente_telefono;
-	$: active = member?.cliente_activo;
+	$: active = member?.miembro_activo;
 	$: startDate = dayjs(String(member?.miembro_fecha_inicio));
 	$: endDate = dayjs(String(member?.miembro_fecha_final));
 	$: formattedStartDate = startDate.format('DD/MM/YYYY');
@@ -36,7 +37,7 @@
 <tr
 	class="border-t border-stone-800 transition-all {selected
 		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'}"
+		: 'hover:bg-stone-800'} {!active ? ' text-stone-400' : ''}"
 >
 	<td class="p-4 text-left select-text">{clientId}</td>
 	<td class="text-left select-text">{name}</td>
@@ -46,7 +47,7 @@
 	<td class="text-left select-text">{formattedEndDate}</td>
 	<td class="pr-4 text-right">
 		<button
-			use:popup={{ ...dropdown, target: `member-dropdown-${clientId}` }}
+			use:popup={{ ...dropdown, target: `member-dropdown-${memberId}` }}
 			class="btn p-1 rounded-full {selected
 				? 'variant-soft-primary'
 				: 'hover:variant-filled-surface'}"
@@ -54,7 +55,7 @@
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
 	</td>
-	<div data-popup={`member-dropdown-${clientId}`}>
+	<div data-popup={`member-dropdown-${memberId}`}>
 		<Dropdown>
 			<DropdownItem
 				text="Editar"
@@ -76,7 +77,7 @@
 					text="Activar"
 					icon={userCheckOutline}
 					on:click={() => {
-						toggleMember(clientId);
+						toggleMember(memberId);
 					}}
 				/>
 			{/if}
