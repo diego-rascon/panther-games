@@ -38,6 +38,7 @@
 	);
 	$: filteredActiveProducts = activeProducts;
 	$: filteredDeactivatedProducts = deactivatedProducts;
+	$: filteredSoldOutProducts = soldOutProducts;
 
 	enum Filter {
 		None,
@@ -58,12 +59,16 @@
 			case Filter.None:
 				filteredActiveProducts = activeProducts;
 				filteredDeactivatedProducts = deactivatedProducts;
+				filteredSoldOutProducts = soldOutProducts;
 				break;
 			case Filter.Game:
 				filteredActiveProducts = activeProducts.filter(
 					(product: any) => product.categoria_id === 1
 				);
 				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 1
+				);
+				filteredSoldOutProducts = soldOutProducts.filter(
 					(product: any) => product.categoria_id === 1
 				);
 				break;
@@ -74,6 +79,9 @@
 				filteredDeactivatedProducts = deactivatedProducts.filter(
 					(product: any) => product.categoria_id === 2
 				);
+				filteredSoldOutProducts = soldOutProducts.filter(
+					(product: any) => product.categoria_id === 2
+				);
 				break;
 			case Filter.Accesory:
 				filteredActiveProducts = activeProducts.filter(
@@ -82,12 +90,18 @@
 				filteredDeactivatedProducts = deactivatedProducts.filter(
 					(product: any) => product.categoria_id === 3
 				);
+				filteredSoldOutProducts = soldOutProducts.filter(
+					(product: any) => product.categoria_id === 3
+				);
 				break;
 			case Filter.Other:
 				filteredActiveProducts = activeProducts.filter(
 					(product: any) => product.categoria_id === 4
 				);
 				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 4
+				);
+				filteredSoldOutProducts = soldOutProducts.filter(
 					(product: any) => product.categoria_id === 4
 				);
 				break;
@@ -114,6 +128,19 @@
 		);
 
 		filteredDeactivatedProducts = deactivatedProducts.filter((product: any) =>
+			searchWords.every(
+				(word: string) =>
+					product.producto_id.toString().includes(word) ||
+					product.producto_nombre.toLowerCase().includes(word) ||
+					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					product.producto_stock.toString().includes(word) ||
+					product.producto_minimo.toString().includes(word) ||
+					product.producto_precio.toString().includes(word)
+			)
+		);
+
+		filteredSoldOutProducts = soldOutProducts.filter((product: any) =>
 			searchWords.every(
 				(word: string) =>
 					product.producto_id.toString().includes(word) ||
@@ -501,7 +528,7 @@
 	{#if filteredActiveProducts.length === 0 && filteredDeactivatedProducts.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
-		{#if filteredActiveProducts.length !== 0}
+		{#if filteredActiveProducts.length > 0}
 			<SectionSubtitle text="Inventario" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 				{#each filteredActiveProducts as activeProduct (activeProduct.producto_id)}
@@ -526,10 +553,10 @@
 				{/each}
 			</div>
 		{/if}
-		{#if soldOutProducts}
+		{#if filteredSoldOutProducts.length > 0}
 			<SectionSubtitle text="Inventario Agotado" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-				{#each soldOutProducts as soldOutProduct (soldOutProduct.producto_id)}
+				{#each filteredSoldOutProducts as soldOutProduct (soldOutProduct.producto_id)}
 					<Product
 						{addToCart}
 						editProduct={(productId) => {
@@ -551,7 +578,7 @@
 				{/each}
 			</div>
 		{/if}
-		{#if filteredDeactivatedProducts.length !== 0}
+		{#if filteredDeactivatedProducts.length > 0}
 			<SectionSubtitle text="Inventario no Activo" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 				{#each filteredDeactivatedProducts as deactivatedProduct (deactivatedProduct.producto_id)}
