@@ -119,7 +119,7 @@
 </div>
 <div class="mt-[60px] flex-col space-y-4">
 	{#if filteredActiveSales.length === 0 && filteredDeactivatedSales.length === 0}
-		<NoResultsMessage />
+		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveSales.length !== 0}
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
