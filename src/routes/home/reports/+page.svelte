@@ -6,10 +6,6 @@
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import { supabase } from '$lib/db';
 
-	export let data;
-	let { ventas } = data;
-	$: ({ ventas } = data);
-
 	let dateBeginMoment: string;
 	let dateFinalMoment: string;
 	let dateFinal = new Date();
@@ -22,8 +18,8 @@
 		producto_stock: number;
 		producto_precio: number;
 		cantidad_vendida: number;
-		plataforma_id: number;
 		total_producto: number;
+		plataforma_id: number;
 	}[] = [];
 
 	let consoleReport: {
@@ -35,13 +31,18 @@
 		total_producto: number;
 	}[] = [];
 
+	let saleReport: {
+		cantidad_ventas: number;
+		total_ventas: number;
+	}[] = [];
+
 	const dateFinalConst = dateFinal;
 
-	const getGamesReport = async (tempDateBegin: string, tempDateFinal: string) => {
+	const getGamesReport = async (dateStart: string, dateEnd: string) => {
 		try {
 			const { data } = await supabase.rpc('generalreportgamesdate', {
-				start_date: tempDateBegin,
-				end_date: tempDateFinal
+				start_date: dateStart,
+				end_date: dateEnd
 			});
 			console.log(data);
 			gameReport = data;
@@ -50,20 +51,23 @@
 		}
 	};
 
-	const getGamesReportToday = async () => {
+	const getGamesReportOneDate = async (date: string) => {
 		try {
-			const { data } = await supabase.rpc('generalreportgamesdate');
+			const { data } = await supabase.rpc('generalreportgamesonedate', {
+				start_date: date
+			});
+			console.log(data);
 			gameReport = data;
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	const getConsolesReport = async (tempDateBegin: string, tempDateFinal: string) => {
+	const getConsolesReport = async (dateStart: string, dateEnd: string) => {
 		try {
 			const { data } = await supabase.rpc('generalreportconsolasdate', {
-				start_date: tempDateBegin,
-				end_date: tempDateFinal
+				start_date: dateStart,
+				end_date: dateEnd
 			});
 			console.log(data);
 			consoleReport = data;
@@ -72,13 +76,91 @@
 		}
 	};
 
-	const getConsolesReportToday = async () => {
+	const getConsolesReportOneDate = async (date: string) => {
 		try {
-			const { data } = await supabase.rpc('generalreportconsolasdate');
+			const { data } = await supabase.rpc('generalreportconsolasonedate', {
+				start_date: date
+			});
 			console.log(data);
 			consoleReport = data;
 		} catch (error) {
 			console.error(error);
+		}
+	};
+
+	const getSalesReport = async (dateStart: string, dateEnd: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportventadate', {
+				start_date: dateStart,
+				end_date: dateEnd
+			});
+			console.log(data);
+			saleReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getSalesReportOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportventaonedate', {
+				start_date: date
+			});
+			console.log(data);
+			saleReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const reporteGeneradoHandler = () => {
+		reporteGenerado = !reporteGenerado;
+	};
+
+	const getReport = () => {
+		reporteGenerado = true;
+		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
+		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
+		console.log(dateBeginMoment);
+		console.log(dateFinalMoment);
+		if (dateBeginMoment === dateFinalMoment) {
+			getGamesReportOneDate(dateBeginMoment);
+			getConsolesReportOneDate(dateBeginMoment);
+			getSalesReportOneDate(dateBeginMoment);
+		} else {
+			getGamesReport(dateBeginMoment, dateFinalMoment);
+			getConsolesReport(dateBeginMoment, dateFinalMoment);
+			getSalesReport(dateBeginMoment, dateFinalMoment);
+		}
+	};
+
+	const getExcel = () => {
+		try {
+			const tables = document.querySelectorAll('table');
+			const wb = XLSX.utils.book_new();
+
+			tables.forEach((table, index) => {
+				const ws = XLSX.utils.table_to_sheet(table);
+				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
+			});
+			XLSX.writeFile(wb, 'reporte.xlsx');
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getColor = (plataforma: number): string => {
+		switch (plataforma) {
+			case 1:
+			case 2:
+				return 'bg-blue-950';
+			case 3:
+				return 'bg-red-950';
+			case 4:
+			case 5:
+				return 'bg-green-950';
+			default:
+				return 'bg-stone-900';
 		}
 	};
 
@@ -109,50 +191,6 @@
 		}
 	};
 
-	const getReport = () => {
-		reporteGenerado = true;
-		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
-		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
-		console.log(dateBeginMoment);
-		console.log(dateFinalMoment);
-		if (dateBeginMoment === dateFinalMoment) {
-			getGamesReportToday();
-			getConsolesReportToday();
-		} else {
-			getGamesReport(dateBeginMoment, dateFinalMoment);
-			getConsolesReport(dateBeginMoment, dateFinalMoment);
-		}
-	};
-
-	const getExcel = () => {
-		try {
-			const tables = document.querySelectorAll('table');
-			const wb = XLSX.utils.book_new();
-
-			tables.forEach((table, index) => {
-				const ws = XLSX.utils.table_to_sheet(table);
-				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
-			});
-			XLSX.writeFile(wb, 'export.xlsx');
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	const getColor = (plataforma: number): string => {
-		switch (plataforma) {
-			case 1:
-			case 2:
-				return 'bg-blue-950';
-			case 3:
-				return 'bg-red-950';
-			case 4:
-			case 5:
-				return 'bg-green-950';
-			default:
-				return 'bg-stone-900';
-		}
-	};
 	const tableStyle = {
 		header: {
 			fill: { patternType: 'solid', fgColor: { rgb: 'FF000000' } },
@@ -170,12 +208,15 @@
 	<!-- Panel gris claro -->
 	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 		<div class="m-2">
-			<SectionSubtitle text="Reporte del periodo {dateBeginMoment} - {dateFinalMoment}" />
-			<button
-				on:click={getExcel}
-				class="bottom-0 flex m-4 p-4 items-center space-x-2 btn-fill rounded-lg shadow-lg transition-all"
-			>
+			<SectionSubtitle text="Reporte del periodo {dateBeginMoment} a {dateFinalMoment}" />
+			<button on:click={getExcel} class="btn variant-filled-primary min-w-max max-w-md m-4 p-4">
 				<p class="font-bold">Exportar en .xlsx</p>
+			</button>
+			<button
+				on:click={reporteGeneradoHandler}
+				class="btn variant-ringed-primary min-w-max max-w-md m-4 p-4"
+			>
+				<p class="font-bold">Volver</p>
 			</button>
 		</div>
 		<!-- División de 2 columnas -->
@@ -190,7 +231,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each ventas as venta}
+						{#each saleReport as venta}
 							<tr>
 								<td class="p-2 text-left">{venta.cantidad_ventas}</td>
 								<td class="p-2 text-left">{venta.total_ventas}</td>
@@ -277,6 +318,17 @@
 					</tbody>
 				</table>
 			</div>
+		</div>
+		<div class="text-center">
+			<button on:click={getExcel} class="btn variant-filled-primary min-w-max max-w-md m-4 p-4">
+				<p class="font-bold">Exportar en .xlsx</p>
+			</button>
+			<button
+				on:click={reporteGeneradoHandler}
+				class="btn variant-ringed-primary min-w-max max-w-md m-4 p-4"
+			>
+				<p class="font-bold">Volver</p>
+			</button>
 		</div>
 	</div>
 {:else}
