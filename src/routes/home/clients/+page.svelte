@@ -8,11 +8,11 @@
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
-	import ClientRow from '../../../components/ClientRow.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import { clientsStore } from '$lib/stores';
 	import { nfd, nfc } from 'unorm';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
+	import ClientRow from '../../../components/data/ClientRow.svelte';
 
 	export let data;
 	let { clients } = data;

@@ -5,12 +5,13 @@
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
-	import SaleRow from '../../../components/SaleRow.svelte';
 	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
-	import SaleDetail from '../../../components/SaleDetail.svelte';
+	import SaleForm from '../../../components/forms/SaleForm.svelte';
+	import SaleRow from '../../../components/data/SaleRow.svelte';
+	import SaleDetail from '../../../components/data/SaleDetail.svelte';
 
 	export let data;
 	let { sales } = data;

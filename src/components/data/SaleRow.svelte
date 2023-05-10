@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { salesStore } from '$lib/stores';
 	import { popup } from '@skeletonlabs/skeleton';
-	import Dropdown from './dropdown/Dropdown.svelte';
-	import DropdownItem from './dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 	import dayjs from 'dayjs';
+	import Dropdown from '../dropdown/Dropdown.svelte';
+	import DropdownItem from '../dropdown/DropdownItem.svelte';
 
 	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
 	export let toggleSale: (saleId: number) => void;

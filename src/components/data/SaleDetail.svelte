@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { scale } from 'svelte/transition';
-	import SectionTitle from './titles/SectionTitle.svelte';
 	import { supabase } from '$lib/db';
+	import SectionTitle from '../titles/SectionTitle.svelte';
 
 	export let closeHandler: () => void;
 	export let saleId: number;

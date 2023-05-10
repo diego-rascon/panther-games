@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CashAction from '../../../components/CashAction.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Icon from '@iconify/svelte';
@@ -13,10 +12,11 @@
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import moment from 'moment';
-	import CashRow from '../../../components/CashRow.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import * as XLSX from 'xlsx';
+	import CashAction from '../../../components/data/CashAction.svelte';
+	import CashRow from '../../../components/data/CashRow.svelte';
 
 	export let data;
 	let { caja } = data;

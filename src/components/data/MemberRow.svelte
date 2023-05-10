@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { membersStore } from '$lib/stores';
 	import { popup } from '@skeletonlabs/skeleton';
-	import Dropdown from './dropdown/Dropdown.svelte';
-	import DropdownItem from './dropdown/DropdownItem.svelte';
+	import Dropdown from '../dropdown/Dropdown.svelte';
+	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';

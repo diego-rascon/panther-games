@@ -8,8 +8,8 @@
 	import cartCrossOutline from '@iconify/icons-solar/cart-cross-outline';
 	import SectionTitle from '../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../components/titles/SectionSubtitle.svelte';
-	import Category from '../../components/Category.svelte';
-	import Product from '../../components/Product.svelte';
+	import Category from '../../components/data/Category.svelte';
+	import Product from '../../components/data/Product.svelte';
 	import CartProduct from '../../components/data/CartProduct.svelte';
 	import ProductForm from '../../components/forms/ProductForm.svelte';
 	import SaleForm from '../../components/forms/SaleForm.svelte';

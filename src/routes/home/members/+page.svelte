@@ -11,10 +11,10 @@
 	import { membersStore } from '$lib/stores';
 	import { nfd, nfc } from 'unorm';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
-	import MemberRow from '../../../components/MemberRow.svelte';
 	import dayjs from 'dayjs';
 	import MemberForm from '../../../components/forms/MemberForm.svelte';
 	import RenewMemberForm from '../../../components/forms/RenewMemberForm.svelte';
+	import MemberRow from '../../../components/data/MemberRow.svelte';
 
 	export let data;
 	let { members, clients } = data;
