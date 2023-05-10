@@ -7,12 +7,23 @@
 		"distDir": "../build"
 	},
 	"package": {
-		"productName": "panther-games",
+		"productName": "Panther Games",
 		"version": "0.1.0"
 	},
 	"tauri": {
 		"allowlist": {
-			"all": false
+			"all": false,
+			"fs": {
+				"all": true,
+				"readFile": true,
+				"writeFile": true,
+				"readDir": true,
+				"copyFile": true,
+				"createDir": true,
+				"removeDir": true,
+				"removeFile": true,
+				"renameFile": true
+			}
 		},
 		"bundle": {
 			"active": true,
