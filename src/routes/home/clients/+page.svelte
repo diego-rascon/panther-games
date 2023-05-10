@@ -47,8 +47,7 @@
 			.insert({
 				cliente_nombre: name,
 				cliente_email: email,
-				cliente_telefono: phone,
-				cliente_miembro: false
+				cliente_telefono: phone
 			})
 			.select()
 			.single();
