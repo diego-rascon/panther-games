@@ -11,6 +11,11 @@
 	import { cajaTotalStore } from '$lib/stores';
 	import { supabase } from '$lib/db';
 	import moment from 'moment';
+	import CashRow from '../../../components/CashRow.svelte';
+
+	export let data;
+	let { caja } = data;
+	$: ({ caja } = data);
 
 	enum Action {
 		None,
@@ -33,15 +38,19 @@
 	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
 
 	const setFondoInicial = async () => {
-		const { data, error } = await supabase.from('caja').insert({
-			caja_fondo_inicio: cajaInicial,
-			caja_total: cajaInicial,
-			caja_fecha: fechaActualFormat
-		}).select().single();
+		const { data, error } = await supabase
+			.from('caja')
+			.insert({
+				caja_fondo_inicio: cajaInicial,
+				caja_total: cajaInicial,
+				caja_fecha: fechaActualFormat
+			})
+			.select()
+			.single();
 		if (error) {
 			console.log(error.message);
 		}
-		if(data) cajaTotal = data.caja_total;
+		if (data) cajaTotal = data.caja_total;
 	};
 
 	const depositMoney = async (dineroEntrada: number) => {
@@ -66,8 +75,7 @@
 
 		if (data && data.length > 0) {
 			cajaTotal = data[0].caja_total;
-		}
-		else{
+		} else {
 			cajaTotal = 0;
 		}
 	};
@@ -111,7 +119,29 @@
 	{#if currentAction === Action.None}
 		<p>Por favor seleccione una acción primero</p>
 	{:else if currentAction === Action.Corte}
-		<p>Corte de caja</p>
+		<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+			<table class="bg-stone-900">
+				<thead>
+					<tr class="text-lg">
+						<th class="p-4 text-left">Fecha</th>
+						<th class="text-left">Fondo inicial</th>
+						<th class="text-left">Fonto total</th>
+						<th class="" />
+					</tr>
+				</thead>
+				<tbody>
+					{#each caja as cajaEntry}
+						<CashRow
+							deleteCaja={() => {console.log('hehe')}}
+							id={cajaEntry.caja_id}
+							date={cajaEntry.caja_fecha}
+							cajaStart={cajaEntry.caja_fondo_inicio}
+							cajaTotal={cajaEntry.caja_total}
+						/>
+					{/each}
+				</tbody>
+			</table>
+		</div>
 	{:else if currentAction === Action.Fondo}
 		<div class="flex flex-col space-y-4 items-end">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
