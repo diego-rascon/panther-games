@@ -17,11 +17,11 @@
 </script>
 
 <a
+	data-sveltekit-preload-data="hover"
 	{href}
 	class="flex p-4 justify-start space-x-4 select-none {isActive
 		? 'btn variant-filled-primary font-bold'
 		: 'btn variant-filled-surface text-stone-500'}"
-	data-sveltekit-preload-data="hover"
 >
 	<Icon {icon} height={24} />
 	<p>{text}</p>
