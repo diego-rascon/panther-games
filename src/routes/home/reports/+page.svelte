@@ -143,7 +143,7 @@
 				const ws = XLSX.utils.table_to_sheet(table);
 				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
 			});
-			XLSX.writeFile(wb, 'export.xlsx');
+			XLSX.writeFile(wb, 'reporte.xlsx');
 		} catch (error) {
 			console.error(error);
 		}

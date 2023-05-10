@@ -45,6 +45,7 @@
 		"@floating-ui/dom": "^1.2.7",
 		"@supabase/supabase-js": "^2.15.0",
 		"dayjs": "^1.11.7",
+		"exceljs": "^4.3.0",
 		"moment": "^2.29.4",
 		"unorm": "^1.6.0",
 		"xlsx": "^0.18.5"
