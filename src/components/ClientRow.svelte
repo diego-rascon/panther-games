@@ -34,7 +34,7 @@
 <tr
 	class="border-t border-stone-800 transition-all {selected
 		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'}"
+		: 'hover:bg-stone-800'} {!active ? ' text-stone-400' : ''}"
 >
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{name}</td>
