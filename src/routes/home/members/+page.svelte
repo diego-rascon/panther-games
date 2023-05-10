@@ -71,7 +71,7 @@
 				.single();
 			if (clientError) console.log(clientError.message);
 			if (client) {
-				const { error: errorMessage } = await supabase.from('miembro').insert({
+				const { data: member, error: errorMessage } = await supabase.from('miembro').insert({
 					cliente_id: client.cliente_id,
 					miembro_fecha_inicio: date,
 					miembro_fecha_final: endDate
