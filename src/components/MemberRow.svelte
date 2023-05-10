@@ -69,7 +69,7 @@
 					text="Eliminar"
 					icon={trashBinMinimalisticLinear}
 					on:click={() => {
-						toggleMember(clientId);
+						toggleMember(memberId);
 					}}
 				/>
 			{:else}
