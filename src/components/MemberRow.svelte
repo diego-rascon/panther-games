@@ -6,11 +6,13 @@
 	import Icon from '@iconify/svelte';
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
+	import refreshOutline from '@iconify/icons-solar/refresh-outline';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 	import dayjs from 'dayjs';
 
 	export let editMember: (clientId: number) => void;
+	export let renewMember: (memberId: number) => void = () => {};
 	export let toggleMember: (memberId: number) => void = () => {};
 	export let memberId: number;
 	export let clientId: number;
@@ -24,6 +26,7 @@
 	$: endDate = dayjs(String(member?.miembro_fecha_final));
 	$: formattedStartDate = startDate.format('DD/MM/YYYY');
 	$: formattedEndDate = endDate.format('DD/MM/YYYY');
+	$: expired = new Date(String(member?.miembro_fecha_final)) < new Date();
 
 	let selected = false;
 
@@ -37,7 +40,7 @@
 <tr
 	class="border-t border-stone-800 transition-all {selected
 		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'} {!active ? ' text-stone-400' : ''}"
+		: 'hover:bg-stone-800'} {!active || expired ? ' text-stone-400' : ''}"
 >
 	<td class="p-4 text-left select-text">{clientId}</td>
 	<td class="text-left select-text">{name}</td>
@@ -64,6 +67,15 @@
 					editMember(clientId);
 				}}
 			/>
+			{#if active && expired}
+				<DropdownItem
+					text="Renovar"
+					icon={refreshOutline}
+					on:click={() => {
+						renewMember(memberId);
+					}}
+				/>
+			{/if}
 			{#if active}
 				<DropdownItem
 					text="Eliminar"

@@ -14,13 +14,21 @@
 	import MemberRow from '../../../components/MemberRow.svelte';
 	import dayjs from 'dayjs';
 	import MemberForm from '../../../components/forms/MemberForm.svelte';
+	import RenewMemberForm from '../../../components/forms/RenewMemberForm.svelte';
 
 	export let data;
 	let { members, clients } = data;
 	$: ({ members, clients } = data);
 
 	$: membersStore.set(members);
-	$: activeMembers = members.filter((member: any) => member.miembro_activo);
+	$: activeMembers = members.filter(
+		(member: any) =>
+			member.miembro_activo && new Date(String(member.miembro_fecha_final)) >= new Date()
+	);
+	$: expiredMembers = members.filter(
+		(member: any) =>
+			member.miembro_activo && new Date(String(member.miembro_fecha_final)) < new Date()
+	);
 	$: deactivatedMembers = members.filter((member: any) => !member.miembro_activo);
 	$: filteredActiveMembers = activeMembers;
 	$: filteredDeactivatedMembers = deactivatedMembers;
@@ -125,6 +133,16 @@
 		}
 		members = members;
 		toastStore.trigger(memberEdited);
+	};
+
+	let renewingMember = false;
+
+	const toggleRenewingMember = () => {
+		renewingMember = !renewingMember;
+	};
+
+	const renewMember = () => {
+		console.log('hehe');
 	};
 
 	let deleteConfirmation = false;
@@ -276,6 +294,45 @@
 				</table>
 			</div>
 		{/if}
+		{#if expiredMembers.length !== 0}
+			<SectionSubtitle text="Miembros Vencidos" />
+			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+				<table class="bg-stone-900">
+					<thead>
+						<tr class="text-lg">
+							<th class="p-4 text-left">ID</th>
+							<th class="text-left">Nombre</th>
+							<th class="text-left">Correo</th>
+							<th class="text-left">Telefono</th>
+							<th class="text-left">Fecha inicial</th>
+							<th class="text-left">Fecha final</th>
+							<th class="" />
+						</tr>
+					</thead>
+					<tbody>
+						{#each expiredMembers as expiredMember (expiredMember.miembro_id)}
+							<MemberRow
+								editMember={(clientId) => {
+									toggleEditingMember();
+									tempClientId = clientId;
+									bindValues();
+								}}
+								renewMember={(memberId) => {
+									toggleRenewingMember();
+									tempMemberId = memberId;
+								}}
+								toggleMember={(memberID) => {
+									toggleDeleteConfirmation();
+									tempMemberId = memberID;
+								}}
+								memberId={expiredMember.miembro_id}
+								clientId={expiredMember.cliente_id}
+							/>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
 		{#if filteredDeactivatedMembers.length !== 0}
 			<SectionSubtitle text="Miembros no Activos" />
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
@@ -350,6 +407,20 @@
 			bind:name
 			bind:email
 			bind:phone
+			bind:date
+			{startDate}
+		/>
+	</DarkenSreen>
+{/if}
+{#if renewingMember}
+	<DarkenSreen>
+		<RenewMemberForm
+			cancelHandler={() => {
+				toggleRenewingMember();
+				clearForm();
+			}}
+			confirmHandler={renewMember}
+			memberId={tempMemberId}
 			bind:date
 			{startDate}
 		/>
