@@ -31,6 +31,7 @@
 	);
 	$: deactivatedMembers = members.filter((member: any) => !member.miembro_activo);
 	$: filteredActiveMembers = activeMembers;
+	$: filteredExpiredMembers = expiredMembers;
 	$: filteredDeactivatedMembers = deactivatedMembers;
 
 	let newClient = true;
@@ -89,6 +90,7 @@
 				.insert({ cliente_id: clientId, miembro_fecha_inicio: date, miembro_fecha_final: endDate });
 			if (error) console.log(error.message);
 			const newMember = clients.find((clientEntry: any) => clientEntry.cliente_id === clientId);
+			newMember.cliente_id = clientId;
 			newMember.miembro_activo = true;
 			newMember.miembro_fecha_inicio = date;
 			newMember.miembro_fecha_final = endDate;
@@ -208,6 +210,26 @@
 			);
 		});
 
+		filteredExpiredMembers = expiredMembers.filter((member: any) => {
+			const startDate = dayjs(String(member.miembro_fecha_inicio));
+			const formattedStartDate = startDate.format('DD/MM/YYYY');
+
+			const endDate = dayjs(String(member.miembro_fecha_final));
+			const formattedEndDate = endDate.format('DD/MM/YYYY');
+
+			return searchWords.every(
+				(word: string) =>
+					member.miembro_id.toString().includes(word) ||
+					member.cliente_id.toString().includes(word) ||
+					nfd(member.cliente_nombre.toLowerCase()).includes(word) ||
+					nfc(member.cliente_nombre.toLowerCase()).includes(word) ||
+					member.cliente_email.toLowerCase().includes(word) ||
+					member.cliente_telefono.toLowerCase().includes(word) ||
+					formattedStartDate.includes(word) ||
+					formattedEndDate.includes(word)
+			);
+		});
+
 		filteredDeactivatedMembers = deactivatedMembers.filter((member: any) => {
 			const startDate = dayjs(String(member.miembro_fecha_inicio));
 			const formattedStartDate = startDate.format('DD/MM/YYYY');
@@ -260,7 +282,7 @@
 	{#if filteredActiveMembers.length === 0 && filteredDeactivatedMembers.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
-		{#if filteredActiveMembers.length !== 0}
+		{#if filteredActiveMembers.length > 0}
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
 				<table class="bg-stone-900">
 					<thead>
@@ -278,13 +300,13 @@
 						{#each filteredActiveMembers as activeMember (activeMember.miembro_id)}
 							<MemberRow
 								editMember={(clientId) => {
-									toggleEditingMember();
 									tempClientId = clientId;
+									toggleEditingMember();
 									bindValues();
 								}}
 								toggleMember={(memberID) => {
-									toggleDeleteConfirmation();
 									tempMemberId = memberID;
+									toggleDeleteConfirmation();
 								}}
 								memberId={activeMember.miembro_id}
 								clientId={activeMember.cliente_id}
@@ -294,7 +316,7 @@
 				</table>
 			</div>
 		{/if}
-		{#if expiredMembers.length !== 0}
+		{#if filteredExpiredMembers.length > 0}
 			<SectionSubtitle text="Miembros Vencidos" />
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
 				<table class="bg-stone-900">
@@ -310,20 +332,20 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each expiredMembers as expiredMember (expiredMember.miembro_id)}
+						{#each filteredExpiredMembers as expiredMember (expiredMember.miembro_id)}
 							<MemberRow
 								editMember={(clientId) => {
-									toggleEditingMember();
 									tempClientId = clientId;
+									toggleEditingMember();
 									bindValues();
 								}}
 								renewMember={(memberId) => {
-									toggleRenewingMember();
 									tempMemberId = memberId;
+									toggleRenewingMember();
 								}}
 								toggleMember={(memberID) => {
-									toggleDeleteConfirmation();
 									tempMemberId = memberID;
+									toggleDeleteConfirmation();
 								}}
 								memberId={expiredMember.miembro_id}
 								clientId={expiredMember.cliente_id}
@@ -333,7 +355,7 @@
 				</table>
 			</div>
 		{/if}
-		{#if filteredDeactivatedMembers.length !== 0}
+		{#if filteredDeactivatedMembers.length > 0}
 			<SectionSubtitle text="Miembros no Activos" />
 			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
 				<table class="bg-stone-900">
@@ -352,13 +374,13 @@
 						{#each filteredDeactivatedMembers as deactivadedMember (deactivadedMember.miembro_id)}
 							<MemberRow
 								editMember={(clientId) => {
-									toggleEditingMember();
 									tempClientId = clientId;
+									toggleEditingMember();
 									bindValues();
 								}}
 								toggleMember={(memberId) => {
-									toggleActivateConfirmation();
 									tempMemberId = memberId;
+									toggleActivateConfirmation();
 								}}
 								memberId={deactivadedMember.miembro_id}
 								clientId={deactivadedMember.cliente_id}
