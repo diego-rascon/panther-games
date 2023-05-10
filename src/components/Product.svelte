@@ -9,12 +9,15 @@
 	import boxLinear from '@iconify/icons-solar/box-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import verifiedCheckOutline from '@iconify/icons-solar/verified-check-outline';
+	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
 
 	export let addToCart: (productId: number) => void;
 	export let editProduct: (productId: number) => void;
 	export let changeStock: (productId: number, currentStock: number) => void;
 	export let toggleProduct: (productId: number) => void;
 	export let id: number;
+
+	let loading = false;
 
 	$: product = $productsStore.find((item: any) => item.producto_id === id);
 	$: name = product?.producto_nombre;
@@ -25,6 +28,7 @@
 	$: isNew = product?.producto_nuevo;
 	$: active = product?.producto_activo;
 	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
+	$: loading = $cartStore.some((item: any) => item.producto_id === id);
 
 	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
@@ -99,14 +103,23 @@
 		</div>
 		{#if active}
 			<button
-				class="btn {onCart
+				class="btn {onCart || loading
 					? 'text-stone-400 bg-surface-700 border-surface-400'
 					: 'variant-ringed-primary font-bold'}"
 				on:click={() => {
-					if (!onCart) addToCart(id);
+					if (!loading && !onCart) {
+						loading = true;
+						addToCart(id);
+					}
 				}}
 			>
-				Agregar
+				{#if onCart}
+					En el carrito
+				{:else if loading}
+					<Icon class="animate-spin" icon={refreshCircleOutline} height={24} hFlip={true} />
+				{:else}
+					Agregar
+				{/if}
 			</button>
 		{/if}
 	</div>
