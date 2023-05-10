@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Icon from '@iconify/svelte';
+	import Icon from '@iconify/svelte';
 	import type { IconifyIcon } from '@iconify/svelte';
 
 	export let icon: IconifyIcon;
@@ -12,7 +12,7 @@
 	on:click
 >
 	<div class="flex flex-col space-y-2 items-center">
-		<Icon icon={icon} height={48} />
+		<Icon {icon} height={48} />
 		<p class="unstyled font-lexend font-bold text-2xl">{text}</p>
 	</div>
 </button>
