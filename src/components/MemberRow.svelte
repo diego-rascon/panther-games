@@ -10,12 +10,11 @@
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 	import dayjs from 'dayjs';
 
-	export let editMember: (memberId: number) => void;
-	export let deleteMember: (memberId: number) => void = () => {};
-	export let activateMember: (memberId: number) => void = () => {};
-	export let id: number;
+	export let editMember: (clientId: number) => void;
+	export let toggleMember: (clientId: number) => void = () => {};
+	export let clientId: number;
 
-	$: member = $membersStore.find((memberEntry: any) => memberEntry.miembro_id === id);
+	$: member = $membersStore.find((memberEntry: any) => memberEntry.cliente_id === clientId);
 	$: name = member?.cliente_nombre;
 	$: email = member?.cliente_email;
 	$: phone = member?.cliente_telefono;
@@ -39,7 +38,7 @@
 		? 'variant-soft-primary'
 		: 'hover:bg-stone-800'}"
 >
-	<td class="p-4 text-left select-text">{id}</td>
+	<td class="p-4 text-left select-text">{clientId}</td>
 	<td class="text-left select-text">{name}</td>
 	<td class="text-left select-text">{email}</td>
 	<td class="text-left select-text">{phone}</td>
@@ -47,7 +46,7 @@
 	<td class="text-left select-text">{formattedEndDate}</td>
 	<td class="pr-4 text-right">
 		<button
-			use:popup={{ ...dropdown, target: `client-dropdown-${id}` }}
+			use:popup={{ ...dropdown, target: `member-dropdown-${clientId}` }}
 			class="btn p-1 rounded-full {selected
 				? 'variant-soft-primary'
 				: 'hover:variant-filled-surface'}"
@@ -55,13 +54,13 @@
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
 	</td>
-	<div data-popup={`client-dropdown-${id}`}>
+	<div data-popup={`member-dropdown-${clientId}`}>
 		<Dropdown>
 			<DropdownItem
 				text="Editar"
 				icon={pen2Linear}
 				on:click={() => {
-					editMember(id);
+					editMember(clientId);
 				}}
 			/>
 			{#if active}
@@ -69,7 +68,7 @@
 					text="Eliminar"
 					icon={trashBinMinimalisticLinear}
 					on:click={() => {
-						deleteMember(id);
+						toggleMember(clientId);
 					}}
 				/>
 			{:else}
@@ -77,7 +76,7 @@
 					text="Activar"
 					icon={userCheckOutline}
 					on:click={() => {
-						activateMember(id);
+						toggleMember(clientId);
 					}}
 				/>
 			{/if}
