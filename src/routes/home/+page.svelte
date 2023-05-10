@@ -214,7 +214,7 @@
 		const activatedProduct = products.find((product: any) => product.producto_id === tempProductId);
 		if (activatedProduct) activatedProduct.producto_activo = true;
 		products = products;
-		toastStore.trigger(productDeleted);
+		toastStore.trigger(productActivated);
 	};
 
 	let doingSale = false;
@@ -225,6 +225,7 @@
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
 		toggleSale();
+		lowerStock();
 		const { error } = await supabase.rpc('register_sale', {
 			input_cliente_id: clientId,
 			input_descuento: 0,
@@ -233,6 +234,16 @@
 		if (error) console.log(error.message);
 		else toastStore.trigger(saleAdded);
 		emptyCart();
+	};
+
+	const lowerStock = () => {
+		for (const cartProduct of cart) {
+			const boughtProduct = products.find(
+				(product: any) => product.producto_id === cartProduct.producto_id
+			);
+			boughtProduct.producto_stock -= cartProduct.producto_cantidad;
+		}
+		products = products;
 	};
 
 	let doingRent = false;
