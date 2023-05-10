@@ -95,11 +95,13 @@
 		</div>
 	</div>
 	<div class="flex flex-col mt-auto">
-		<div class={active || soldOut ? 'py-4' : 'pt-4'}>
+		<div class={!active || soldOut ? 'pt-4' : 'py-4'}>
 			{#if isGame}
 				<p class="unstyled text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
-			<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
+			{#if !soldOut}
+				<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
+			{/if}
 			<p class="unstyled pt-2 text-xl font-bold">{formattedPrice}</p>
 		</div>
 		{#if active && !soldOut}
