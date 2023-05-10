@@ -22,6 +22,7 @@
 	$: product = $productsStore.find((item: any) => item.producto_id === id);
 	$: name = product?.producto_nombre;
 	$: stock = Number(product?.producto_stock);
+	$: soldOut = stock < 1;
 	$: price = Number(product?.producto_precio);
 	$: isGame = product?.categoria_id === 1;
 	$: platform = product?.plataforma_nombre;
@@ -39,7 +40,7 @@
 </script>
 
 <div
-	class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all {!active
+	class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all {!active || soldOut
 		? ' text-stone-400'
 		: ''}"
 >
@@ -94,14 +95,14 @@
 		</div>
 	</div>
 	<div class="flex flex-col mt-auto">
-		<div class={active ? 'py-4' : 'pt-4'}>
+		<div class={active || soldOut ? 'py-4' : 'pt-4'}>
 			{#if isGame}
 				<p class="unstyled text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
 			<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
 			<p class="unstyled pt-2 text-xl font-bold">{formattedPrice}</p>
 		</div>
-		{#if active}
+		{#if active && !soldOut}
 			<button
 				class="btn {onCart || loading
 					? 'text-stone-400 bg-surface-700 border-surface-400'
