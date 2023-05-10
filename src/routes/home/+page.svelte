@@ -190,11 +190,30 @@
 		const { error } = await supabase
 			.from('producto')
 			.update({ producto_activo: false })
-			.eq('producto_id', tempProductId)
-			.select()
-			.single();
+			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		products = products.filter((product: any) => product.producto_id !== tempProductId);
+		const removedProduct = products.find((product: any) => product.producto_id === tempProductId);
+		if (removedProduct) removedProduct.producto_activo = false;
+		products = products;
+		toastStore.trigger(productDeleted);
+	};
+
+	let activateConfirmation = false;
+
+	const toggleActivateConfirmation = () => {
+		activateConfirmation = !activateConfirmation;
+	};
+
+	const activateProduct = async () => {
+		toggleActivateConfirmation();
+		const { error } = await supabase
+			.from('producto')
+			.update({ producto_activo: true })
+			.eq('producto_id', tempProductId);
+		if (error) console.log(error.message);
+		const activatedProduct = products.find((product: any) => product.producto_id === tempProductId);
+		if (activatedProduct) activatedProduct.producto_activo = true;
+		products = products;
 		toastStore.trigger(productDeleted);
 	};
 
@@ -326,13 +345,18 @@
 		background: 'variant-filled-primary'
 	};
 
-	const stockChanged: ToastSettings = {
-		message: 'Se actualizó el stock del producto exitosamente.',
+	const productDeleted: ToastSettings = {
+		message: 'Un producto fue eliminado exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
-	const productDeleted: ToastSettings = {
-		message: 'Un producto fue eliminado exitosamente.',
+	const productActivated: ToastSettings = {
+		message: 'Un producto fue activado exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const stockChanged: ToastSettings = {
+		message: 'Se actualizó el stock del producto exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
@@ -378,7 +402,7 @@
 							tempProductId = productId;
 							tempProductStock = currentStock;
 						}}
-						deleteProduct={(productId) => {
+						toggleProduct={(productId) => {
 							toggleDeleteConfirmation();
 							tempProductId = productId;
 						}}
@@ -403,8 +427,8 @@
 							tempProductId = productId;
 							tempProductStock = currentStock;
 						}}
-						deleteProduct={(productId) => {
-							toggleDeleteConfirmation();
+						toggleProduct={(productId) => {
+							toggleActivateConfirmation();
 							tempProductId = productId;
 						}}
 						id={deactivatedProduct.producto_id}
@@ -574,6 +598,16 @@
 			confirmHandler={deleteProduct}
 			title="Eliminar Producto"
 			text="¿Seguro de que desea eliminar el producto?"
+		/>
+	</DarkenSreen>
+{/if}
+{#if activateConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleActivateConfirmation}
+			confirmHandler={activateProduct}
+			title="Activar Producto"
+			text="¿Seguro de que desea activar el producto?"
 		/>
 	</DarkenSreen>
 {/if}
