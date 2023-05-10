@@ -8,22 +8,11 @@
 	},
 	"package": {
 		"productName": "Panther Games",
-		"version": "0.1.0"
+		"version": "0.7.0"
 	},
 	"tauri": {
 		"allowlist": {
-			"all": false,
-			"fs": {
-				"all": true,
-				"readFile": true,
-				"writeFile": true,
-				"readDir": true,
-				"copyFile": true,
-				"createDir": true,
-				"removeDir": true,
-				"removeFile": true,
-				"renameFile": true
-			}
+			"all": false
 		},
 		"bundle": {
 			"active": true,
@@ -53,6 +42,9 @@
 			"shortDescription": "",
 			"targets": "all",
 			"windows": {
+				"wix": {
+					"language": "es-ES"
+				},
 				"certificateThumbprint": null,
 				"digestAlgorithm": "sha256",
 				"timestampUrl": ""
@@ -67,11 +59,10 @@
 		"windows": [
 			{
 				"fullscreen": false,
-				"width": 800,
 				"height": 600,
 				"resizable": true,
 				"title": "Panther Games",
-				"theme": "Dark"
+				"width": 800
 			}
 		]
 	}

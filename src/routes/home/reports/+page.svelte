@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as XLSX from 'xlsx';
 	import moment from 'moment';
-	import { Datepicker } from 'svelte-calendar';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import { supabase } from '$lib/db';
