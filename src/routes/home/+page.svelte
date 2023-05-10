@@ -28,9 +28,13 @@
 
 	$: cartStore.set(cart);
 	$: productsStore.set(products);
-	$: activeProducts = products.filter((product: any) => product.producto_activo && product.producto_stock > 0);
+	$: activeProducts = products.filter(
+		(product: any) => product.producto_activo && product.producto_stock > 0
+	);
 	$: deactivatedProducts = products.filter((product: any) => !product.producto_activo);
-	$: soldOutProducts = products.filter((product: any) => product.producto_activo && product.producto_stock < 1)
+	$: soldOutProducts = products.filter(
+		(product: any) => product.producto_activo && product.producto_stock < 1
+	);
 	$: filteredActiveProducts = activeProducts;
 	$: filteredDeactivatedProducts = deactivatedProducts;
 
@@ -456,12 +460,12 @@
 		{/each}
 	</div>
 	{#if filteredActiveProducts.length === 0 && filteredDeactivatedProducts.length === 0}
-		<NoResultsMessage search={search !== ''}/>
+		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveProducts.length !== 0}
 			<SectionSubtitle text="Inventario" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-				{#each filteredActiveProducts as activeProduct}
+				{#each filteredActiveProducts as activeProduct (activeProduct.producto_id)}
 					<Product
 						{addToCart}
 						editProduct={(productId) => {
@@ -483,10 +487,10 @@
 				{/each}
 			</div>
 		{/if}
-		{#if soldOutProducts }
+		{#if soldOutProducts}
 			<SectionSubtitle text="Inventario Agotado" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-				{#each soldOutProducts as soldOutProduct}
+				{#each soldOutProducts as soldOutProduct (soldOutProduct.producto_id)}
 					<Product
 						{addToCart}
 						editProduct={(productId) => {
@@ -511,7 +515,7 @@
 		{#if filteredDeactivatedProducts.length !== 0}
 			<SectionSubtitle text="Inventario no Activo" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
-				{#each filteredDeactivatedProducts as deactivatedProduct}
+				{#each filteredDeactivatedProducts as deactivatedProduct (deactivatedProduct.producto_id)}
 					<Product
 						{addToCart}
 						editProduct={(productId) => {

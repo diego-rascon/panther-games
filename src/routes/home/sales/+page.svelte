@@ -137,7 +137,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredActiveSales as sale}
+						{#each filteredActiveSales as sale (sale.venta_id)}
 							<SaleRow
 								toggleDetail={(clientId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
@@ -173,7 +173,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredDeactivatedSales as sale}
+						{#each filteredDeactivatedSales as sale (sale.venta_id)}
 							<SaleRow
 								toggleDetail={(saleID, saleTotal, saleQuantity) => {
 									toggleShowDetail();

@@ -205,7 +205,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredActiveClients as client}
+						{#each filteredActiveClients as client (client.cliente_id)}
 							<ClientRow
 								editClient={(clientId) => {
 									toggleEditingClient();
@@ -238,7 +238,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredDeactivatedClients as client}
+						{#each filteredDeactivatedClients as client (client.cliente_id)}
 							<ClientRow
 								editClient={(clientId) => {
 									toggleEditingClient();
