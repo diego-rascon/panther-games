@@ -8,11 +8,12 @@
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import boxLinear from '@iconify/icons-solar/box-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
+	import verifiedCheckOutline from '@iconify/icons-solar/verified-check-outline';
 
 	export let addToCart: (productId: number) => void;
 	export let editProduct: (productId: number) => void;
 	export let changeStock: (productId: number, currentStock: number) => void;
-	export let deleteProduct: (productId: number) => void;
+	export let toggleProduct: (productId: number) => void;
 	export let id: number;
 
 	$: product = $productsStore.find((item: any) => item.producto_id === id);
@@ -22,6 +23,7 @@
 	$: isGame = product?.categoria_id === 1;
 	$: platform = product?.plataforma_nombre;
 	$: isNew = product?.producto_nuevo;
+	$: active = product?.producto_activo;
 	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
 
 	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -32,7 +34,11 @@
 	};
 </script>
 
-<div class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all">
+<div
+	class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all {!active
+		? ' text-stone-400'
+		: ''}"
+>
 	<div class="flex items-start justify-between">
 		<div class="flex flex-col items-start space-y-2">
 			<p class="unstyled line-clamp-4 text-xl font-bold">{name}</p>
@@ -63,33 +69,45 @@
 						changeStock(id, stock);
 					}}
 				/>
-				<DropdownItem
-					text="Eliminar"
-					icon={trashBinMinimalisticLinear}
-					on:click={() => {
-						deleteProduct(id);
-					}}
-				/>
+				{#if active}
+					<DropdownItem
+						text="Eliminar"
+						icon={trashBinMinimalisticLinear}
+						on:click={() => {
+							toggleProduct(id);
+						}}
+					/>
+				{:else}
+					<DropdownItem
+						text="Activar"
+						icon={verifiedCheckOutline}
+						on:click={() => {
+							toggleProduct(id);
+						}}
+					/>
+				{/if}
 			</Dropdown>
 		</div>
 	</div>
 	<div class="flex flex-col mt-auto">
-		<div class="py-4">
+		<div class={active ? 'py-4' : 'pt-4'}>
 			{#if isGame}
 				<p class="unstyled text-sm"><strong>Plataforma:</strong> {platform}</p>
 			{/if}
 			<p class="unstyled text-sm"><strong>Cantidad:</strong> {stock}</p>
 			<p class="unstyled pt-2 text-xl font-bold">{formattedPrice}</p>
 		</div>
-		<button
-			class="btn {onCart
-				? 'text-stone-400 bg-surface-700 border-surface-400'
-				: 'variant-ringed-primary font-bold'}"
-			on:click={() => {
-				if (!onCart) addToCart(id);
-			}}
-		>
-			Agregar
-		</button>
+		{#if active}
+			<button
+				class="btn {onCart
+					? 'text-stone-400 bg-surface-700 border-surface-400'
+					: 'variant-ringed-primary font-bold'}"
+				on:click={() => {
+					if (!onCart) addToCart(id);
+				}}
+			>
+				Agregar
+			</button>
+		{/if}
 	</div>
 </div>
