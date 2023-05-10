@@ -35,17 +35,58 @@
 
 	enum Filter {
 		None,
-		Game = 'Juegos',
-		Console = 'Consola',
-		Accesory = 'Accesorio',
-		Other = 'Otro'
+		Game,
+		Console,
+		Accesory,
+		Other
 	}
 
 	let currentFilter = Filter.None;
 
-	const filter = () => {
-		console.log(currentFilter.toString());
+	const changeFilter = (newAction: Filter) => {
+		currentFilter = currentFilter === newAction ? Filter.None : newAction;
 	};
+
+	$: {
+		switch (currentFilter) {
+			case Filter.None:
+				filteredActiveProducts = activeProducts;
+				filteredDeactivatedProducts = deactivatedProducts;
+				break;
+			case Filter.Game:
+				filteredActiveProducts = activeProducts.filter(
+					(product: any) => product.categoria_id === 1
+				);
+				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 1
+				);
+				break;
+			case Filter.Console:
+				filteredActiveProducts = activeProducts.filter(
+					(product: any) => product.categoria_id === 2
+				);
+				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 2
+				);
+				break;
+			case Filter.Accesory:
+				filteredActiveProducts = activeProducts.filter(
+					(product: any) => product.categoria_id === 3
+				);
+				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 3
+				);
+				break;
+			case Filter.Other:
+				filteredActiveProducts = activeProducts.filter(
+					(product: any) => product.categoria_id === 4
+				);
+				filteredDeactivatedProducts = deactivatedProducts.filter(
+					(product: any) => product.categoria_id === 4
+				);
+				break;
+		}
+	}
 
 	let categoryId: number;
 	let platformId: number;
@@ -314,9 +355,10 @@
 		fetchTotal();
 	};
 
-	let search: string;
+	let search = '';
 
 	const searchProduct = (search: string) => {
+		currentFilter = Filter.None;
 		const searchWords = search.split(' ');
 
 		filteredActiveProducts = activeProducts.filter((product: any) =>
@@ -391,11 +433,29 @@
 	<SectionSubtitle text="Categorías" />
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 		{#each categories as category}
-			<Category on:click={filter} text={category.categoria_nombre} />
+			<Category
+				on:click={() => {
+					switch (category.categoria_id) {
+						case 1:
+							changeFilter(Filter.Game);
+							break;
+						case 2:
+							changeFilter(Filter.Console);
+							break;
+						case 3:
+							changeFilter(Filter.Accesory);
+							break;
+						case 4:
+							changeFilter(Filter.Other);
+					}
+				}}
+				active={currentFilter === category.categoria_id}
+				text={category.categoria_nombre}
+			/>
 		{/each}
 	</div>
 	{#if filteredActiveProducts.length === 0 && filteredDeactivatedProducts.length === 0}
-		<NoResultsMessage />
+		<NoResultsMessage search={search !== ''}/>
 	{:else}
 		{#if filteredActiveProducts.length !== 0}
 			<SectionSubtitle text="Inventario" />
