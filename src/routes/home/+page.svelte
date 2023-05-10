@@ -28,8 +28,9 @@
 
 	$: cartStore.set(cart);
 	$: productsStore.set(products);
-	$: activeProducts = products.filter((product: any) => product.producto_activo);
+	$: activeProducts = products.filter((product: any) => product.producto_activo && product.producto_stock > 0);
 	$: deactivatedProducts = products.filter((product: any) => !product.producto_activo);
+	$: soldOutProducts = products.filter((product: any) => product.producto_activo && product.producto_stock < 1)
 	$: filteredActiveProducts = activeProducts;
 	$: filteredDeactivatedProducts = deactivatedProducts;
 
@@ -482,8 +483,33 @@
 				{/each}
 			</div>
 		{/if}
+		{#if soldOutProducts }
+			<SectionSubtitle text="Inventario Agotado" />
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
+				{#each soldOutProducts as soldOutProduct}
+					<Product
+						{addToCart}
+						editProduct={(productId) => {
+							toggleEditingProduct();
+							tempProductId = productId;
+							bindValues();
+						}}
+						changeStock={(productId, currentStock) => {
+							toggleChangingStock();
+							tempProductId = productId;
+							tempProductStock = currentStock;
+						}}
+						toggleProduct={(productId) => {
+							toggleActivateConfirmation();
+							tempProductId = productId;
+						}}
+						id={soldOutProduct.producto_id}
+					/>
+				{/each}
+			</div>
+		{/if}
 		{#if filteredDeactivatedProducts.length !== 0}
-			<SectionSubtitle text="Inventario Desactivado" />
+			<SectionSubtitle text="Inventario no Activo" />
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all">
 				{#each filteredDeactivatedProducts as deactivatedProduct}
 					<Product
