@@ -6,10 +6,7 @@
 	export let icon: IconifyIcon;
 </script>
 
-<button
-	on:click
-	class="btn variant-filled-surface justify-start space-x-4"
->
+<button on:click|stopPropagation class="btn variant-filled-surface justify-start space-x-4">
 	<Icon {icon} height={20} />
 	<p>{text}</p>
 </button>
