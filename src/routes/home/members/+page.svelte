@@ -175,22 +175,22 @@
 	};
 
 	const memberAdded: ToastSettings = {
-		message: 'Un nuevo cliente fue registrado exitosamente',
+		message: 'Un nuevo miembro fue registrado exitosamente',
 		background: 'variant-filled-primary'
 	};
 
 	const memberEdited: ToastSettings = {
-		message: 'Se actualizaron los datos del cliente exitosamente',
+		message: 'Se actualizaron los datos del miembro exitosamente',
 		background: 'variant-filled-primary'
 	};
 
 	const memberDeleted: ToastSettings = {
-		message: 'Se eliminó al cliente exitosamente',
+		message: 'Se eliminó al miembro exitosamente',
 		background: 'variant-filled-primary'
 	};
 
 	const memberActivated: ToastSettings = {
-		message: 'Se activó al cliente exitosamente',
+		message: 'Se activó al miembro exitosamente',
 		background: 'variant-filled-primary'
 	};
 </script>
