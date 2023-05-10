@@ -8,6 +8,9 @@
 	import cashOutOutline from '@iconify/icons-solar/cash-out-outline';
 	import wadOfMoneyOutline from '@iconify/icons-solar/wad-of-money-outline';
 	import handMoneyOutline from '@iconify/icons-solar/hand-money-outline';
+	import { cajaTotalStore } from '$lib/stores';
+	import { supabase } from '$lib/db';
+	import moment from 'moment';
 
 	enum Action {
 		None,
@@ -22,6 +25,54 @@
 	const changeAction = (newAction: Action) => {
 		currentAction = currentAction === newAction ? Action.None : newAction;
 	};
+
+	let cajaTotal: number;
+	let cajaInicial: number;
+	let cajaFinal: number;
+	let fechaActual = new Date();
+	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
+
+	const setFondoInicial = async () => {
+		const { data, error } = await supabase.from('caja').insert({
+			caja_fondo_inicio: cajaInicial,
+			caja_total: cajaInicial,
+			caja_fecha: fechaActualFormat
+		}).select().single();
+		if (error) {
+			console.log(error.message);
+		}
+		if(data) cajaTotal = data.caja_total;
+	};
+
+	const depositMoney = async (dineroEntrada: number) => {
+		const { data, error } = await supabase
+			.from('caja')
+			.update({ caja_total: dineroEntrada })
+			.eq('fecha', fechaActualFormat);
+
+		if (error) {
+			console.error(error);
+		} else {
+			console.log('Se ha actualizado el registro correctamente');
+		}
+	};
+
+	const getCajaTotalFromDate = async () => {
+		const { data, error } = await supabase
+			.from('caja')
+			.select('caja_total')
+			.eq('caja_fecha', fechaActualFormat)
+			.limit(1);
+
+		if (data && data.length > 0) {
+			cajaTotal = data[0].caja_total;
+		}
+		else{
+			cajaTotal = 0;
+		}
+	};
+
+	getCajaTotalFromDate();
 </script>
 
 <div class="fixed top-0 inset-x-0 p-4 ml-64 bg-gradient-to-b from-stone-950">
@@ -55,14 +106,25 @@
 		/>
 	</div>
 	<div>
-		<SectionSubtitle text="Cantidad: $420.69" />
+		<SectionSubtitle text="Cantidad: ${cajaTotal}" />
 	</div>
 	{#if currentAction === Action.None}
 		<p>Por favor seleccione una acción primero</p>
 	{:else if currentAction === Action.Corte}
 		<p>Corte de caja</p>
 	{:else if currentAction === Action.Fondo}
-		<p>Fondo inicial</p>
+		<div class="flex flex-col space-y-4 items-end">
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={wadOfMoneyOutline} height={24} /></div>
+				<input
+					type="number"
+					class="input"
+					placeholder="Cantidad de fondo inicial"
+					bind:value={cajaInicial}
+				/>
+			</div>
+			<button on:click={setFondoInicial} class="btn variant-filled-primary">Establecer</button>
+		</div>
 	{:else if currentAction === Action.Retirar}
 		<div class="flex flex-col space-y-4 items-end">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
