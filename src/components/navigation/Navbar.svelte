@@ -7,9 +7,14 @@
 	import crownStarLinear from '@iconify/icons-solar/crown-star-linear';
 	import usersGroupRoundedOutline from '@iconify/icons-solar/users-group-rounded-outline';
 	import documentTextLinear from '@iconify/icons-solar/document-text-linear';
+	import moneyBagOutline from '@iconify/icons-solar/money-bag-outline';
 	import logoutLinear from '@iconify/icons-solar/logout-linear';
+	import DarkenSreen from '../modals/DarkenSreen.svelte';
+	import SectionTitle from '../titles/SectionTitle.svelte';
+	import { text } from 'svelte/internal';
+	import { scale } from 'svelte/transition';
 
-	export const sections = [
+	const sections = [
 		{ href: '/home', text: 'Productos', icon: gamepadLinear },
 		{ href: '/home/sales', text: 'Ventas', icon: dollarMinimalisticLinear },
 		{ href: '/home/rents', text: 'Rentas', icon: watchRoundOutline },
@@ -29,6 +34,7 @@
 		<NavItem href={section.href} text={section.text} icon={section.icon} />
 	{/each}
 	<div class="mt-auto">
+		<NavItem href="/home/cash" text="Caja" icon={moneyBagOutline} />
 		<NavItem href="/" text="Cerrar sesión" icon={logoutLinear} />
 	</div>
 </nav>
