@@ -66,7 +66,7 @@
 	<div
 		class="mx-auto p-8 max-w-sm w-full bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all"
 	>
-		<form class="flex flex-col space-y-4">
+		<div class="flex flex-col space-y-4">
 			<PantherGamesLogo size={4} />
 			<input
 				type="text"
@@ -85,6 +85,20 @@
 			{#if errorVisible}
 				<InputError text={errorString} />
 			{/if}
+			<a
+				href='/home'
+				type="button"
+				class="btn font-bold {loginSuccess ? 'variant-filled-success' : 'variant-filled-primary'}"
+			>
+				{#if loginSuccess}
+					<span>Bienvenido</span>
+				{:else if loading}
+					<LoadingScreen />
+				{:else}
+					<span>Iniciar sesión</span>
+				{/if}
+			</a>
+			<!--
 			<button
 				type="button"
 				class="btn font-bold {loginSuccess ? 'variant-filled-success' : 'variant-filled-primary'}"
@@ -98,6 +112,7 @@
 					<span>Iniciar sesión</span>
 				{/if}
 			</button>
-		</form>
+			-->
+		</div>
 	</div>
 </div>
