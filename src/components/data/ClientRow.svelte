@@ -9,9 +9,6 @@
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
-	import { scale } from 'svelte/transition';
-	import type { SvelteComponent } from 'svelte';
-	import type { SvelteHTMLElements } from 'svelte/elements';
 
 	export let editClient: (productId: number) => void;
 	export let deleteClient: (productId: number) => void = () => {};
@@ -25,7 +22,6 @@
 	$: active = client?.cliente_activo;
 	$: member = client?.cliente_miembro;
 
-	let selected = false;
 	let dropdownVisible = false;
 
 	const toggleDropdown = () => {
