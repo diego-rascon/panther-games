@@ -9,6 +9,9 @@
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
+	import { scale } from 'svelte/transition';
+	import type { SvelteComponent } from 'svelte';
+	import type { SvelteHTMLElements } from 'svelte/elements';
 
 	export let editClient: (productId: number) => void;
 	export let deleteClient: (productId: number) => void = () => {};
@@ -23,16 +26,23 @@
 	$: member = client?.cliente_miembro;
 
 	let selected = false;
+	let dropdownVisible = false;
 
-	let dropdown: any = {
-		placement: 'top-end',
-		event: 'focus-click',
-		state: (e: { state: boolean }) => (selected = e.state)
+	const toggleDropdown = () => {
+		dropdownVisible = !dropdownVisible;
 	};
+
+	let container: HTMLElement;
+
+	function onWindowClick(e: any) {
+		if (container.contains(e.target) == false) dropdownVisible = false;
+	}
 </script>
 
+<svelte:window on:click={onWindowClick} />
+
 <tr
-	class="border-t border-stone-800 transition-all {selected
+	class="relative border-t border-stone-800 transition-all {dropdownVisible
 		? 'variant-soft-primary'
 		: 'hover:bg-stone-800'} {!active ? ' text-stone-400' : ''}"
 >
@@ -45,42 +55,45 @@
 			<Icon icon={crownMinimalisticBold} />
 		{/if}
 	</td>
-	<td class="pr-4 text-right">
+	<td class="pr-4 text-right" bind:this={container}>
 		<button
-			use:popup={{ ...dropdown, target: `client-dropdown-${id}` }}
-			class="btn p-1 rounded-full {selected
+			on:click={toggleDropdown}
+			class="btn p-1 rounded-full {dropdownVisible
 				? 'variant-soft-primary'
 				: 'hover:variant-filled-surface'}"
 		>
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
+		{#if dropdownVisible}
+			<Dropdown>
+				<DropdownItem
+					text="Editar"
+					icon={pen2Linear}
+					on:click={() => {
+						editClient(id);
+						toggleDropdown();
+					}}
+				/>
+				{#if active}
+					<DropdownItem
+						text="Eliminar"
+						icon={trashBinMinimalisticLinear}
+						on:click={() => {
+							deleteClient(id);
+							toggleDropdown();
+						}}
+					/>
+				{:else}
+					<DropdownItem
+						text="Activar"
+						icon={userCheckOutline}
+						on:click={() => {
+							activateClient(id);
+							toggleDropdown();
+						}}
+					/>
+				{/if}
+			</Dropdown>
+		{/if}
 	</td>
-	<div data-popup={`client-dropdown-${id}`}>
-		<Dropdown>
-			<DropdownItem
-				text="Editar"
-				icon={pen2Linear}
-				on:click={() => {
-					editClient(id);
-				}}
-			/>
-			{#if active}
-				<DropdownItem
-					text="Eliminar"
-					icon={trashBinMinimalisticLinear}
-					on:click={() => {
-						deleteClient(id);
-					}}
-				/>
-			{:else}
-				<DropdownItem
-					text="Activar"
-					icon={userCheckOutline}
-					on:click={() => {
-						activateClient(id);
-					}}
-				/>
-			{/if}
-		</Dropdown>
-	</div>
 </tr>
