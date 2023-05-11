@@ -181,7 +181,7 @@
 </script>
 
 <div
-	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
+	class="z-[888] fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
 >
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
@@ -191,8 +191,8 @@
 		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveClients.length !== 0}
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+			<div class="flex flex-col min-w-full">
+				<table class="bg-stone-900 rounded-xl overflow-x-auto">
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
