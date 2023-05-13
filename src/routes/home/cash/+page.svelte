@@ -7,7 +7,6 @@
 	import cashOutOutline from '@iconify/icons-solar/cash-out-outline';
 	import wadOfMoneyOutline from '@iconify/icons-solar/wad-of-money-outline';
 	import handMoneyOutline from '@iconify/icons-solar/hand-money-outline';
-	import { cajaTotalStore } from '$lib/stores';
 	import { supabase } from '$lib/db';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
