@@ -373,7 +373,7 @@
 		const startDate = new Date();
 		const endDate = new Date();
 
-		endDate.setDate(startDate.getDate() + 3);
+		endDate.setDate(startDate.getDate() + duration);
 
 		const formattedStartDate = dayjs(startDate).format('YYYY-MM-DD');
 		const formattedEndDate = dayjs(endDate).format('YYYY-MM-DD');
