@@ -55,7 +55,7 @@
 	<ConfirmDialog
 		cancelHandler={toggleConfirmation}
 		confirmHandler={registerSale}
-		title="Confirmar venta"
+		title="Confirmar Venta"
 		text="¿Está seguro de que desea registrar la venta?"
 	/>
 {:else}
