@@ -1,19 +1,19 @@
 <script lang="ts">
-	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
-	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
+	import { supabase } from '$lib/db';
+	import moment from 'moment';
+	import * as XLSX from 'xlsx';
 	import Icon from '@iconify/svelte';
 	import dollarOutline from '@iconify/icons-solar/dollar-outline';
 	import walletOutline from '@iconify/icons-solar/wallet-outline';
 	import cashOutOutline from '@iconify/icons-solar/cash-out-outline';
 	import wadOfMoneyOutline from '@iconify/icons-solar/wad-of-money-outline';
 	import handMoneyOutline from '@iconify/icons-solar/hand-money-outline';
-	import { supabase } from '$lib/db';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import moment from 'moment';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
-	import * as XLSX from 'xlsx';
 	import CashAction from '../../../components/data/CashAction.svelte';
 	import CashRow from '../../../components/data/CashRow.svelte';
 
@@ -32,6 +32,7 @@
 		venta_id: number;
 		producto_id: number;
 		producto_nombre: string;
+		plataforma_nombre: string;
 		producto_stock: number;
 		producto_precio: number;
 		cantidad_vendida: number;
@@ -52,6 +53,16 @@
 	let saleReport: {
 		cantidad_ventas: number;
 		total_ventas: number;
+	}[] = [];
+
+	let accesoriesReport: {
+		venta_id: number;
+		producto_id: number;
+		producto_nombre: string;
+		producto_stock: number;
+		producto_precio: number;
+		cantidad_vendida: number;
+		total_producto: number;
 	}[] = [];
 
 	enum Action {
@@ -257,10 +268,23 @@
 		}
 	};
 
+	const getAccesoriesReportOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportaccesoriosonedate', {
+				start_date: date
+			});
+			console.log(data);
+			accesoriesReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const getReport = () => {
 		getGamesReportOneDate(fechaActualFormat);
 		getConsolesReportOneDate(fechaActualFormat);
 		getSalesReportOneDate(fechaActualFormat);
+		getAccesoriesReportOneDate(fechaActualFormat);
 	};
 
 	const toggleVisualizarCorte = async () => {
@@ -366,9 +390,6 @@
 		{:else}
 			<!-- Panel gris claro -->
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-				<div class="m-2">
-					<SectionSubtitle text="Reporte del periodo  a " />
-				</div>
 				<!-- División de 2 columnas -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
 					<!-- Izquierda -->
@@ -425,7 +446,8 @@
 								<tr>
 									<th class="p-2 text-left">Folio</th>
 									<th class="p-2 text-left">Nombre</th>
-									<th class="p-2 text-left">Stock</th>
+									<th class="p-2 text-left">Plataforma</th>
+									<th class="p-2 text-left">Stock Actual</th>
 									<th class="p-2 text-left">Precio venta</th>
 									<th class="p-2 text-left">Vendidos</th>
 									<th class="p-2 text-left">Total</th>
@@ -435,6 +457,7 @@
 								<tr class={getColor(game.plataforma_id)}>
 									<td class="p-2 text-left">{game.venta_id}</td>
 									<td class="p-2 text-left">{game.producto_nombre}</td>
+									<td class="p-2 text-left">{game.plataforma_nombre}</td>
 									<td class="p-2 text-left">{game.producto_stock}</td>
 									<td class="p-2 text-left">{game.producto_precio}</td>
 									<td class="p-2 text-left">{game.cantidad_vendida}</td>
@@ -469,6 +492,37 @@
 										<td class="p-2 text-left">{consola.producto_precio}</td>
 										<td class="p-2 text-left">{consola.cantidad_vendida}</td>
 										<td class="p-2 text-left">{consola.total_producto}</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div>
+					<div class="m-2">
+						<SectionSubtitle text="Accesorios" />
+					</div>
+					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+						<table id="TableToExport" class="table">
+							<thead class="border-b border-stone-800">
+								<tr>
+									<th class="p-2 text-left">Folio</th>
+									<th class="p-2 text-left">Nombre</th>
+									<th class="p-2 text-left">Stock</th>
+									<th class="p-2 text-left">Precio venta</th>
+									<th class="p-2 text-left">Vendidos</th>
+									<th class="p-2 text-left">Total</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each accesoriesReport as accesorio}
+									<tr>
+										<td class="p-2 text-left">{accesorio.venta_id}</td>
+										<td class="p-2 text-left">{accesorio.producto_nombre}</td>
+										<td class="p-2 text-left">{accesorio.producto_stock}</td>
+										<td class="p-2 text-left">{accesorio.producto_precio}</td>
+										<td class="p-2 text-left">{accesorio.cantidad_vendida}</td>
+										<td class="p-2 text-left">{accesorio.total_producto}</td>
 									</tr>
 								{/each}
 							</tbody>
