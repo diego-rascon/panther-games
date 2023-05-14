@@ -37,11 +37,18 @@ export const load = async () => {
 		return data ?? [];
 	};
 
+	const fetchMembers = async () => {
+		const { data } = await supabase
+			.rpc('get_clients_members')
+			.order('cliente_nombre', { ascending: true });
+		return data ?? [];
+	};
 	return {
 		categories: fetchCategories(),
 		products: fetchProducts(),
 		platforms: fetchPlatforms(),
 		cart: fetchCart(),
-		clients: fetchClients()
+		clients: fetchClients(),
+		members: fetchMembers()
 	};
 };
