@@ -50,58 +50,60 @@
 		? ' text-stone-400'
 		: ''}"
 >
-	<div class="flex items-start justify-between" bind:this={container}>
+	<div class="flex items-start justify-between">
 		<div class="flex flex-col items-start space-y-2">
 			<p class="unstyled line-clamp-4 text-xl font-bold">{name}</p>
 			{#if !isNew}
 				<p class="unstyled px-2 p-1 variant-soft-warning rounded-full text-xs">Usado</p>
 			{/if}
 		</div>
-		<button
-			on:click={toggleDropdown}
-			class="btn p-1 rounded-full {dropdownVisible
-				? 'variant-soft-primary'
-				: 'hover:variant-filled-surface'}"
-		>
-			<Icon icon={menuDotsBold} rotate={1} height={20} />
-		</button>
-		{#if dropdownVisible}
-			<div class="absolute right-4 bottom-[226px]">
-				<Dropdown>
-					<DropdownItem
-						text="Editar"
-						icon={pen2Linear}
-						on:click={() => {
-							editProduct(id);
-						}}
-					/>
-					<DropdownItem
-						text="Editar stock"
-						icon={boxLinear}
-						on:click={() => {
-							changeStock(id, stock);
-						}}
-					/>
-					{#if active}
+		<div bind:this={container}>
+			<button
+				on:click={toggleDropdown}
+				class="btn p-1 rounded-full {dropdownVisible
+					? 'variant-soft-primary'
+					: 'hover:variant-filled-surface'}"
+			>
+				<Icon icon={menuDotsBold} rotate={1} height={20} />
+			</button>
+			{#if dropdownVisible}
+				<div class="absolute right-4 -top-[132px]">
+					<Dropdown>
 						<DropdownItem
-							text="Eliminar"
-							icon={trashBinMinimalisticLinear}
+							text="Editar"
+							icon={pen2Linear}
 							on:click={() => {
-								toggleProduct(id);
+								editProduct(id);
 							}}
 						/>
-					{:else}
 						<DropdownItem
-							text="Activar"
-							icon={verifiedCheckOutline}
+							text="Editar stock"
+							icon={boxLinear}
 							on:click={() => {
-								toggleProduct(id);
+								changeStock(id, stock);
 							}}
 						/>
-					{/if}
-				</Dropdown>
-			</div>
-		{/if}
+						{#if active}
+							<DropdownItem
+								text="Eliminar"
+								icon={trashBinMinimalisticLinear}
+								on:click={() => {
+									toggleProduct(id);
+								}}
+							/>
+						{:else}
+							<DropdownItem
+								text="Activar"
+								icon={verifiedCheckOutline}
+								on:click={() => {
+									toggleProduct(id);
+								}}
+							/>
+						{/if}
+					</Dropdown>
+				</div>
+			{/if}
+		</div>
 	</div>
 	<div class="flex flex-col mt-auto">
 		<div class={!active || soldOut ? 'pt-4' : 'py-4'}>
