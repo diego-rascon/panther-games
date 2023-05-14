@@ -31,11 +31,10 @@
 >
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{formattedDate}</td>
-	<td class="text-left select-text">{formattedPrice}</td>
 	<td class="text-left select-text">{quantity}</td>
-	<td class="text-left select-text">{discount}%</td>
 	<td class="text-left select-text">{paymentType}</td>
-	<td class="text-left select-text">{client}</td>
+	<td class="text-left select-text">{discount}%</td>
+	<td class="text-left select-text">{formattedPrice}</td>
 	<td class="pr-4 text-right">
 		<button
 			on:click|stopPropagation={() => toggleSale(id)}
