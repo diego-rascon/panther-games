@@ -1,13 +1,9 @@
 <script lang="ts">
 	import { salesStore } from '$lib/stores';
-	import { popup } from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
-	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
-	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 	import dayjs from 'dayjs';
-	import Dropdown from '../dropdown/Dropdown.svelte';
-	import DropdownItem from '../dropdown/DropdownItem.svelte';
+	import Icon from '@iconify/svelte';
+	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
+	import checkCircleOutline from '@iconify/icons-solar/check-circle-outline';
 
 	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
 	export let toggleSale: (saleId: number) => void;
@@ -22,25 +18,14 @@
 	$: paymentType = sale?.venta_tarjeta ? 'Tarjeta' : 'Efectivo';
 	$: client = sale?.cliente_id;
 	$: active = sale?.venta_activa;
-
 	$: formattedPrice = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-	let selected = false;
-
-	let dropdown: any = {
-		placement: 'top-end',
-		event: 'focus-click',
-		state: (e: { state: boolean }) => (selected = e.state)
-	};
 </script>
 
 <tr
 	on:click={() => {
 		toggleDetail(id, total, quantity);
 	}}
-	class="border-t border-stone-800 transition-all cursor-pointer active:variant-soft-primary {selected
-		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'}"
+	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer"
 >
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{formattedDate}</td>
@@ -51,34 +36,10 @@
 	<td class="text-left select-text">{client}</td>
 	<td class="pr-4 text-right">
 		<button
-			on:click|stopPropagation
-			use:popup={{ ...dropdown, target: `sale-dropdown-${id}` }}
-			class="btn p-1 rounded-full {selected
-				? 'variant-soft-primary'
-				: 'hover:variant-filled-surface'}"
+			on:click|stopPropagation={() => toggleSale(id)}
+			class="btn p-1 rounded-full variant-soft-surface"
 		>
-			<Icon icon={menuDotsBold} rotate={1} height={20} />
+			<Icon icon={active ? trashBinMinimalisticLinear : checkCircleOutline} height={20} />
 		</button>
 	</td>
-	<div data-popup={`sale-dropdown-${id}`}>
-		<Dropdown>
-			{#if active}
-				<DropdownItem
-					text="Eliminar"
-					icon={trashBinMinimalisticLinear}
-					on:click={() => {
-						toggleSale(id);
-					}}
-				/>
-			{:else}
-				<DropdownItem
-					text="Activar"
-					icon={userCheckOutline}
-					on:click={() => {
-						toggleSale(id);
-					}}
-				/>
-			{/if}
-		</Dropdown>
-	</div>
 </tr>
