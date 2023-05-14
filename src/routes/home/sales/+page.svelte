@@ -39,15 +39,15 @@
 		deleteConfirmation = !deleteConfirmation;
 	};
 
-	const deleteClient = async () => {
+	const deleteSale = async () => {
 		toggleDeleteConfirmation();
 		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: false })
-			.eq('cliente_id', tempSaleId);
+			.from('venta')
+			.update({ venta_activa: false })
+			.eq('venta_id', tempSaleId);
 		if (error) console.log(error.message);
-		const removedClient = sales.find((sale: any) => sale.cliente_id === tempSaleId);
-		if (removedClient) removedClient.cliente_activo = false;
+		const removedSale = sales.find((sale: any) => sale.cliente_id === tempSaleId);
+		if (removedSale) removedSale.venta_activo = false;
 		sales = sales;
 		toastStore.trigger(saleDeleted);
 	};
@@ -210,7 +210,7 @@
 	<DarkenSreen>
 		<ConfirmDialog
 			cancelHandler={toggleDeleteConfirmation}
-			confirmHandler={deleteClient}
+			confirmHandler={deleteSale}
 			title="Eliminar Venta"
 			text="¿Seguro de que desea eliminar la venta?"
 		/>

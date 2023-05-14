@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { cartStore, productsStore } from '$lib/stores';
-	import { popup } from '@skeletonlabs/skeleton';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
@@ -30,21 +29,28 @@
 	$: active = product?.producto_activo;
 	$: onCart = $cartStore.some((item: any) => item.producto_id === id);
 	$: loading = $cartStore.some((item: any) => item.producto_id === id);
-
 	$: formattedPrice = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-	let dropdown: any = {
-		placement: 'bottom-end',
-		event: 'focus-click'
+	let dropdownVisible = false;
+	let container: HTMLElement;
+
+	const toggleDropdown = () => {
+		dropdownVisible = !dropdownVisible;
+	};
+
+	const windowHandler = (e: any) => {
+		if (container.contains(e.target) == false) dropdownVisible = false;
 	};
 </script>
 
+<svelte:window on:click={windowHandler} on:wheel={windowHandler} />
 <div
-	class="flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all {!active || soldOut
+	class="relative flex flex-col p-4 text-left bg-stone-900 rounded-xl transition-all {!active ||
+	soldOut
 		? ' text-stone-400'
 		: ''}"
 >
-	<div class="flex items-start justify-between">
+	<div class="flex items-start justify-between" bind:this={container}>
 		<div class="flex flex-col items-start space-y-2">
 			<p class="unstyled line-clamp-4 text-xl font-bold">{name}</p>
 			{#if !isNew}
@@ -52,47 +58,50 @@
 			{/if}
 		</div>
 		<button
-			on:click
-			use:popup={{ ...dropdown, target: `dropdown-${id}` }}
-			class="btn variant-filled-surface p-1 rounded-full"
+			on:click={toggleDropdown}
+			class="btn p-1 rounded-full {dropdownVisible
+				? 'variant-soft-primary'
+				: 'hover:variant-filled-surface'}"
 		>
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
-		<div data-popup={`dropdown-${id}`}>
-			<Dropdown>
-				<DropdownItem
-					text="Editar"
-					icon={pen2Linear}
-					on:click={() => {
-						editProduct(id);
-					}}
-				/>
-				<DropdownItem
-					text="Editar stock"
-					icon={boxLinear}
-					on:click={() => {
-						changeStock(id, stock);
-					}}
-				/>
-				{#if active}
+		{#if dropdownVisible}
+			<div class="absolute right-4 bottom-[226px]">
+				<Dropdown>
 					<DropdownItem
-						text="Eliminar"
-						icon={trashBinMinimalisticLinear}
+						text="Editar"
+						icon={pen2Linear}
 						on:click={() => {
-							toggleProduct(id);
+							editProduct(id);
 						}}
 					/>
-				{:else}
 					<DropdownItem
-						text="Activar"
-						icon={verifiedCheckOutline}
+						text="Editar stock"
+						icon={boxLinear}
 						on:click={() => {
-							toggleProduct(id);
+							changeStock(id, stock);
 						}}
 					/>
-				{/if}
-			</Dropdown>
-		</div>
+					{#if active}
+						<DropdownItem
+							text="Eliminar"
+							icon={trashBinMinimalisticLinear}
+							on:click={() => {
+								toggleProduct(id);
+							}}
+						/>
+					{:else}
+						<DropdownItem
+							text="Activar"
+							icon={verifiedCheckOutline}
+							on:click={() => {
+								toggleProduct(id);
+							}}
+						/>
+					{/if}
+				</Dropdown>
+			</div>
+		{/if}
 	</div>
 	<div class="flex flex-col mt-auto">
 		<div class={!active || soldOut ? 'pt-4' : 'py-4'}>

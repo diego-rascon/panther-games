@@ -186,13 +186,13 @@
 	<SectionTitle text="Clientes" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="mt-[60px] flex-col mb-20 space-y-4">
+<div class="mt-[60px] flex flex-col mb-20 space-y-4">
 	{#if filteredActiveClients.length === 0 && filteredDeactivatedClients.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveClients.length !== 0}
-			<div class="flex flex-col min-w-full">
-				<table class="bg-stone-900 rounded-xl overflow-x-auto">
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -218,14 +218,17 @@
 								id={client.cliente_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class=" h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
 		{/if}
 		{#if filteredDeactivatedClients.length !== 0}
 			<SectionSubtitle text="Clientes no Activos" />
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -251,6 +254,9 @@
 								id={client.cliente_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class=" h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>

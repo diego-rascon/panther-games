@@ -23,20 +23,18 @@
 	$: member = client?.cliente_miembro;
 
 	let dropdownVisible = false;
+	let container: HTMLElement;
 
 	const toggleDropdown = () => {
 		dropdownVisible = !dropdownVisible;
 	};
 
-	let container: HTMLElement;
-
-	function onWindowClick(e: any) {
+	const windowHandler = (e: any) => {
 		if (container.contains(e.target) == false) dropdownVisible = false;
-	}
+	};
 </script>
 
-<svelte:window on:click={onWindowClick} />
-
+<svelte:window on:click={windowHandler} on:wheel={windowHandler} />
 <tr
 	class="relative border-t border-stone-800 transition-all {dropdownVisible
 		? 'variant-soft-primary'
@@ -61,35 +59,37 @@
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
 		{#if dropdownVisible}
-			<Dropdown>
-				<DropdownItem
-					text="Editar"
-					icon={pen2Linear}
-					on:click={() => {
-						editClient(id);
-						toggleDropdown();
-					}}
-				/>
-				{#if active}
+			<div class="z-[999] absolute bottom-12 right-4">
+				<Dropdown>
 					<DropdownItem
-						text="Eliminar"
-						icon={trashBinMinimalisticLinear}
+						text="Editar"
+						icon={pen2Linear}
 						on:click={() => {
-							deleteClient(id);
+							editClient(id);
 							toggleDropdown();
 						}}
 					/>
-				{:else}
-					<DropdownItem
-						text="Activar"
-						icon={userCheckOutline}
-						on:click={() => {
-							activateClient(id);
-							toggleDropdown();
-						}}
-					/>
-				{/if}
-			</Dropdown>
+					{#if active}
+						<DropdownItem
+							text="Eliminar"
+							icon={trashBinMinimalisticLinear}
+							on:click={() => {
+								deleteClient(id);
+								toggleDropdown();
+							}}
+						/>
+					{:else}
+						<DropdownItem
+							text="Activar"
+							icon={userCheckOutline}
+							on:click={() => {
+								activateClient(id);
+								toggleDropdown();
+							}}
+						/>
+					{/if}
+				</Dropdown>
+			</div>
 		{/if}
 	</td>
 </tr>

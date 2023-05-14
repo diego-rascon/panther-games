@@ -28,71 +28,81 @@
 	$: formattedEndDate = endDate.format('DD/MM/YYYY');
 	$: expired = new Date(String(member?.miembro_fecha_final)) < new Date();
 
-	let selected = false;
+	let dropdownVisible = false;
+	let container: HTMLElement;
 
-	let dropdown: any = {
-		placement: 'top-end',
-		event: 'focus-click',
-		state: (e: { state: boolean }) => (selected = e.state)
+	const toggleDropdown = () => {
+		dropdownVisible = !dropdownVisible;
+	};
+
+	const windowHandler = (e: any) => {
+		if (container.contains(e.target) == false) dropdownVisible = false;
 	};
 </script>
 
+<svelte:window on:click={windowHandler} on:wheel={windowHandler} />
 <tr
-	class="border-t border-stone-800 transition-all {selected
+	class="relative border-t border-stone-800 transition-all {dropdownVisible
 		? 'variant-soft-primary'
 		: 'hover:bg-stone-800'} {!active || expired ? ' text-stone-400' : ''}"
 >
-	<td class="p-4 text-left select-text">{clientId}</td>
+	<td class="p-4 text-left select-text">{memberId}</td>
 	<td class="text-left select-text">{name}</td>
 	<td class="text-left select-text">{email}</td>
 	<td class="text-left select-text">{phone}</td>
 	<td class="text-left select-text">{formattedStartDate}</td>
 	<td class="text-left select-text">{formattedEndDate}</td>
-	<td class="pr-4 text-right">
+	<td class="pr-4 text-right" bind:this={container}>
 		<button
-			use:popup={{ ...dropdown, target: `member-dropdown-${memberId}` }}
-			class="btn p-1 rounded-full {selected
+			on:click={toggleDropdown}
+			class="btn p-1 rounded-full {dropdownVisible
 				? 'variant-soft-primary'
 				: 'hover:variant-filled-surface'}"
 		>
 			<Icon icon={menuDotsBold} rotate={1} height={20} />
 		</button>
+		{#if dropdownVisible}
+			<div class="z-[999] absolute bottom-12 right-4">
+				<Dropdown>
+					<DropdownItem
+						text="Editar"
+						icon={pen2Linear}
+						on:click={() => {
+							editMember(clientId);
+							toggleDropdown();
+						}}
+					/>
+					{#if active && expired}
+						<DropdownItem
+							text="Renovar"
+							icon={refreshOutline}
+							on:click={() => {
+								renewMember(memberId);
+								toggleDropdown();
+							}}
+						/>
+					{/if}
+					{#if active}
+						<DropdownItem
+							text="Eliminar"
+							icon={trashBinMinimalisticLinear}
+							on:click={() => {
+								toggleMember(memberId);
+								toggleDropdown();
+							}}
+						/>
+					{:else}
+						<DropdownItem
+							text="Activar"
+							icon={userCheckOutline}
+							on:click={() => {
+								toggleMember(memberId);
+								toggleDropdown();
+							}}
+						/>
+					{/if}
+				</Dropdown>
+			</div>
+		{/if}
 	</td>
-	<div data-popup={`member-dropdown-${memberId}`}>
-		<Dropdown>
-			<DropdownItem
-				text="Editar"
-				icon={pen2Linear}
-				on:click={() => {
-					editMember(clientId);
-				}}
-			/>
-			{#if active && expired}
-				<DropdownItem
-					text="Renovar"
-					icon={refreshOutline}
-					on:click={() => {
-						renewMember(memberId);
-					}}
-				/>
-			{/if}
-			{#if active}
-				<DropdownItem
-					text="Eliminar"
-					icon={trashBinMinimalisticLinear}
-					on:click={() => {
-						toggleMember(memberId);
-					}}
-				/>
-			{:else}
-				<DropdownItem
-					text="Activar"
-					icon={userCheckOutline}
-					on:click={() => {
-						toggleMember(memberId);
-					}}
-				/>
-			{/if}
-		</Dropdown>
-	</div>
 </tr>
