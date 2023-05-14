@@ -1,64 +1,34 @@
 <script lang="ts">
-	import PantherGamesLogo from '../components/titles/PantherGamesLogo.svelte';
 	import { supabase } from '$lib/db';
+	import { session } from '$lib/stores';
+	import { goto } from '$app/navigation';
+	import PantherGamesLogo from '../components/titles/PantherGamesLogo.svelte';
 	import InputError from '../components/utils/InputError.svelte';
-	import LoadingScreen from '../components/utils/LoadingScreen.svelte';
+	import Icon from '@iconify/svelte';
+	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
 
-	let usuario = '';
-	let contraseña = '';
-	let errorString = '';
+	session.set(false);
 
-	let errorVisible = false;
-	let loginSuccess = false;
+	let user = '';
+	let password = '';
 
 	let loading = false;
+	let inputError = false;
+	let validLogin = false;
 
 	const checkLogin = async () => {
-		// Verificar si el usuario y la contraseña no están vacíos
-		if (usuario && contraseña) {
-			// Realizar una consulta a la tabla "usuario" en Supabase para verificar la coincidencia
-			const { data, error } = await supabase
-				.from('usuario')
-				.select()
-				.eq('usuario_username', usuario)
-				.eq('usuario_password', contraseña)
-				.limit(1);
-
-			if (error) {
-				console.error('Error al verificar usuario y contraseña:', error);
-				return;
-			}
-
-			if (data && data.length > 0) {
-				// Desactivar variables
-				errorVisible = false;
-				// Volver boton verde
-				loginSuccess = true;
-				// Los datos coinciden, el usuario y contraseña son válidos
-				console.log('Usuario y contraseña coinciden.');
-				// Redireccionar a la página de inicio
-				window.location.href = '/home';
-			} else {
-				loading = false;
-				errorVisible = true;
-				errorString = 'Usuario o contraseña no coinciden.';
-			}
-		} else {
-			loading = false;
-			errorVisible = true;
-			errorString = 'Favor de introducir usuario y contraseña.';
-		}
-	};
-
-	const submit = () => {
-		loading = true;
-		checkLogin();
-	};
-
-	const submitOnEnter = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			submit();
-		}
+		const { data, error } = await supabase
+			.from('usuario')
+			.select()
+			.eq('usuario_username', user)
+			.eq('usuario_password', password)
+			.maybeSingle();
+		if (data) {
+			session.set(true);
+			validLogin = true;
+			goto('/home');
+		} else inputError = true;
+		loading = false;
 	};
 </script>
 
@@ -66,53 +36,30 @@
 	<div
 		class="mx-auto p-8 max-w-sm w-full bg-stone-950 border border-stone-800 rounded-xl shadow-xl transition-all"
 	>
-		<div class="flex flex-col space-y-4">
+		<form class="flex flex-col space-y-4">
 			<PantherGamesLogo size={4} />
-			<input
-				type="text"
-				bind:value={usuario}
-				placeholder="Usuario"
-				class="input"
-				on:keypress={submitOnEnter}
-			/>
-			<input
-				type="password"
-				bind:value={contraseña}
-				placeholder="Contraseña"
-				class="input"
-				on:keypress={submitOnEnter}
-			/>
-			{#if errorVisible}
-				<InputError text={errorString} />
+			<input type="text" bind:value={user} placeholder="Usuario" class="input" />
+			<input type="password" bind:value={password} placeholder="Contraseña" class="input" />
+			{#if inputError}
+				<InputError text="El usuario y contraseña no coinciden." />
 			{/if}
-			<a
-				href='/home'
-				type="button"
-				class="btn font-bold {loginSuccess ? 'variant-filled-success' : 'variant-filled-primary'}"
-			>
-				{#if loginSuccess}
-					<span>Bienvenido</span>
-				{:else if loading}
-					<LoadingScreen />
-				{:else}
-					<span>Iniciar sesión</span>
-				{/if}
-			</a>
-			<!--
 			<button
-				type="button"
-				class="btn font-bold {loginSuccess ? 'variant-filled-success' : 'variant-filled-primary'}"
-				on:click={submit}
+				type="submit"
+				class="btn font-bold {validLogin ? 'variant-filled-success' : 'variant-filled-primary'}"
+				on:click={() => {
+					if (!loading && !validLogin) {
+						loading = true;
+						inputError = false;
+						checkLogin();
+					}
+				}}
 			>
-				{#if loginSuccess}
-					<span>Bienvenido</span>
-				{:else if loading}
-					<LoadingScreen />
+				{#if loading}
+					<Icon class="animate-spin" icon={refreshCircleOutline} height={24} hFlip={true} />
 				{:else}
-					<span>Iniciar sesión</span>
+					{validLogin ? 'Bienvenido' : 'Iniciar sesión'}
 				{/if}
 			</button>
-			-->
-		</div>
+		</form>
 	</div>
 </div>
