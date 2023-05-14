@@ -332,7 +332,19 @@
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
 		toggleSale();
-		if (await updateCaja()) {
+		if (cashPayment) {
+			if (await updateCaja()) {
+				lowerStock();
+				const { error } = await supabase.rpc('register_sale', {
+					input_cliente_id: clientId,
+					input_descuento: 0,
+					input_venta_tarjeta: !cashPayment
+				});
+				if (error) console.log(error.message);
+				else toastStore.trigger(saleAdded);
+				emptyCart();
+			}
+		} else {
 			lowerStock();
 			const { error } = await supabase.rpc('register_sale', {
 				input_cliente_id: clientId,
