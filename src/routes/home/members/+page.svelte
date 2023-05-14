@@ -15,6 +15,7 @@
 	import MemberForm from '../../../components/forms/MemberForm.svelte';
 	import RenewMemberForm from '../../../components/forms/RenewMemberForm.svelte';
 	import MemberRow from '../../../components/data/MemberRow.svelte';
+	import MemberDetail from '../../../components/data/MemberDetail.svelte';
 
 	export let data;
 	let { members, clients } = data;
@@ -54,6 +55,12 @@
 		name = '';
 		email = '';
 		phone = '';
+	};
+
+	let showingDetail = false;
+
+	const toggleShowDetail = () => {
+		showingDetail = !showingDetail;
 	};
 
 	let addingMember = false;
@@ -341,13 +348,17 @@
 					<tbody>
 						{#each filteredActiveMembers as activeMember (activeMember.miembro_id)}
 							<MemberRow
+								toggleDetail={(memberId) => {
+									tempMemberId = memberId;
+									toggleShowDetail();
+								}}
 								editMember={(clientId) => {
 									tempClientId = clientId;
 									toggleEditingMember();
 									bindValues();
 								}}
-								toggleMember={(memberID) => {
-									tempMemberId = memberID;
+								toggleMember={(memberId) => {
+									tempMemberId = memberId;
 									toggleDeleteConfirmation();
 								}}
 								memberId={activeMember.miembro_id}
@@ -355,7 +366,7 @@
 							/>
 						{/each}
 						<tr class="border-t border-stone-800">
-							<td class=" h-7" />
+							<td class="h-7" />
 						</tr>
 					</tbody>
 				</table>
@@ -379,6 +390,10 @@
 					<tbody>
 						{#each filteredExpiredMembers as expiredMember (expiredMember.miembro_id)}
 							<MemberRow
+								toggleDetail={(memberId) => {
+									tempMemberId = memberId;
+									toggleShowDetail();
+								}}
 								editMember={(clientId) => {
 									tempClientId = clientId;
 									toggleEditingMember();
@@ -397,7 +412,7 @@
 							/>
 						{/each}
 						<tr class="border-t border-stone-800">
-							<td class=" h-7" />
+							<td class="h-7" />
 						</tr>
 					</tbody>
 				</table>
@@ -421,6 +436,10 @@
 					<tbody>
 						{#each filteredDeactivatedMembers as deactivadedMember (deactivadedMember.miembro_id)}
 							<MemberRow
+								toggleDetail={(memberId) => {
+									tempMemberId = memberId;
+									toggleShowDetail();
+								}}
 								editMember={(clientId) => {
 									tempClientId = clientId;
 									toggleEditingMember();
@@ -435,7 +454,7 @@
 							/>
 						{/each}
 						<tr class="border-t border-stone-800">
-							<td class=" h-7" />
+							<td class="h-7" />
 						</tr>
 					</tbody>
 				</table>
@@ -446,6 +465,11 @@
 <div class="fixed bottom-0 right-0">
 	<AddButton on:click={toggleAddingMember} />
 </div>
+{#if showingDetail}
+	<DarkenSreen>
+		<MemberDetail closeHandler={toggleShowDetail} memberId={tempMemberId} />
+	</DarkenSreen>
+{/if}
 {#if addingMember}
 	<DarkenSreen>
 		<MemberForm

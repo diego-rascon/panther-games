@@ -10,7 +10,9 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
 	import dayjs from 'dayjs';
+	import { stop_propagation } from 'svelte/internal';
 
+	export let toggleDetail: (memberId: number) => void;
 	export let editMember: (clientId: number) => void;
 	export let renewMember: (memberId: number) => void = () => {};
 	export let toggleMember: (memberId: number) => void = () => {};
@@ -42,7 +44,10 @@
 
 <svelte:window on:click={windowHandler} on:wheel={windowHandler} />
 <tr
-	class="relative border-t border-stone-800 transition-all {dropdownVisible
+	on:click={() => {
+		toggleDetail(memberId);
+	}}
+	class="relative border-t border-stone-800 transition-all active:variant-soft-primary cursor-pointer {dropdownVisible
 		? 'variant-soft-primary'
 		: 'hover:bg-stone-800'} {!active || expired ? ' text-stone-400' : ''}"
 >
@@ -54,7 +59,7 @@
 	<td class="text-left select-text">{formattedEndDate}</td>
 	<td class="pr-4 text-right" bind:this={container}>
 		<button
-			on:click={toggleDropdown}
+			on:click|stopPropagation={toggleDropdown}
 			class="btn p-1 rounded-full {dropdownVisible
 				? 'variant-soft-primary'
 				: 'hover:variant-filled-surface'}"
