@@ -33,7 +33,7 @@ export const load = async () => {
 		const { data } = await supabase
 			.from('cliente')
 			.select()
-			.order('cliente_id', { ascending: false });
+			.order('cliente_nombre', { ascending: true });
 		return data ?? [];
 	};
 
