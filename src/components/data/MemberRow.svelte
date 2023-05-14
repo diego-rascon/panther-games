@@ -49,7 +49,7 @@
 	}}
 	class="relative border-t border-stone-800 transition-all active:variant-soft-primary cursor-pointer {dropdownVisible
 		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'} {!active || expired ? ' text-stone-400' : ''}"
+		: 'hover:bg-stone-800'} {!active || expired ? 'text-stone-400' : ''}"
 >
 	<td class="p-4 text-left select-text">{memberId}</td>
 	<td class="text-left select-text">{name}</td>
