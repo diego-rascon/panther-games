@@ -16,6 +16,10 @@
 	export let stock: number;
 	export let quantity: number;
 
+	$: quantity = rent ? 1 : quantity;
+
+	$: console.log(quantity);
+
 	$: formattedPrice = (price * quantity).toLocaleString('en-US', {
 		style: 'currency',
 		currency: 'USD'
