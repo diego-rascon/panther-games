@@ -11,16 +11,22 @@
 	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 
 	export let cancelHandler: () => void;
-	export let confirmHandler: (clientId: number, saleCard: boolean) => void;
-	export let clients: { [x: string]: any }[];
+	export let confirmHandler: (
+		memberId: number,
+		duration: number,
+		saleCard: boolean,
+		startDate: Date
+	) => void;
+	export let members: { [x: string]: any }[];
 	export let cartQuantity: number;
 
 	$: rentTotal = duration === 3 ? 100 * cartQuantity : 200 * cartQuantity;
 	$: formattedPrice = rentTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-	let genericClient = true;
-	let clientId: number;
-	let duration: number = 3;
+	const startDate = new Date();
+
+	let memberId: number;
+	let duration = 3;
 	let cashPayment = true;
 	let payment: number;
 
@@ -38,7 +44,7 @@
 
 	const registerSale = () => {
 		if (validInput()) {
-			confirmHandler(genericClient ? 1 : clientId, cashPayment);
+			confirmHandler(memberId, duration, cashPayment, startDate);
 		} else {
 			inputError = true;
 			toggleConfirmation();
@@ -69,9 +75,9 @@
 			<SectionSubtitle text="Miembro" />
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<div class="input-group-shim"><Icon icon={userOutline} height={24} /></div>
-				<select class="select" bind:value={clientId}>
-					{#each clients as client}
-						<option value={client.cliente_id}>{client.cliente_nombre}</option>
+				<select class="select" bind:value={memberId}>
+					{#each members as member}
+						<option value={member.miembro_id}>{member.cliente_nombre}</option>
 					{/each}
 				</select>
 			</div>
