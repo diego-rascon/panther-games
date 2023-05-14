@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { salesStore } from '$lib/stores';
 	import { supabase } from '$lib/db';
-	import { toastStore } from '@skeletonlabs/skeleton';
+	import { Paginator, toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
 	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
@@ -9,9 +9,9 @@
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
-	import SaleForm from '../../../components/forms/SaleForm.svelte';
 	import SaleRow from '../../../components/data/SaleRow.svelte';
 	import SaleDetail from '../../../components/data/SaleDetail.svelte';
+	import type { PaginationSettings } from '@skeletonlabs/skeleton/dist/components/Paginator/types';
 
 	export let data;
 	let { sales } = data;
@@ -22,6 +22,20 @@
 	$: deactivatedSales = sales.filter((sale: any) => !sale.venta_activa);
 	$: filteredActiveSales = activeSales;
 	$: filteredDeactivatedSales = deactivatedSales;
+
+	let pageSettings = {
+		offset: 0,
+		limit: 10,
+		size: sales.filter((sale: any) => sale.venta_activa).length,
+		amounts: [10, 15, 20, 25]
+	} as PaginationSettings;
+
+	$: pageSettings.size = filteredActiveSales.length;
+
+	$: paginatedActiveSales = filteredActiveSales.slice(
+		pageSettings.offset * pageSettings.limit,
+		pageSettings.offset * pageSettings.limit + pageSettings.limit
+	);
 
 	let showingDetail = false;
 
@@ -110,6 +124,8 @@
 		message: 'Se activó la venta exitosamente',
 		background: 'variant-filled-primary'
 	};
+
+	$: console.log(deactivatedSales);
 </script>
 
 <div
@@ -122,9 +138,9 @@
 	{#if filteredActiveSales.length === 0 && filteredDeactivatedSales.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
-		{#if filteredActiveSales.length !== 0}
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+		{#if filteredActiveSales.length > 0}
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">Folio</th>
@@ -138,7 +154,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredActiveSales as sale (sale.venta_id)}
+						{#each paginatedActiveSales as activeSale (activeSale.venta_id)}
 							<SaleRow
 								toggleDetail={(clientId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
@@ -150,17 +166,21 @@
 									toggleDeleteConfirmation();
 									tempSaleId = saleId;
 								}}
-								id={sale.venta_id}
+								id={activeSale.venta_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class="h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
+			<Paginator bind:settings={pageSettings} />
 		{/if}
-		{#if filteredDeactivatedSales.length !== 0}
-			<SectionSubtitle text="Ventas Desactivados" />
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+		{#if filteredDeactivatedSales.length > 0}
+			<SectionSubtitle text="Ventas Desactivadas" />
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">Folio</th>
@@ -174,7 +194,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredDeactivatedSales as sale (sale.venta_id)}
+						{#each filteredDeactivatedSales as deactivatedSale (deactivatedSale.venta_id)}
 							<SaleRow
 								toggleDetail={(saleID, saleTotal, saleQuantity) => {
 									toggleShowDetail();
@@ -183,13 +203,16 @@
 									tempSaleQuantity = saleQuantity;
 									console.log(saleQuantity);
 								}}
-								toggleSale={(clientId) => {
+								toggleSale={(saleId) => {
 									toggleActivateConfirmation();
-									tempSaleId = clientId;
+									tempSaleId = saleId;
 								}}
-								id={sale.venta_id}
+								id={deactivatedSale.venta_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class="h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
