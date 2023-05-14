@@ -22,10 +22,11 @@
 	import { nfc, nfd } from 'unorm';
 	import RentForm from '../../components/forms/RentForm.svelte';
 	import moment from 'moment';
+	import dayjs from 'dayjs';
 
 	export let data;
-	let { categories, products, platforms, cart, clients } = data;
-	$: ({ categories, products, platforms, cart, clients } = data);
+	let { categories, products, platforms, cart, clients, members } = data;
+	$: ({ categories, products, platforms, cart, clients, members } = data);
 
 	$: cartStore.set(cart);
 	$: productsStore.set(products);
@@ -332,29 +333,16 @@
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
 		toggleSale();
-		if (cashPayment) {
-			if (await updateCaja()) {
-				lowerStock();
-				const { error } = await supabase.rpc('register_sale', {
-					input_cliente_id: clientId,
-					input_descuento: 0,
-					input_venta_tarjeta: !cashPayment
-				});
-				if (error) console.log(error.message);
-				else toastStore.trigger(saleAdded);
-				emptyCart();
-			}
-		} else {
-			lowerStock();
-			const { error } = await supabase.rpc('register_sale', {
-				input_cliente_id: clientId,
-				input_descuento: 0,
-				input_venta_tarjeta: !cashPayment
-			});
-			if (error) console.log(error.message);
-			else toastStore.trigger(saleAdded);
-			emptyCart();
-		}
+		if (cashPayment && !updateCaja()) return;
+		lowerStock();
+		const { error } = await supabase.rpc('register_sale', {
+			input_cliente_id: clientId,
+			input_descuento: 0,
+			input_venta_tarjeta: !cashPayment
+		});
+		if (error) console.log(error.message);
+		else toastStore.trigger(saleAdded);
+		emptyCart();
 	};
 
 	const lowerStock = () => {
@@ -362,7 +350,7 @@
 			const boughtProduct = products.find(
 				(product: any) => product.producto_id === cartProduct.producto_id
 			);
-			boughtProduct.producto_stock -= cartProduct.producto_cantidad;
+			boughtProduct.producto_stock -= rent ? 1 : cartProduct.producto_cantidad;
 		}
 		products = products;
 	};
@@ -377,8 +365,60 @@
 		doingRent = !doingRent;
 	};
 
-	const registerRent = () => {
-		console.log('Register Rent');
+	const registerRent = async (memberId: number, duration: number, cashPayment: boolean) => {
+		toggleRent();
+
+		if (cashPayment) if (!updateCaja()) return;
+
+		const startDate = new Date();
+		const endDate = new Date();
+
+		endDate.setDate(startDate.getDate() + 3);
+
+		const formattedStartDate = dayjs(startDate).format('YYYY-MM-DD');
+		const formattedEndDate = dayjs(endDate).format('YYYY-MM-DD');
+
+		const { data: rent, error: rentError } = await supabase
+			.from('renta')
+			.insert({
+				miembro_id: memberId,
+				renta_duracion: duration,
+				renta_monto: duration === 3 ? cart.length * 100 : 200 * cart.length,
+				renta_descuento: 0,
+				renta_tarjeta: !cashPayment,
+				renta_cantidad: cart.length,
+				renta_fecha_inicio: formattedStartDate,
+				renta_fecha_final: formattedEndDate
+			})
+			.select()
+			.single();
+		if (rentError) console.log(rentError.message);
+		if (rent) {
+			for (const cartProduct of cart) {
+				const productId = cartProduct.producto_id;
+				const { error: detailError } = await supabase
+					.from('renta_detalle')
+					.insert({ renta_id: rent.renta_id, producto_id: productId });
+				if (detailError) console.log(detailError.message);
+				const { data: product, error: productError } = await supabase
+					.from('producto')
+					.select('producto_stock')
+					.eq('producto_id', productId)
+					.single();
+				if (productError) console.log(productError.message);
+				if (product) {
+					const newStock = product.producto_stock - 1;
+					const { error } = await supabase
+						.from('producto')
+						.update({ producto_stock: newStock })
+						.eq('producto_id', productId);
+					if (error) console.log(error.message);
+				}
+			}
+			lowerStock();
+			toastStore.trigger(rentAdded);
+			emptyCart();
+		}
 	};
 
 	let cartVisible = cart.length > 0;
@@ -498,6 +538,11 @@
 
 	const saleMode: ToastSettings = {
 		message: 'Ahora se está registrando una venta.',
+		background: 'variant-filled-primary'
+	};
+
+	const rentAdded: ToastSettings = {
+		message: 'Una nueva renta fue registrada exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
@@ -665,12 +710,6 @@
 	</div>
 	<!--Buttons-->
 	<div class="flex flex-col mt-auto space-y-4">
-		{#if !rent}
-			<div class="flex justify-between text-lg">
-				<p class="unstyled font-bold">Total ({cartQuantity})</p>
-				<p class="unstyled">{formattedPrice}</p>
-			</div>
-		{/if}
 		{#if rent}
 			{#if !validRentProducts}
 				<p class="unstyled text-sm text-warning-700">
@@ -680,6 +719,11 @@
 			{#if !validRentQuantity}
 				<p class="unstyled text-sm text-warning-700">Solo se puede rentar un máximo de 3 juegos.</p>
 			{/if}
+		{:else}
+			<div class="flex justify-between text-lg">
+				<p class="unstyled font-bold">Total ({cartQuantity})</p>
+				<p class="unstyled">{formattedPrice}</p>
+			</div>
 		{/if}
 		<RadioGroup class="justify-center" active="variant-filled-success">
 			<RadioItem
@@ -803,6 +847,6 @@
 {/if}
 {#if doingRent}
 	<DarkenSreen>
-		<RentForm cancelHandler={toggleRent} confirmHandler={registerRent} {clients} {cartQuantity} />
+		<RentForm cancelHandler={toggleRent} confirmHandler={registerRent} {members} {cartQuantity} />
 	</DarkenSreen>
 {/if}
