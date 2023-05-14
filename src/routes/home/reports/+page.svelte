@@ -15,6 +15,7 @@
 		venta_id: number;
 		producto_id: number;
 		producto_nombre: string;
+		plataforma_nombre: string;
 		producto_stock: number;
 		producto_precio: number;
 		cantidad_vendida: number;
@@ -35,6 +36,16 @@
 	let saleReport: {
 		cantidad_ventas: number;
 		total_ventas: number;
+	}[] = [];
+
+	let accesoriesReport: {
+		venta_id: number;
+		producto_id: number;
+		producto_nombre: string;
+		producto_stock: number;
+		producto_precio: number;
+		cantidad_vendida: number;
+		total_producto: number;
 	}[] = [];
 
 	const dateFinalConst = dateFinal;
@@ -114,6 +125,31 @@
 		}
 	};
 
+	const getAccesoriesReport = async (dateStart: string, dateEnd: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportaccesoriosdate', {
+				start_date: dateStart,
+				end_date: dateEnd
+			});
+			console.log(data);
+			accesoriesReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getAccesoriesReportOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportaccesoriosonedate', {
+				start_date: date
+			});
+			console.log(data);
+			accesoriesReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const reporteGeneradoHandler = () => {
 		reporteGenerado = !reporteGenerado;
 	};
@@ -126,10 +162,12 @@
 			getGamesReportOneDate(dateBeginMoment);
 			getConsolesReportOneDate(dateBeginMoment);
 			getSalesReportOneDate(dateBeginMoment);
+			getAccesoriesReportOneDate(dateBeginMoment);
 		} else {
 			getGamesReport(dateBeginMoment, dateFinalMoment);
 			getConsolesReport(dateBeginMoment, dateFinalMoment);
 			getSalesReport(dateBeginMoment, dateFinalMoment);
+			getAccesoriesReport(dateBeginMoment, dateFinalMoment);
 		}
 	};
 
@@ -272,7 +310,8 @@
 						<tr>
 							<th class="p-2 text-left">Folio</th>
 							<th class="p-2 text-left">Nombre</th>
-							<th class="p-2 text-left">Stock</th>
+							<th class="p-2 text-left">Plataforma</th>
+							<th class="p-2 text-left">Stock Actual</th>
 							<th class="p-2 text-left">Precio venta</th>
 							<th class="p-2 text-left">Vendidos</th>
 							<th class="p-2 text-left">Total</th>
@@ -282,6 +321,7 @@
 						<tr class={getColor(game.plataforma_id)}>
 							<td class="p-2 text-left">{game.venta_id}</td>
 							<td class="p-2 text-left">{game.producto_nombre}</td>
+							<td class="p-2 text-left">{game.plataforma_nombre}</td>
 							<td class="p-2 text-left">{game.producto_stock}</td>
 							<td class="p-2 text-left">{game.producto_precio}</td>
 							<td class="p-2 text-left">{game.cantidad_vendida}</td>
@@ -322,6 +362,37 @@
 				</table>
 			</div>
 		</div>
+		<div>
+			<div class="m-2">
+				<SectionSubtitle text="Accesorios" />
+			</div>
+			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+				<table id="TableToExport" class="table">
+					<thead class="border-b border-stone-800">
+						<tr>
+							<th class="p-2 text-left">Folio</th>
+							<th class="p-2 text-left">Nombre</th>
+							<th class="p-2 text-left">Stock</th>
+							<th class="p-2 text-left">Precio venta</th>
+							<th class="p-2 text-left">Vendidos</th>
+							<th class="p-2 text-left">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each accesoriesReport as accesorio}
+							<tr>
+								<td class="p-2 text-left">{accesorio.venta_id}</td>
+								<td class="p-2 text-left">{accesorio.producto_nombre}</td>
+								<td class="p-2 text-left">{accesorio.producto_stock}</td>
+								<td class="p-2 text-left">{accesorio.producto_precio}</td>
+								<td class="p-2 text-left">{accesorio.cantidad_vendida}</td>
+								<td class="p-2 text-left">{accesorio.total_producto}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<div class="text-center">
 			<button on:click={getExcel} class="btn variant-filled-primary min-w-max max-w-md m-4 p-4">
 				<p class="font-bold">Exportar en .xlsx</p>
@@ -341,12 +412,10 @@
 			<div class="space-y-2">
 				<SectionSubtitle text="Fecha Inicial" />
 				<input type="date" class="input" bind:value={dateBegin} />
-				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateBegin} />-->
 			</div>
 			<div class="space-y-2">
 				<SectionSubtitle text="Fecha Final" />
 				<input type="date" class="input" bind:value={dateFinal} />
-				<!--<DateInput format="yyyy/MM/dd" max={dateFinal} bind:value={dateFinal} />-->
 			</div>
 		</div>
 		<button on:click={getReport} class="btn variant-filled-primary min-w-max max-w-md"
