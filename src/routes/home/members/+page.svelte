@@ -72,28 +72,49 @@
 				.single();
 			if (clientError) console.log(clientError.message);
 			if (client) {
-				const { data: member, error: errorMessage } = await supabase.from('miembro').insert({
-					cliente_id: client.cliente_id,
-					miembro_fecha_inicio: date,
-					miembro_fecha_final: endDate
-				});
+				const { data: member, error: errorMessage } = await supabase
+					.from('miembro')
+					.insert({
+						cliente_id: client.cliente_id,
+						miembro_fecha_original: date,
+						miembro_fecha_inicio: date,
+						miembro_fecha_final: endDate
+					})
+					.select()
+					.single();
 				if (errorMessage) console.log(errorMessage.message);
-				const newMember = client;
-				newMember.miembro_activo = true;
-				newMember.miembro_fecha_inicio = date;
-				newMember.miembro_fecha_final = endDate;
-				members = [newMember, ...members];
+				if (member) {
+					const newMember = client;
+					newMember.miembro_id = member.miembro_id;
+					newMember.miembro_activo = true;
+					newMember.miembro_fecha_original = date;
+					newMember.miembro_fecha_inicio = date;
+					newMember.miembro_fecha_final = endDate;
+					newMember.miembro_compras = 0;
+					newMember.miembro_rentas = 0;
+					members = [newMember, ...members];
+				}
 			}
 		} else {
 			const { error } = await supabase
 				.from('miembro')
-				.insert({ cliente_id: clientId, miembro_fecha_inicio: date, miembro_fecha_final: endDate });
+				.insert({
+					cliente_id: clientId,
+					miembro_fecha_original: date,
+					miembro_fecha_inicio: date,
+					miembro_fecha_final: endDate
+				})
+				.select()
+				.single();
 			if (error) console.log(error.message);
 			const newMember = clients.find((clientEntry: any) => clientEntry.cliente_id === clientId);
-			newMember.cliente_id = clientId;
+			newMember.miembro_id = clientId;
 			newMember.miembro_activo = true;
+			newMember.miembro_fecha_original = date;
 			newMember.miembro_fecha_inicio = date;
 			newMember.miembro_fecha_final = endDate;
+			newMember.miembro_compras = 0;
+			newMember.miembro_rentas = 0;
 			members = [newMember, ...members];
 			clients = clients.filter((clientEntry: any) => clientEntry.cliente_id !== clientId);
 		}
@@ -143,9 +164,25 @@
 		renewingMember = !renewingMember;
 	};
 
-	const renewMember = () => {
-		console.log('hehe');
+	const renewMember = async () => {
+		toggleRenewingMember();
+		const { data, error } = await supabase
+			.from('miembro')
+			.update({ miembro_fecha_inicio: date, miembro_fecha_final: endDate })
+			.eq('miembro_id', tempMemberId)
+			.select();
+		if (error) console.log(error.message);
+		if (data) {
+			const renewedMember = members.find((member: any) => member.miembro_id === tempMemberId);
+			renewedMember.miembro_fecha_inicio = date;
+			renewedMember.miembro_fecha_final = endDate;
+			console.log(renewedMember);
+			members = members;
+			toastStore.trigger(memberRenewed);
+		}
 	};
+
+	$: console.log(endDate);
 
 	let deleteConfirmation = false;
 
@@ -261,6 +298,11 @@
 		background: 'variant-filled-primary'
 	};
 
+	const memberRenewed: ToastSettings = {
+		message: 'Se renovó al miembro exitosamente',
+		background: 'variant-filled-primary'
+	};
+
 	const memberDeleted: ToastSettings = {
 		message: 'Se eliminó al miembro exitosamente',
 		background: 'variant-filled-primary'
@@ -273,18 +315,18 @@
 </script>
 
 <div
-	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
+	class="z-[888] fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
 >
 	<SectionTitle text="Miembros" />
 	<Search searchHandler={searchClient} bind:search />
 </div>
-<div class="mt-[60px] flex-col mb-20 space-y-4">
+<div class="mt-[60px] flex flex-col mb-20 space-y-4">
 	{#if filteredActiveMembers.length === 0 && filteredDeactivatedMembers.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveMembers.length > 0}
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -312,14 +354,17 @@
 								clientId={activeMember.cliente_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class=" h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
 		{/if}
 		{#if filteredExpiredMembers.length > 0}
 			<SectionSubtitle text="Miembros Vencidos" />
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -351,14 +396,17 @@
 								clientId={expiredMember.cliente_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class=" h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
 		{/if}
 		{#if filteredDeactivatedMembers.length > 0}
 			<SectionSubtitle text="Miembros no Activos" />
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -386,6 +434,9 @@
 								clientId={deactivadedMember.cliente_id}
 							/>
 						{/each}
+						<tr class="border-t border-stone-800">
+							<td class=" h-7" />
+						</tr>
 					</tbody>
 				</table>
 			</div>
