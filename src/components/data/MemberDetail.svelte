@@ -22,20 +22,17 @@
 	<SectionTitle centered={true} text="Detalles del Miembro" />
 	<div class="flex flex-col space-y-4 overflow-y-auto">
 		{#await memberDetailesPromise}
-			<div class="text-center text-xl">
-				<p>Miembro desde</p>
-				<div class="placeholder animate-pulse" />
-			</div>
+			<p class="text-center text-xl">Miembro desde --/--/----</p>
 			<div class="flex justify-between text-lg">
 				<p class="unstyled font-bold">Compras</p>
-				<div class="placeholder animate-pulse" />
+				<p>...</p>
 			</div>
 			<div class="flex justify-between text-lg">
 				<p class="unstyled font-bold">Rentas</p>
-				<div class="placeholder animate-pulse" />
+				<p>...</p>
 			</div>
 		{:then memberDetails}
-			<p class=" text-center text-xl">
+			<p class="text-center text-xl">
 				Miembro desde {dayjs(memberDetails?.miembro_fecha_original).format('DD/MM/YYYY')}
 			</p>
 			<div class="flex justify-between text-lg">
