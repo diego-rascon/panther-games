@@ -17,9 +17,6 @@
 	export let quantity: number;
 
 	$: quantity = rent ? 1 : quantity;
-
-	$: console.log(quantity);
-
 	$: formattedPrice = (price * quantity).toLocaleString('en-US', {
 		style: 'currency',
 		currency: 'USD'
@@ -33,12 +30,14 @@
 	</div>
 	<div class="flex flex-col space-y-1 items-start">
 		<div class="flex space-x-2">
-			<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">{categoryName}</p>
+			{#if !rent}
+				<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">{categoryName}</p>
+			{/if}
 			{#if !newProduct}
 				<p class="unstyled px-2 p-1 variant-soft-warning rounded-full text-xs">Usado</p>
 			{/if}
 		</div>
-		{#if categoryId === 1}
+		{#if (!rent && categoryId === 1) || (rent && platformName !== 'Switch')}
 			<p class="unstyled flex px-2 p-1 variant-soft-success rounded-full text-xs">{platformName}</p>
 		{/if}
 	</div>
