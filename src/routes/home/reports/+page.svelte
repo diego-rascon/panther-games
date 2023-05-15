@@ -33,6 +33,11 @@
 		total_producto: number;
 	}[] = [];
 
+	let saleCardReport: {
+		cantidad_ventas: number;
+		total_ventas: number;
+	}[] = [];
+
 	let saleReport: {
 		cantidad_ventas: number;
 		total_ventas: number;
@@ -150,6 +155,30 @@
 		}
 	};
 
+	const getVentaTarjetaDate = async (dateStart: string, dateEnd: string) => {
+		try {
+			const { data } = await supabase.rpc('ventatarjetadate', {
+				start_date: dateStart,
+				end_date: dateEnd
+			});
+			saleCardReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+
+	const getVentaTarjetaOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('ventatarjetaonedate', {
+				start_date: date
+			});
+			saleCardReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const reporteGeneradoHandler = () => {
 		reporteGenerado = !reporteGenerado;
 	};
@@ -163,13 +192,17 @@
 			getConsolesReportOneDate(dateBeginMoment);
 			getSalesReportOneDate(dateBeginMoment);
 			getAccesoriesReportOneDate(dateBeginMoment);
+			getVentaTarjetaOneDate(dateBeginMoment);
 		} else {
 			getGamesReport(dateBeginMoment, dateFinalMoment);
 			getConsolesReport(dateBeginMoment, dateFinalMoment);
 			getSalesReport(dateBeginMoment, dateFinalMoment);
 			getAccesoriesReport(dateBeginMoment, dateFinalMoment);
+			getVentaTarjetaDate(dateBeginMoment, dateFinalMoment);
 		}
 	};
+
+	let arreglo: string[] = ["Ventas", "Juegos", "Consolas", "Accesorios" ];
 
 	const getExcel = () => {
 		try {
@@ -178,9 +211,9 @@
 
 			tables.forEach((table, index) => {
 				const ws = XLSX.utils.table_to_sheet(table);
-				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
+				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
 			});
-			XLSX.writeFile(wb, 'reporte.xlsx');
+			XLSX.writeFile(wb, dateBeginMoment+'-'+dateFinalMoment+'.xlsx');
 		} catch (error) {
 			console.error(error);
 		}
@@ -256,46 +289,37 @@
 				<p class="font-bold">Volver</p>
 			</button>
 		</div>
-		<!-- División de 2 columnas -->
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
 			<!-- Izquierda -->
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 				<table id="TableToExport" class="table">
 					<thead class="border-b border-stone-800">
 						<tr>
-							<th class="p-2 text-left">Ventas totales</th>
-							<th class="p-2 text-left">Total por Ventas</th>
+							<th class="p-2 text-left">Cantidad de ventas tarjeta</th>
+							<th class="p-2 text-left">Total ventas tarjeta</th>
+							<th class="p-2 text-left">Cantidad de ventas efectivo</th>
+							<th class="p-2 text-left">Total ventas efectivo</th>
+							<th class="p-2 text-left">Cantidad de ventas totales</th>
+							<th class="p-2 text-left">Total ventas</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each saleReport as venta}
-							<tr>
-								<td class="p-2 text-left">{venta.cantidad_ventas}</td>
-								<td class="p-2 text-left">{venta.total_ventas}</td>
-							</tr>
+							{#each saleCardReport as tarjetaVenta}
+								<tr>
+									<td class="p-2 text-left">{tarjetaVenta.cantidad_ventas}</td>
+									<td class="p-2 text-left">{tarjetaVenta.total_ventas}</td>
+									<td class="p-2 text-left"
+										>{venta.cantidad_ventas - tarjetaVenta.cantidad_ventas}</td
+									>
+									<td class="p-2 text-left">{venta.total_ventas - tarjetaVenta.total_ventas}</td>
+									<td class="p-2 text-left">{venta.cantidad_ventas}</td>
+									<td class="p-2 text-left">{venta.total_ventas}</td>
+								</tr>
+							{/each}
 						{/each}
 					</tbody>
 				</table>
-			</div>
-
-			<!-- Derecha -->
-			<div>
-				<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
-					<table id="TableToExport" class="table">
-						<thead class="border-b border-stone-800">
-							<tr>
-								<th class="p-2 text-left">Nuevos miembros</th>
-								<th class="p-2 text-left">Miembros activos</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="p-2 text-left">3</td>
-								<td class="p-2 text-left">27</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
 			</div>
 		</div>
 
