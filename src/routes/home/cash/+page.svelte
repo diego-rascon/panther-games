@@ -96,6 +96,7 @@
 
 	const changeAction = (newAction: Action) => {
 		currentAction = currentAction === newAction ? Action.None : newAction;
+		dineroEntrada = 0;
 	};
 
 	let tempCajaId: number;
@@ -114,17 +115,16 @@
 
 	const deleteCaja = async () => {
 		toggleDeleteConfirmation();
-		deleteCajaRetiroDetalle(); //Retiro borrar
-		deleteCajaIngresoDetalle(); //Ingreos borrar
 		const { data, error } = await supabase
 			.from('caja')
 			.delete()
 			.eq('caja_id', tempCajaId)
 			.select()
-			.single();
+			.maybeSingle();
 		if (error) console.log(error.message);
 		if (data) caja = caja.filter((cajaEntry: any) => cajaEntry.caja_id != tempCajaId);
-		cajaTotal = caja[0].caja_total;
+		if (caja.length > 0) cajaTotal = caja[0].caja_total;
+
 		toastStore.trigger(cajaDeleted);
 		cajaInicialExist = false;
 	};
@@ -502,9 +502,6 @@
 
 	const hacerCorte = async () => {
 		toggleCorteConfirmation();
-
-		deleteCajaRetiroDetalle(); //Retiro borrar
-		deleteCajaIngresoDetalle(); //Ingresos borrar
 		const { data, error } = await supabase
 			.from('caja')
 			.delete()
@@ -518,7 +515,17 @@
 		toggleVisualizarCorte();
 	};
 
-	let arreglo: string[] = ["Ventas", "Caja", "Ingresos y Retiros", "Ingresos Detalles", "Retiros Detalles", "Juegos", "Consolas", "Accesorios" ];
+	let arreglo: string[] = [
+		'Ventas',
+		'Caja',
+		'Ingresos y Retiros',
+		'Rentas',
+		'Ingresos Detalles',
+		'Retiros Detalles',
+		'Juegos',
+		'Consolas',
+		'Accesorios'
+	];
 
 	const getExcel = () => {
 		try {
@@ -529,7 +536,7 @@
 				const ws = XLSX.utils.table_to_sheet(table);
 				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
 			});
-			XLSX.writeFile(wb, 'reporte.xlsx');
+			XLSX.writeFile(wb, 'Corte Caja ' + fechaActualFormat + '.xlsx');
 		} catch (error) {
 			console.error(error);
 		}
@@ -573,39 +580,46 @@
 		<p>Por favor seleccione una acción primero</p>
 	{:else if currentAction === Action.Corte}
 		<div class="text-center">
-			<button
-				on:click={toggleVisualizarCorte}
-				class="btn variant-filled-primary min-w-max max-w-md text-xl"
-				>Previsualizar Corte de Caja Actual</button
-			>
+			{#if cajaInicialExist}
+				<button
+					on:click={toggleVisualizarCorte}
+					class="btn variant-filled-primary min-w-max max-w-md text-xl"
+					>Previsualizar Corte de Caja Actual</button
+				>
+			{:else}
+				<div class="text-xl">No existe una caja establecida para el dia de hoy.</div>
+			{/if}
 		</div>
+
 		{#if !visualizarCorte}
-			<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
-				<table class="bg-stone-900">
-					<thead>
-						<tr class="text-lg">
-							<th class="p-4 text-left">Fecha</th>
-							<th class="text-left">Fondo inicial</th>
-							<th class="text-left">Fondo total</th>
-							<th class="" />
-						</tr>
-					</thead>
-					<tbody>
-						{#each caja as cajaEntry}
-							<CashRow
-								deleteCaja={(cajaId) => {
-									toggleDeleteConfirmation();
-									tempCajaId = cajaId;
-								}}
-								id={cajaEntry.caja_id}
-								date={cajaEntry.caja_fecha}
-								cajaStart={cajaEntry.caja_fondo_inicio}
-								cajaTotal={cajaEntry.caja_total}
-							/>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			{#if cajaInicialExist}
+				<div class="flex flex-col min-w-full rounded-xl overflow-x-auto">
+					<table class="bg-stone-900">
+						<thead>
+							<tr class="text-lg">
+								<th class="p-4 text-left">Fecha</th>
+								<th class="text-left">Fondo inicial</th>
+								<th class="text-left">Fondo total</th>
+								<th class="" />
+							</tr>
+						</thead>
+						<tbody>
+							{#each caja as cajaEntry}
+								<CashRow
+									deleteCaja={(cajaId) => {
+										toggleDeleteConfirmation();
+										tempCajaId = cajaId;
+									}}
+									id={cajaEntry.caja_id}
+									date={cajaEntry.caja_fecha}
+									cajaStart={cajaEntry.caja_fondo_inicio}
+									cajaTotal={cajaEntry.caja_total}
+								/>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
 		{:else}
 			<!-- Panel gris claro -->
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
@@ -707,6 +721,23 @@
 									<td class="p-2 text-left">{sumRetiros} </td>
 									<td class="p-2 text-left">{ingresosCount}</td>
 									<td class="p-2 text-left">{sumIngresos}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- Derecha -->
+					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+						<table id="TableToExport" class="table">
+							<thead class="border-b border-stone-800">
+								<tr>
+									<th class="p-2 text-left">Cantidad Rentas</th>
+									<th class="p-2 text-left">Dinero por rentas</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="p-2 text-left">{tempCajaInicial} </td>
+									<td class="p-2 text-left">{retirosCount} </td>
 								</tr>
 							</tbody>
 						</table>
@@ -877,7 +908,7 @@
 				<button on:click={setFondoInicial} class="btn variant-filled-primary">Establecer</button>
 			</div>
 		{:else}
-			Ya existe una caja para el dia de hoy. :)
+			<div class="text-xl">Ya existe una caja para el dia de hoy.</div>
 		{/if}
 	{:else if currentAction === Action.Retirar}
 		<div class="flex flex-col space-y-4 items-end">

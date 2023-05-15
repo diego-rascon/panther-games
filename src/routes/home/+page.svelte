@@ -331,18 +331,70 @@
 		doingSale = !doingSale;
 	};
 
+	let fechaActual = new Date();
+	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
+
+	const updateCaja = async (cashPayment: boolean) => {
+		if (cashPayment) {
+			const { data, error } = await supabase
+				.from('caja')
+				.update({ caja_total: (await getCajaValue()) + cartTotal })
+				.eq('caja_fecha', fechaActualFormat)
+				.select()
+				.single();
+			if (error) {
+				console.error('error updateando caja', error);
+				console.log('no hubo caja');
+				return false;
+			} else {
+				console.log('si hubo caja');
+				return true;
+			}
+		} else {
+			const { data, error } = await supabase
+				.from('caja')
+				.update({ caja_total: await getCajaValue() })
+				.eq('caja_fecha', fechaActualFormat)
+				.select()
+				.single();
+			if (error) {
+				console.error('error updateando caja', error);
+				console.log('no hubo caja');
+				return false;
+			} else {
+				console.log('si hubo caja');
+				return true;
+			}
+		}
+	};
+
+	const getCajaValue = async () => {
+		const { data, error } = await supabase
+			.from('caja')
+			.select('caja_total')
+			.eq('caja_fecha', fechaActualFormat)
+			.single();
+		if (error) {
+			toastStore.trigger(cajaNotFound);
+			return;
+		}
+		return data.caja_total;
+	};
+
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
 		toggleSale();
-		if (cashPayment && !updateCaja()) return;
-		lowerStock();
-		const { error } = await supabase.rpc('register_sale', {
-			input_cliente_id: clientId,
-			input_descuento: 0,
-			input_venta_tarjeta: !cashPayment
-		});
-		if (error) console.log(error.message);
-		else toastStore.trigger(saleAdded);
-		emptyCart();
+		if (await updateCaja(cashPayment)) {
+			console.log('REGISTER SALE');
+			lowerStock();
+			const { error } = await supabase.rpc('register_sale', {
+				input_cliente_id: clientId,
+				input_descuento: 0,
+				input_venta_tarjeta: !cashPayment
+			});
+			if (error) console.log(error.message);
+			else toastStore.trigger(saleAdded);
+			emptyCart();
+		}
 	};
 
 	const lowerStock = () => {
@@ -365,59 +417,76 @@
 		doingRent = !doingRent;
 	};
 
+	const updateCajaRent = async (duration: number) => {
+		const { data, error } = await supabase
+			.from('caja')
+			.update({
+				caja_total: (await getCajaValue()) + duration === 3 ? cart.length * 100 : 200 * cart.length
+			})
+			.eq('caja_fecha', fechaActualFormat)
+			.select()
+			.single();
+		if (error) {
+			console.error('error updateando caja', error);
+			return false;
+		} else {
+			return true;
+		}
+	};
+
 	const registerRent = async (memberId: number, duration: number, cashPayment: boolean) => {
 		toggleRent();
 
-		if (cashPayment) if (!updateCaja()) return;
+		if (cashPayment && (await updateCajaRent(duration))) {
+			const startDate = new Date();
+			const endDate = new Date();
 
-		const startDate = new Date();
-		const endDate = new Date();
+			endDate.setDate(startDate.getDate() + duration);
 
-		endDate.setDate(startDate.getDate() + duration);
+			const formattedStartDate = dayjs(startDate).format('YYYY-MM-DD');
+			const formattedEndDate = dayjs(endDate).format('YYYY-MM-DD');
 
-		const formattedStartDate = dayjs(startDate).format('YYYY-MM-DD');
-		const formattedEndDate = dayjs(endDate).format('YYYY-MM-DD');
-
-		const { data: rent, error: rentError } = await supabase
-			.from('renta')
-			.insert({
-				miembro_id: memberId,
-				renta_duracion: duration,
-				renta_monto: duration === 3 ? cart.length * 100 : 200 * cart.length,
-				renta_descuento: 0,
-				renta_tarjeta: !cashPayment,
-				renta_cantidad: cart.length,
-				renta_fecha_inicio: formattedStartDate,
-				renta_fecha_final: formattedEndDate
-			})
-			.select()
-			.single();
-		if (rentError) console.log(rentError.message);
-		if (rent) {
-			for (const cartProduct of cart) {
-				const productId = cartProduct.producto_id;
-				const { error: detailError } = await supabase
-					.from('renta_detalle')
-					.insert({ renta_id: rent.renta_id, producto_id: productId });
-				if (detailError) console.log(detailError.message);
-				const { data: product, error: productError } = await supabase
-					.from('producto')
-					.select('producto_stock')
-					.eq('producto_id', productId)
-					.single();
-				if (productError) console.log(productError.message);
-				if (product) {
-					const newStock = product.producto_stock - 1;
-					const { error } = await supabase
+			const { data: rent, error: rentError } = await supabase
+				.from('renta')
+				.insert({
+					miembro_id: memberId,
+					renta_duracion: duration,
+					renta_monto: duration === 3 ? cart.length * 100 : 200 * cart.length,
+					renta_descuento: 0,
+					renta_tarjeta: !cashPayment,
+					renta_cantidad: cart.length,
+					renta_fecha_inicio: formattedStartDate,
+					renta_fecha_final: formattedEndDate
+				})
+				.select()
+				.single();
+			if (rentError) console.log(rentError.message);
+			if (rent) {
+				for (const cartProduct of cart) {
+					const productId = cartProduct.producto_id;
+					const { error: detailError } = await supabase
+						.from('renta_detalle')
+						.insert({ renta_id: rent.renta_id, producto_id: productId });
+					if (detailError) console.log(detailError.message);
+					const { data: product, error: productError } = await supabase
 						.from('producto')
-						.update({ producto_stock: newStock })
-						.eq('producto_id', productId);
-					if (error) console.log(error.message);
+						.select('producto_stock')
+						.eq('producto_id', productId)
+						.single();
+					if (productError) console.log(productError.message);
+					if (product) {
+						const newStock = product.producto_stock - 1;
+						const { error } = await supabase
+							.from('producto')
+							.update({ producto_stock: newStock })
+							.eq('producto_id', productId);
+						if (error) console.log(error.message);
+					}
 				}
+				lowerStock();
+				toastStore.trigger(rentAdded);
+				emptyCart();
 			}
-			lowerStock();
-			toastStore.trigger(rentAdded);
-			emptyCart();
 		}
 	};
 
@@ -475,37 +544,6 @@
 		fetchTotal();
 	};
 
-	let fechaActual = new Date();
-	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
-
-	const updateCaja = async () => {
-		const { data, error } = await supabase
-			.from('caja')
-			.update({ caja_total: (await getCajaValue()) + cartTotal })
-			.eq('caja_fecha', fechaActualFormat)
-			.select()
-			.single();
-		if (error) {
-			console.error('error updateando caja', error);
-			return false;
-		} else {
-			return true;
-		}
-	};
-
-	const getCajaValue = async () => {
-		const { data, error } = await supabase
-			.from('caja')
-			.select('caja_total')
-			.eq('caja_fecha', fechaActualFormat)
-			.single();
-		if (error) {
-			toastStore.trigger(cajaNotFound);
-			return;
-		}
-		return data.caja_total;
-	};
-
 	const productAdded: ToastSettings = {
 		message: 'Un nuevo producto fue registrado exitosamente.',
 		background: 'variant-filled-primary'
@@ -552,7 +590,7 @@
 	};
 
 	const cajaNotFound: ToastSettings = {
-		message: 'No existe ó hay mas de una caja establecida para el dia de hoy',
+		message: 'No existe una caja establecida para el dia de hoy',
 		background: 'variant-filled-primary'
 	};
 </script>

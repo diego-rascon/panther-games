@@ -213,7 +213,7 @@
 				const ws = XLSX.utils.table_to_sheet(table);
 				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
 			});
-			XLSX.writeFile(wb, dateBeginMoment+'-'+dateFinalMoment+'.xlsx');
+			XLSX.writeFile(wb, 'Reporte ' + dateBeginMoment+' a '+dateFinalMoment+'.xlsx');
 		} catch (error) {
 			console.error(error);
 		}
