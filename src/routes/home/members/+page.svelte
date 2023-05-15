@@ -373,7 +373,7 @@
 		{#if filteredExpiredMembers.length > 0}
 			<SectionSubtitle text="Miembros Vencidos" />
 			<div class="flex flex-col rounded-xl bg-stone-900">
-				<table>
+				<table class="text-stone-400">
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>
@@ -419,7 +419,7 @@
 		{#if filteredDeactivatedMembers.length > 0}
 			<SectionSubtitle text="Miembros no Activos" />
 			<div class="flex flex-col rounded-xl bg-stone-900">
-				<table>
+				<table class="text-stone-400">
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">ID</th>

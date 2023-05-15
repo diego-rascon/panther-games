@@ -177,7 +177,7 @@
 		{#if filteredDeactivatedSales.length > 0}
 			<SectionSubtitle text="Ventas Desactivadas" />
 			<div class="flex flex-col rounded-xl bg-stone-900">
-				<table>
+				<table class="text-stone-400">
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">Folio</th>
