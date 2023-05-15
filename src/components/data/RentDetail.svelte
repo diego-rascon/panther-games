@@ -4,9 +4,12 @@
 	import SectionTitle from '../titles/SectionTitle.svelte';
 
 	export let closeHandler: () => void;
-	export let memberId: number;
 	export let rentId: number;
+	export let memberId: number;
+	export let startDate: string;
+	export let endDate: string;
 	export let total: number;
+	export let paymentType: string;
 	export let quantity: number;
 
 	$: formattedTotal = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -31,11 +34,24 @@
 >
 	<SectionTitle centered={true} text="Detalles de Renta #{rentId}" />
 	<div class="flex flex-col space-y-4 overflow-y-auto">
-		{#await memberPromise}
-			<p>Renta hecha por...</p>
-		{:then member}
-			<p>Renta hecha por {member?.cliente_nombre}.</p>
-		{/await}
+		<div class="flex flex-col space-y-2">
+			<div class="flex justify-between">
+				<strong>Miembro</strong>
+				{#await memberPromise}
+					<p>...</p>
+				{:then member}
+					<p>{member?.cliente_nombre}</p>
+				{/await}
+			</div>
+			<div class="flex justify-between">
+				<strong>Fecha de inicio</strong>
+				<p>{startDate}</p>
+			</div>
+			<div class="flex justify-between">
+				<strong>Fecha de entrega</strong>
+				<p>{endDate}</p>
+			</div>
+		</div>
 		<div class="flex flex-col space-y-4 overflow-y-auto">
 			{#await rentDetailsPromise}
 				<div class="placeholder animate-pulse p-7" />
@@ -47,9 +63,15 @@
 				{/each}
 			{/await}
 		</div>
-		<div class="flex justify-between text-lg pb-4">
-			<p class="unstyled font-bold">Total ({quantity})</p>
-			<p class="unstyled">{formattedTotal}</p>
+		<div class="flex flex-col space-y-2">
+			<div class="flex justify-between">
+				<strong>Método de pago</strong>
+				<p>{paymentType}</p>
+			</div>
+			<div class="flex justify-between text-lg">
+				<p class="unstyled font-bold">Total ({quantity})</p>
+				<p class="unstyled">{formattedTotal}</p>
+			</div>
 		</div>
 	</div>
 	<button class="btn variant-ringed-primary" on:click={closeHandler}>Cerrar</button>

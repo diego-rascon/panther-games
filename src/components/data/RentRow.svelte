@@ -6,7 +6,15 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import restartLinear from '@iconify/icons-solar/restart-linear';
 
-	export let toggleDetail: (rentId: number, memberId: number, total: number, quantity: number) => void;
+	export let toggleDetail: (
+		rentId: number,
+		memberId: number,
+		startDate: string,
+		endDate: string,
+		total: number,
+		paymentType: string,
+		quantity: number
+	) => void;
 	export let finishRent: (rentId: number) => void = () => {};
 	export let toggleRent: (rentId: number) => void;
 	export let rentId: number;
@@ -28,7 +36,15 @@
 
 <tr
 	on:click={() => {
-		toggleDetail(rentId, memberId, total, quantity);
+		toggleDetail(
+			rentId,
+			memberId,
+			formattedStartDate,
+			formattedEndDate,
+			total,
+			paymentType,
+			quantity
+		);
 	}}
 	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer"
 >

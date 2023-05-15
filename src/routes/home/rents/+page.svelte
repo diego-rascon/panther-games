@@ -43,7 +43,10 @@
 
 	let tempRentId: number;
 	let tempMemberId: number;
+	let tempStartDate: string;
+	let tempEndDate: string;
 	let tempRentTotal: number;
+	let tempPaymentType: string;
 	let tempRentQuantity: number;
 
 	let finishingRent = false;
@@ -193,10 +196,19 @@
 									tempRentId = rentId;
 									toggleFinishRent();
 								}}
-								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
+								toggleDetail={(
+									rentId,
+									memberId,
+									startDate,
+									endDate,
+									rentTotal,
+									paymentType,
+									rentQuantity
+								) => {
 									toggleShowDetail();
 									tempRentId = rentId;
 									tempMemberId = memberId;
+
 									tempRentTotal = rentTotal;
 									tempRentQuantity = rentQuantity;
 								}}
@@ -237,11 +249,20 @@
 									tempRentId = rentId;
 									toggleFinishRent();
 								}}
-								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
+								toggleDetail={(
+									rentId,
+									memberId,
+									startDate,
+									endDate,
+									rentTotal,
+									paymentType,
+									rentQuantity
+								) => {
 									toggleShowDetail();
 									tempRentId = rentId;
 									tempMemberId = memberId;
-									tempRentTotal = rentTotal;
+									(tempStartDate = startDate), (tempEndDate = endDate), (tempRentTotal = rentTotal);
+									tempPaymentType = paymentType;
 									tempRentQuantity = rentQuantity;
 								}}
 								toggleRent={(rentId) => {
@@ -277,11 +298,20 @@
 					<tbody>
 						{#each filteredPreviousRents as previousRent (previousRent.renta_id)}
 							<RentRow
-								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
+								toggleDetail={(
+									rentId,
+									memberId,
+									startDate,
+									endDate,
+									rentTotal,
+									paymentType,
+									rentQuantity
+								) => {
 									toggleShowDetail();
 									tempRentId = rentId;
 									tempMemberId = memberId;
-									tempRentTotal = rentTotal;
+									(tempStartDate = startDate), (tempEndDate = endDate), (tempRentTotal = rentTotal);
+									tempPaymentType = paymentType;
 									tempRentQuantity = rentQuantity;
 								}}
 								toggleRent={(rentaId) => {
@@ -316,11 +346,20 @@
 					<tbody>
 						{#each filteredUnactiveRents as previousRent (previousRent.renta_id)}
 							<RentRow
-								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
+								toggleDetail={(
+									rentId,
+									memberId,
+									startDate,
+									endDate,
+									rentTotal,
+									paymentType,
+									rentQuantity
+								) => {
 									toggleShowDetail();
 									tempRentId = rentId;
 									tempMemberId = memberId;
-									tempRentTotal = rentTotal;
+									(tempStartDate = startDate), (tempEndDate = endDate), (tempRentTotal = rentTotal);
+									tempPaymentType = paymentType;
 									tempRentQuantity = rentQuantity;
 								}}
 								toggleRent={(rentaId) => {
@@ -345,7 +384,10 @@
 			closeHandler={toggleShowDetail}
 			rentId={tempRentId}
 			memberId={tempMemberId}
+			startDate={tempStartDate}
+			endDate={tempEndDate}
 			total={tempRentTotal}
+			paymentType={tempPaymentType}
 			quantity={tempRentQuantity}
 		/>
 	</DarkenSreen>
