@@ -10,6 +10,7 @@
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 	import RentRow from '../../../components/data/RentRow.svelte';
+	import RentDetail from '../../../components/data/RentDetail.svelte';
 
 	export let data;
 	let { rents } = data;
@@ -41,6 +42,7 @@
 	};
 
 	let tempRentId: number;
+	let tempMemberId: number;
 	let tempRentTotal: number;
 	let tempRentQuantity: number;
 
@@ -191,9 +193,10 @@
 									tempRentId = rentId;
 									toggleFinishRent();
 								}}
-								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
 									tempRentId = rentId;
+									tempMemberId = memberId;
 									tempRentTotal = rentTotal;
 									tempRentQuantity = rentQuantity;
 								}}
@@ -234,9 +237,10 @@
 									tempRentId = rentId;
 									toggleFinishRent();
 								}}
-								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
 									tempRentId = rentId;
+									tempMemberId = memberId;
 									tempRentTotal = rentTotal;
 									tempRentQuantity = rentQuantity;
 								}}
@@ -273,9 +277,10 @@
 					<tbody>
 						{#each filteredPreviousRents as previousRent (previousRent.renta_id)}
 							<RentRow
-								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
 									tempRentId = rentId;
+									tempMemberId = memberId;
 									tempRentTotal = rentTotal;
 									tempRentQuantity = rentQuantity;
 								}}
@@ -311,9 +316,10 @@
 					<tbody>
 						{#each filteredUnactiveRents as previousRent (previousRent.renta_id)}
 							<RentRow
-								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+								toggleDetail={(rentId, memberId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
 									tempRentId = rentId;
+									tempMemberId = memberId;
 									tempRentTotal = rentTotal;
 									tempRentQuantity = rentQuantity;
 								}}
@@ -334,7 +340,15 @@
 	{/if}
 </div>
 {#if showingDetail}
-	<DarkenSreen />
+	<DarkenSreen>
+		<RentDetail
+			closeHandler={toggleShowDetail}
+			rentId={tempRentId}
+			memberId={tempMemberId}
+			total={tempRentTotal}
+			quantity={tempRentQuantity}
+		/>
+	</DarkenSreen>
 {/if}
 {#if finishingRent}
 	<DarkenSreen>

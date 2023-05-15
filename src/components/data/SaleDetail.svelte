@@ -33,7 +33,7 @@
 	class="flex flex-col p-8 w-full max-w-md max-h-[95%] space-y-8 bg-stone-950 border border-stone-800 rounded-xl"
 	in:scale={{ duration: 150 }}
 >
-	<SectionTitle centered={true} text="Detalles de Venta" />
+	<SectionTitle centered={true} text="Detalles de Venta #{saleId}" />
 	<div class="flex flex-col space-y-4 overflow-y-auto">
 		{#await clientPromise}
 			<p>Compra hecha por...</p>
