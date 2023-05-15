@@ -9,8 +9,6 @@
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
-	import SaleRow from '../../../components/data/SaleRow.svelte';
-	import SaleDetail from '../../../components/data/SaleDetail.svelte';
 	import RentRow from '../../../components/data/RentRow.svelte';
 
 	export let data;
@@ -18,9 +16,22 @@
 	$: ({ rents } = data);
 
 	$: rentsStore.set(rents);
-	$: activeRents = rents.filter((rent: any) => rent.renta_activa);
-	$: unactiveRents = rents.filter((rent: any) => !rent.renta_activa);
+	$: pendingRents = rents.filter(
+		(rent: any) =>
+			rent.renta_activa && !rent.renta_completada && new Date(rent.renta_fecha_final) < new Date()
+	);
+	$: filteredPendingRents = pendingRents;
+	$: activeRents = rents.filter(
+		(rent: any) =>
+			rent.renta_activa &&
+			!rent.renta_completada &&
+			new Date(rent.renta_fecha_inicio) <= new Date() &&
+			new Date(rent.renta_fecha_final) >= new Date()
+	);
 	$: filteredActiveRents = activeRents;
+	$: previousRents = rents.filter((rent: any) => rent.renta_activa && rent.renta_completada);
+	$: filteredPreviousRents = previousRents;
+	$: unactiveRents = rents.filter((rent: any) => !rent.renta_activa);
 	$: filteredUnactiveRents = unactiveRents;
 
 	let showingDetail = false;
@@ -33,6 +44,53 @@
 	let tempRentTotal: number;
 	let tempRentQuantity: number;
 
+	let finishingRent = false;
+
+	const toggleFinishRent = () => {
+		finishingRent = !finishingRent;
+	};
+
+	const finishRent = async () => {
+		toggleFinishRent();
+		const { error: rentError } = await supabase
+			.from('renta')
+			.update({ renta_completada: true })
+			.eq('renta_id', tempRentId);
+		if (rentError) console.log(rentError.message);
+		const { data: rentDetail, error: detailError } = await supabase
+			.from('renta_detalle')
+			.select('producto_id')
+			.eq('renta_id', tempRentId);
+		if (detailError) console.log(detailError.message);
+		if (rentDetail) {
+			for (const rentedProduct of rentDetail) {
+				const productId = rentedProduct.producto_id;
+				const { data: product, error: productError } = await supabase
+					.from('producto')
+					.select('producto_stock')
+					.eq('producto_id', productId)
+					.single();
+				if (productError) console.log(productError.message);
+				if (product) {
+					const newStock = product.producto_stock + 1;
+					const { data: stock, error: stockError } = await supabase
+						.from('producto')
+						.update({ producto_stock: newStock })
+						.eq('producto_id', productId)
+						.select();
+					if (stockError) console.log(stockError.message);
+					if (stock) {
+						const finishedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
+						if (finishedRent) finishedRent.renta_completada = true;
+						rents = rents;
+						toastStore.trigger(rentFinished);
+						console.log('hehe');
+					}
+				}
+			}
+		}
+	};
+
 	let deleteConfirmation = false;
 
 	const toggleDeleteConfirmation = () => {
@@ -42,14 +100,14 @@
 	const deleteRent = async () => {
 		toggleDeleteConfirmation();
 		const { error } = await supabase
-			.from('venta')
-			.update({ venta_activa: false })
-			.eq('venta_id', tempRentId);
+			.from('renta')
+			.update({ renta_activa: false })
+			.eq('renta_id', tempRentId);
 		if (error) console.log(error.message);
-		const removedSale = rents.find((sale: any) => sale.cliente_id === tempRentId);
-		if (removedSale) removedSale.venta_activo = false;
+		const removedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
+		if (removedRent) removedRent.renta_activa = false;
 		rents = rents;
-		toastStore.trigger(saleDeleted);
+		toastStore.trigger(rentDeleted);
 	};
 
 	let activateConfirmation = false;
@@ -61,98 +119,175 @@
 	const activateRent = async () => {
 		toggleActivateConfirmation();
 		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: true })
-			.eq('cliente_id', tempRentId);
+			.from('renta')
+			.update({ renta_activa: true })
+			.eq('renta_id', tempRentId);
 		if (error) console.log(error.message);
-		const activatedClient = rents.find((client: any) => client.cliente_id === tempRentId);
-		if (activatedClient) activatedClient.cliente_activo = true;
+		const activatedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
+		if (activatedRent) activatedRent.renta_activa = true;
 		rents = rents;
-		toastStore.trigger(saleActivated);
+		toastStore.trigger(rentActivated);
 	};
 
 	let search: string;
 
-	const searchSale = (search: string) => {
+	const searchRent = (search: string) => {
 		const searchWords = search.split(' ');
 
-		filteredActiveRents = activeRents.filter((sale: any) =>
+		filteredActiveRents = activeRents.filter((rent: any) =>
 			searchWords.every(
 				(word: string) =>
-					sale.venta_id.toString().includes(word) ||
-					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
-					sale.venta_monto.toString().includes(word) ||
-					sale.venta_cantidad.toString().includes(word) ||
-					sale.venta_descuento.toString().includes(word) ||
-					sale.cliente_id.toString().includes(word)
-			)
-		);
-
-		filteredUnactiveRents = unactiveRents.filter((sale: any) =>
-			searchWords.every(
-				(word: string) =>
-					sale.venta_id.toString().includes(word) ||
-					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
-					sale.venta_monto.toString().includes(word) ||
-					sale.venta_cantidad.toString().includes(word) ||
-					sale.venta_descuento.toString().includes(word) ||
-					sale.cliente_id.toString().includes(word)
+					rent.renta_id.toString().includes(word) ||
+					new Date(String(rent.renta_fecha_inicio)).toLocaleDateString('en-GB').includes(word) ||
+					new Date(String(rent.renta_fecha_final)).toLocaleDateString('en-GB').includes(word) ||
+					rent.renta_cantidad.toString().includes(word) ||
+					rent.renta_descuento.toString().includes(word) ||
+					rent.renta_monto.toString().includes(word)
 			)
 		);
 	};
 
-	const saleDeleted: ToastSettings = {
-		message: 'Se eliminó la venta exitosamente',
+	const rentFinished: ToastSettings = {
+		message: 'Se marcó la renta como terminada exitosamente',
 		background: 'variant-filled-primary'
 	};
 
-	const saleActivated: ToastSettings = {
-		message: 'Se activó la venta exitosamente',
+	const rentDeleted: ToastSettings = {
+		message: 'Se eliminó la renta exitosamente',
 		background: 'variant-filled-primary'
 	};
 
-	$: console.log(unactiveRents);
+	const rentActivated: ToastSettings = {
+		message: 'Se activó la renta exitosamente',
+		background: 'variant-filled-primary'
+	};
 </script>
 
 <div
 	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
 >
 	<SectionTitle text="Rentas" />
-	<Search searchHandler={searchSale} bind:search />
+	<Search searchHandler={searchRent} bind:search />
 </div>
 <div class="mt-[60px] flex-col space-y-4">
 	{#if filteredActiveRents.length === 0 && filteredUnactiveRents.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
-		{#if filteredActiveRents.length > 0}
+		{#if filteredPendingRents.length > 0}
+			<SectionSubtitle text="Pendientes" />
 			<div class="flex flex-col rounded-xl bg-stone-900">
-				<table>
+				<table class="text-pink-200">
 					<thead>
 						<tr class="text-lg">
-							<th class="p-4 text-left">ID</th>
+							<th class="p-4 text-left">Folio</th>
 							<th class="text-left">Fecha de renta</th>
 							<th class="text-left">Fecha de entrega</th>
-							<th class="text-left">Total</th>
 							<th class="text-left">Cantidad</th>
-							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
-							<th class="" />
+							<th class="text-left">Descuento</th>
+							<th class="text-left">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each filteredPendingRents as pendingRent (pendingRent.renta_id)}
+							<RentRow
+								finishRent={(rentId) => {
+									tempRentId = rentId;
+									toggleFinishRent();
+								}}
+								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+									toggleShowDetail();
+									tempRentId = rentId;
+									tempRentTotal = rentTotal;
+									tempRentQuantity = rentQuantity;
+								}}
+								toggleRent={(rentId) => {
+									toggleDeleteConfirmation();
+									tempRentId = rentId;
+								}}
+								rentId={pendingRent.renta_id}
+								pending={true}
+							/>
+						{/each}
+						<tr class="border-t border-stone-800">
+							<td class="h-7" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		{/if}
+		{#if filteredActiveRents.length > 0}
+			<SectionSubtitle text="Activas" />
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table class="text-indigo-200">
+					<thead>
+						<tr class="text-lg">
+							<th class="p-4 text-left">Folio</th>
+							<th class="text-left">Fecha de renta</th>
+							<th class="text-left">Fecha de entrega</th>
+							<th class="text-left">Cantidad</th>
+							<th class="text-left">Pago</th>
+							<th class="text-left">Descuento</th>
+							<th class="text-left">Total</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each filteredActiveRents as activeRent (activeRent.renta_id)}
 							<RentRow
-								toggleDetail={(rentId, saleTotal, saleQuantity) => {
+								finishRent={(rentId) => {
+									tempRentId = rentId;
+									toggleFinishRent();
+								}}
+								toggleDetail={(rentId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
 									tempRentId = rentId;
-									tempRentTotal = saleTotal;
-									tempRentQuantity = saleQuantity;
+									tempRentTotal = rentTotal;
+									tempRentQuantity = rentQuantity;
 								}}
-								toggleRent={(saleId) => {
+								toggleRent={(rentId) => {
 									toggleDeleteConfirmation();
-									tempRentId = saleId;
+									tempRentId = rentId;
 								}}
 								rentId={activeRent.renta_id}
+								pending={true}
+							/>
+						{/each}
+						<tr class="border-t border-stone-800">
+							<td class="h-7" />
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		{/if}
+		{#if filteredPreviousRents.length > 0}
+			<SectionSubtitle text="Historial" />
+			<div class="flex flex-col rounded-xl bg-stone-900">
+				<table>
+					<thead>
+						<tr class="text-lg">
+							<th class="p-4 text-left">Folio</th>
+							<th class="text-left">Fecha de renta</th>
+							<th class="text-left">Fecha de entrega</th>
+							<th class="text-left">Cantidad</th>
+							<th class="text-left">Pago</th>
+							<th class="text-left">Descuento</th>
+							<th class="text-left">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each filteredPreviousRents as previousRent (previousRent.renta_id)}
+							<RentRow
+								toggleDetail={(rentId, rentTotal, rentQuantity) => {
+									toggleShowDetail();
+									tempRentId = rentId;
+									tempRentTotal = rentTotal;
+									tempRentQuantity = rentQuantity;
+								}}
+								toggleRent={(rentaId) => {
+									toggleDeleteConfirmation();
+									tempRentId = rentaId;
+								}}
+								rentId={previousRent.renta_id}
 							/>
 						{/each}
 						<tr class="border-t border-stone-800">
@@ -163,36 +298,34 @@
 			</div>
 		{/if}
 		{#if filteredUnactiveRents.length > 0}
-			<SectionSubtitle text="Ventas Desactivadas" />
+			<SectionSubtitle text="Desactivadas" />
 			<div class="flex flex-col rounded-xl bg-stone-900">
-				<table>
+				<table class="text-stone-400">
 					<thead>
 						<tr class="text-lg">
 							<th class="p-4 text-left">Folio</th>
-							<th class="text-left">Fecha</th>
-							<th class="text-left">Monto</th>
+							<th class="text-left">Fecha de renta</th>
+							<th class="text-left">Fecha de entrega</th>
 							<th class="text-left">Cantidad</th>
-							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
-							<th class="text-left">Cliente</th>
-							<th class="" />
+							<th class="text-left">Descuento</th>
+							<th class="text-left">Total</th>
 						</tr>
 					</thead>
 					<tbody>
-						{#each filteredUnactiveRents as deactivatedSale (deactivatedSale.venta_id)}
-							<SaleRow
-								toggleDetail={(saleID, saleTotal, saleQuantity) => {
+						{#each filteredUnactiveRents as previousRent (previousRent.renta_id)}
+							<RentRow
+								toggleDetail={(rentId, rentTotal, rentQuantity) => {
 									toggleShowDetail();
-									tempRentId = saleID;
-									tempRentTotal = saleTotal;
-									tempRentQuantity = saleQuantity;
-									console.log(saleQuantity);
+									tempRentId = rentId;
+									tempRentTotal = rentTotal;
+									tempRentQuantity = rentQuantity;
 								}}
-								toggleSale={(saleId) => {
+								toggleRent={(rentaId) => {
 									toggleActivateConfirmation();
-									tempRentId = saleId;
+									tempRentId = rentaId;
 								}}
-								id={deactivatedSale.venta_id}
+								rentId={previousRent.renta_id}
 							/>
 						{/each}
 						<tr class="border-t border-stone-800">
@@ -205,12 +338,15 @@
 	{/if}
 </div>
 {#if showingDetail}
+	<DarkenSreen />
+{/if}
+{#if finishingRent}
 	<DarkenSreen>
-		<SaleDetail
-			closeHandler={toggleShowDetail}
-			saleId={tempRentId}
-			total={tempRentTotal}
-			quantity={tempRentQuantity}
+		<ConfirmDialog
+			cancelHandler={toggleFinishRent}
+			confirmHandler={finishRent}
+			title="Terminar Renta"
+			text="¿Seguro de que desea marcar la renta como terminada?"
 		/>
 	</DarkenSreen>
 {/if}
@@ -219,8 +355,8 @@
 		<ConfirmDialog
 			cancelHandler={toggleDeleteConfirmation}
 			confirmHandler={deleteRent}
-			title="Eliminar Venta"
-			text="¿Seguro de que desea eliminar la venta?"
+			title="Eliminar Renta"
+			text="¿Seguro de que desea eliminar la renta?"
 		/>
 	</DarkenSreen>
 {/if}
@@ -229,8 +365,8 @@
 		<ConfirmDialog
 			cancelHandler={toggleActivateConfirmation}
 			confirmHandler={activateRent}
-			title="Activar Venta"
-			text="¿Seguro de que desea activar la venta?"
+			title="Activar Renta"
+			text="¿Seguro de que desea activar la renta?"
 		/>
 	</DarkenSreen>
 {/if}
