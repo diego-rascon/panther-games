@@ -397,7 +397,26 @@
 			});
 			if (error) console.log(error.message);
 			else toastStore.trigger(saleAdded);
+			const isMember = members.find((member: any) => member.cliente_id === clientId);
+			if (isMember) updateMemberCounter(false, clientId, cart.length);
 			emptyCart();
+		}
+	};
+
+	const updateMemberCounter = async (rent: boolean, id: number, quantity: number) => {
+		const { data: counter, error: counterError } = await supabase
+			.from('miembro')
+			.select('miembro_compras')
+			.eq(rent ? 'miembro_id' : 'cliente_id', id)
+			.single();
+		if (counterError) console.log(counterError.message);
+		if (counter) {
+			const newQuantity = counter.miembro_compras + quantity;
+			const { error } = await supabase
+				.from('miembro')
+				.update({ miembro_compras: newQuantity })
+				.eq(rent ? 'miembro_id' : 'cliente_id', id);
+			if (error) console.log(error.message);
 		}
 	};
 
@@ -458,7 +477,7 @@
 	const registerRent = async (memberId: number, duration: number, cashPayment: boolean) => {
 		toggleRent();
 
-		if ((await updateCajaRent(duration, cashPayment))) {
+		if (await updateCajaRent(duration, cashPayment)) {
 			const startDate = new Date();
 			const endDate = new Date();
 
@@ -504,6 +523,7 @@
 						if (error) console.log(error.message);
 					}
 				}
+				updateMemberCounter(true, memberId, cart.length);
 				lowerStock();
 				toastStore.trigger(rentAdded);
 				emptyCart();
