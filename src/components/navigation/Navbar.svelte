@@ -25,7 +25,7 @@
 </script>
 
 <nav
-	class="fixed inset-y-0 left-0 w-64 flex flex-col p-4 bg-stone-900 border-r border-stone-800 shadow-xl transition-all overflow-auto"
+	class="z-[888] fixed inset-y-0 left-0 w-64 flex flex-col p-4 bg-stone-900 border-r border-stone-800 shadow-xl transition-all overflow-auto"
 >
 	<a data-sveltekit-preload-data="hover" href="/home" class="btn p-4 rounded-xl">
 		<PantherGamesLogo size={2} />
