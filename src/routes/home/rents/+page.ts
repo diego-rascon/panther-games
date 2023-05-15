@@ -5,7 +5,8 @@ export const load = async () => {
 		const { data } = await supabase
 			.from('renta')
 			.select()
-			.order('renta_fecha_final', { ascending: false });
+			.order('renta_fecha_final', { ascending: false })
+			.order('renta_id', { ascending: false });
 		return data ?? [];
 	};
 	return { rents: fetchRents() };
