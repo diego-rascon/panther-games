@@ -8,7 +8,9 @@
 	export let toggleDetail: (
 		clientId: number,
 		saleId: number,
+		date: string,
 		total: number,
+		paymentType: string,
 		quantity: number
 	) => void;
 	export let toggleSale: (saleId: number) => void;
@@ -28,7 +30,7 @@
 
 <tr
 	on:click={() => {
-		toggleDetail(client, id, total, quantity);
+		toggleDetail(client, id, formattedDate, total, paymentType, quantity);
 	}}
 	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer"
 >

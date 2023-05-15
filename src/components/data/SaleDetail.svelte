@@ -6,7 +6,9 @@
 	export let closeHandler: () => void;
 	export let clientId: number;
 	export let saleId: number;
+	export let date: string;
 	export let total: number;
+	export let paymentType: string;
 	export let quantity: number;
 
 	$: formattedTotal = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -35,11 +37,18 @@
 >
 	<SectionTitle centered={true} text="Detalles de Venta #{saleId}" />
 	<div class="flex flex-col space-y-4 overflow-y-auto">
-		{#await clientPromise}
-			<p>Compra hecha por...</p>
-		{:then client}
-			<p>Compra hecha por {client?.cliente_nombre}.</p>
-		{/await}
+		<div class="flex flex-col space-y-2">
+			<div class="flex justify-between">
+				<strong>Cliente</strong>
+				{#await clientPromise then client}
+					<p>{client?.cliente_nombre}</p>
+				{/await}
+			</div>
+			<div class="flex justify-between">
+				<strong>Fecha</strong>
+				<p>{date}</p>
+			</div>
+		</div>
 		<div class="flex flex-col space-y-4 overflow-y-auto">
 			{#await saleDetailsPromise}
 				<div class="placeholder animate-pulse p-11" />
@@ -72,9 +81,15 @@
 				{/each}
 			{/await}
 		</div>
-		<div class="flex justify-between text-lg pb-4">
-			<p class="unstyled font-bold">Total ({quantity})</p>
-			<p class="unstyled">{formattedTotal}</p>
+		<div class="flex flex-col space-y-2">
+			<div class="flex justify-between">
+				<strong>Método de pago</strong>
+				<p>{paymentType}</p>
+			</div>
+			<div class="flex justify-between text-lg">
+				<p class="unstyled font-bold">Total ({quantity})</p>
+				<p class="unstyled">{formattedTotal}</p>
+			</div>
 		</div>
 	</div>
 	<button class="btn variant-ringed-primary" on:click={closeHandler}>Cerrar</button>

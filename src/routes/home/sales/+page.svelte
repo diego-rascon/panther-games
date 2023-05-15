@@ -46,7 +46,9 @@
 
 	let tempClientId: number;
 	let tempSaleId: number;
+	let tempDate: string;
 	let tempSaleTotal: number;
+	let tempPaymentType: string;
 	let tempSaleQuantity: number;
 
 	let deleteConfirmation = false;
@@ -156,11 +158,13 @@
 					<tbody>
 						{#each paginatedActiveSales as activeSale (activeSale.venta_id)}
 							<SaleRow
-								toggleDetail={(clientId, saleId, saleTotal, saleQuantity) => {
+								toggleDetail={(clientId, saleId, date, saleTotal, paymentType, saleQuantity) => {
 									toggleShowDetail();
 									tempClientId = clientId;
 									tempSaleId = saleId;
+									tempDate = date;
 									tempSaleTotal = saleTotal;
+									tempPaymentType = paymentType;
 									tempSaleQuantity = saleQuantity;
 								}}
 								toggleSale={(saleId) => {
@@ -195,11 +199,13 @@
 					<tbody>
 						{#each filteredDeactivatedSales as deactivatedSale (deactivatedSale.venta_id)}
 							<SaleRow
-								toggleDetail={(clientId, saleId, saleTotal, saleQuantity) => {
+								toggleDetail={(clientId, saleId, date, saleTotal, paymentType, saleQuantity) => {
 									toggleShowDetail();
 									tempClientId = clientId;
 									tempSaleId = saleId;
+									tempDate = date;
 									tempSaleTotal = saleTotal;
+									tempPaymentType = paymentType;
 									tempSaleQuantity = saleQuantity;
 								}}
 								toggleSale={(saleId) => {
@@ -224,7 +230,9 @@
 			closeHandler={toggleShowDetail}
 			clientId={tempClientId}
 			saleId={tempSaleId}
+			date={tempDate}
 			total={tempSaleTotal}
+			paymentType={tempPaymentType}
 			quantity={tempSaleQuantity}
 		/>
 	</DarkenSreen>
