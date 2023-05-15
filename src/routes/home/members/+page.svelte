@@ -92,7 +92,6 @@
 					const newMember = client;
 					newMember.miembro_id = member.miembro_id;
 					newMember.miembro_activo = true;
-					newMember.miembro_fecha_original = date;
 					newMember.miembro_fecha_inicio = date;
 					newMember.miembro_fecha_final = endDate;
 					newMember.miembro_compras = 0;
@@ -115,7 +114,6 @@
 			const newMember = clients.find((clientEntry: any) => clientEntry.cliente_id === clientId);
 			newMember.miembro_id = clientId;
 			newMember.miembro_activo = true;
-			newMember.miembro_fecha_original = date;
 			newMember.miembro_fecha_inicio = date;
 			newMember.miembro_fecha_final = endDate;
 			newMember.miembro_compras = 0;
@@ -187,8 +185,6 @@
 		}
 	};
 
-	$: console.log(endDate);
-
 	let deleteConfirmation = false;
 
 	const toggleDeleteConfirmation = () => {
@@ -229,7 +225,7 @@
 
 	let search: string;
 
-	const searchClient = (search: string) => {
+	const searchMember = (search: string) => {
 		const searchWords = search.split(' ');
 
 		filteredActiveMembers = activeMembers.filter((member: any) => {
@@ -323,10 +319,10 @@
 	class="z-[888] fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
 >
 	<SectionTitle text="Miembros" />
-	<Search searchHandler={searchClient} bind:search />
+	<Search searchHandler={searchMember} bind:search />
 </div>
 <div class="mt-[60px] flex flex-col mb-20 space-y-4">
-	{#if filteredActiveMembers.length === 0 && filteredDeactivatedMembers.length === 0}
+	{#if filteredActiveMembers.length === 0 && filteredExpiredMembers === 0 && filteredDeactivatedMembers.length === 0}
 		<NoResultsMessage search={search !== ''} />
 	{:else}
 		{#if filteredActiveMembers.length > 0}
@@ -340,7 +336,6 @@
 							<th class="text-left">Telefono</th>
 							<th class="text-left">Fecha inicial</th>
 							<th class="text-left">Fecha final</th>
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
@@ -382,7 +377,6 @@
 							<th class="text-left">Telefono</th>
 							<th class="text-left">Fecha inicial</th>
 							<th class="text-left">Fecha final</th>
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
@@ -428,7 +422,6 @@
 							<th class="text-left">Telefono</th>
 							<th class="text-left">Fecha inicial</th>
 							<th class="text-left">Fecha final</th>
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>

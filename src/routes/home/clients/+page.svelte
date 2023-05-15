@@ -199,8 +199,6 @@
 							<th class="text-left">Nombre</th>
 							<th class="text-left">Correo</th>
 							<th class="text-left">Telefono</th>
-							<th class="" />
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
@@ -235,8 +233,6 @@
 							<th class="text-left">Nombre</th>
 							<th class="text-left">Correo</th>
 							<th class="text-left">Telefono</th>
-							<th class="" />
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>

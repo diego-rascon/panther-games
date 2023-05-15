@@ -147,7 +147,6 @@
 							<th class="text-left">Pago</th>
 							<th class="text-left">Descuento</th>
 							<th class="text-left">Total</th>
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
@@ -187,7 +186,6 @@
 							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
 							<th class="text-left">Cliente</th>
-							<th class="" />
 						</tr>
 					</thead>
 					<tbody>
