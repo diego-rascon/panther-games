@@ -20,7 +20,7 @@
 	in:scale={{ duration: 150 }}
 >
 	<SectionTitle centered={true} text="Detalles del Miembro" />
-	<div class="flex flex-col space-y-4 overflow-y-auto">
+	<div class="flex flex-col space-y-2 overflow-y-auto">
 		{#await memberDetailesPromise}
 			<p class="text-center text-xl">Miembro desde --/--/----</p>
 			<div class="flex justify-between text-lg">
