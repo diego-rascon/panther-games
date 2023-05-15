@@ -67,9 +67,11 @@
 
 	const bindValues = () => {
 		const editedClient = clients.find((client: any) => client.cliente_id === tempClientId);
-		name = editedClient?.cliente_nombre;
-		email = editedClient?.cliente_email;
-		phone = editedClient?.cliente_telefono;
+		if (editedClient) {
+			name = editedClient.cliente_nombre;
+			email = editedClient.cliente_email;
+			phone = editedClient.cliente_telefono;
+		}
 	};
 
 	const editClient = async () => {
@@ -83,14 +85,12 @@
 			})
 			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const editedClient = clients.find((client: any) => client.cliente_id === tempClientId);
-		if (editedClient) {
-			editedClient.cliente_nombre = name;
-			editedClient.cliente_email = email;
-			editedClient.cliente_telefono = phone;
-			clients = clients;
-			toastStore.trigger(clientEdited);
-		}
+		const editedClient = clients.findIndex((client: any) => client.cliente_id === tempClientId);
+		clients[editedClient].cliente_nombre = name;
+		clients[editedClient].cliente_email = email;
+		clients[editedClient].cliente_telefono = phone;
+		toastStore.trigger(clientEdited);
+		clearForm();
 	};
 
 	let deleteConfirmation = false;
@@ -106,9 +106,8 @@
 			.update({ cliente_activo: false })
 			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const removedClient = clients.find((client: any) => client.cliente_id === tempClientId);
-		if (removedClient) removedClient.cliente_activo = false;
-		clients = clients;
+		const removedClient = clients.findIndex((client: any) => client.cliente_id === tempClientId);
+		clients[removedClient].cliente_activo = false;
 		toastStore.trigger(clientDeleted);
 	};
 
@@ -125,9 +124,8 @@
 			.update({ cliente_activo: true })
 			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const activatedClient = clients.find((client: any) => client.cliente_id === tempClientId);
-		if (activatedClient) activatedClient.cliente_activo = true;
-		clients = clients;
+		const removedClient = clients.findIndex((client: any) => client.cliente_id === tempClientId);
+		clients[removedClient].cliente_activo = true;
 		toastStore.trigger(clientActivated);
 	};
 
