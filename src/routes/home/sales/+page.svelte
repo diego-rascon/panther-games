@@ -124,8 +124,6 @@
 		message: 'Se activó la venta exitosamente',
 		background: 'variant-filled-primary'
 	};
-
-	$: console.log(deactivatedSales);
 </script>
 
 <div
