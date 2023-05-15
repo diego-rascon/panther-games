@@ -5,7 +5,12 @@
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
 	import restartLinear from '@iconify/icons-solar/restart-linear';
 
-	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
+	export let toggleDetail: (
+		clientId: number,
+		saleId: number,
+		total: number,
+		quantity: number
+	) => void;
 	export let toggleSale: (saleId: number) => void;
 	export let id: number;
 
@@ -16,14 +21,14 @@
 	$: quantity = Number(sale?.venta_cantidad);
 	$: discount = sale?.venta_descuento;
 	$: paymentType = sale?.venta_tarjeta ? 'Tarjeta' : 'Efectivo';
-	$: client = sale?.cliente_id;
+	$: client = Number(sale?.cliente_id);
 	$: active = sale?.venta_activa;
 	$: formattedPrice = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 </script>
 
 <tr
 	on:click={() => {
-		toggleDetail(id, total, quantity);
+		toggleDetail(client, id, total, quantity);
 	}}
 	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer"
 >
