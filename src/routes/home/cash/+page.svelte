@@ -44,6 +44,8 @@
 		plataforma_id: number;
 	}[] = [];
 
+	
+
 	let consoleReport: {
 		venta_id: number;
 		producto_id: number;
@@ -64,6 +66,18 @@
 		total_ventas: number;
 	}[] = [];
 
+	let rentReport: {
+		cantidad_rentas: number;
+		total_rentas: number;
+	}[] = [];
+
+	let rentCardReport: {
+		cantidad_rentas: number;
+		total_rentas: number;
+	}[] = [];
+
+	
+
 	let accesoriesReport: {
 		venta_id: number;
 		producto_id: number;
@@ -83,6 +97,8 @@
 		ingreso_cantidad: number;
 		ingreso_motivo: string;
 	}[] = [];
+
+
 
 	enum Action {
 		None,

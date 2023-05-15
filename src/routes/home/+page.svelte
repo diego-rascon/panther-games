@@ -420,27 +420,45 @@
 		doingRent = !doingRent;
 	};
 
-	const updateCajaRent = async (duration: number) => {
-		const { data, error } = await supabase
-			.from('caja')
-			.update({
-				caja_total: (await getCajaValue()) + duration === 3 ? cart.length * 100 : 200 * cart.length
-			})
-			.eq('caja_fecha', fechaActualFormat)
-			.select()
-			.single();
-		if (error) {
-			console.error('error updateando caja', error);
-			return false;
+	const updateCajaRent = async (duration: number, cashPayment: boolean) => {
+		if (cashPayment) {
+			const { data, error } = await supabase
+				.from('caja')
+				.update({
+					caja_total:
+						(await getCajaValue()) + duration === 3 ? cart.length * 100 : 200 * cart.length
+				})
+				.eq('caja_fecha', fechaActualFormat)
+				.select()
+				.single();
+			if (error) {
+				console.error('error updateando caja', error);
+				return false;
+			} else {
+				return true;
+			}
 		} else {
-			return true;
+			const { data, error } = await supabase
+				.from('caja')
+				.update({
+					caja_total: await getCajaValue()
+				})
+				.eq('caja_fecha', fechaActualFormat)
+				.select()
+				.single();
+			if (error) {
+				console.error('error updateando caja', error);
+				return false;
+			} else {
+				return true;
+			}
 		}
 	};
 
 	const registerRent = async (memberId: number, duration: number, cashPayment: boolean) => {
 		toggleRent();
 
-		if (cashPayment && (await updateCajaRent(duration))) {
+		if ((await updateCajaRent(duration, cashPayment))) {
 			const startDate = new Date();
 			const endDate = new Date();
 
