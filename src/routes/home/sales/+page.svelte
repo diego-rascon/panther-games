@@ -12,6 +12,7 @@
 	import SaleRow from '../../../components/data/SaleRow.svelte';
 	import SaleDetail from '../../../components/data/SaleDetail.svelte';
 	import type { PaginationSettings } from '@skeletonlabs/skeleton/dist/components/Paginator/types';
+	import dayjs from 'dayjs';
 
 	export let data;
 	let { sales } = data;
@@ -60,9 +61,8 @@
 			.update({ venta_activa: false })
 			.eq('venta_id', tempSaleId);
 		if (error) console.log(error.message);
-		const removedSale = sales.find((sale: any) => sale.cliente_id === tempSaleId);
-		if (removedSale) removedSale.venta_activo = false;
-		sales = sales;
+		const removedSale = sales.findIndex((sale: any) => sale.venta_id === tempSaleId);
+		sales[removedSale].venta_activa = false;
 		toastStore.trigger(saleDeleted);
 	};
 
@@ -72,16 +72,15 @@
 		activateConfirmation = !activateConfirmation;
 	};
 
-	const activateClient = async () => {
+	const activateSale = async () => {
 		toggleActivateConfirmation();
 		const { error } = await supabase
-			.from('cliente')
-			.update({ cliente_activo: true })
-			.eq('cliente_id', tempSaleId);
+			.from('venta')
+			.update({ venta_activa: true })
+			.eq('venta_id', tempSaleId);
 		if (error) console.log(error.message);
-		const activatedClient = sales.find((client: any) => client.cliente_id === tempSaleId);
-		if (activatedClient) activatedClient.cliente_activo = true;
-		sales = sales;
+		const removedSale = sales.findIndex((sale: any) => sale.venta_id === tempSaleId);
+		sales[removedSale].venta_activa = true;
 		toastStore.trigger(saleActivated);
 	};
 
@@ -90,29 +89,33 @@
 	const searchSale = (search: string) => {
 		const searchWords = search.split(' ');
 
-		filteredActiveSales = activeSales.filter((sale: any) =>
-			searchWords.every(
-				(word: string) =>
-					sale.venta_id.toString().includes(word) ||
-					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
-					sale.venta_monto.toString().includes(word) ||
-					sale.venta_cantidad.toString().includes(word) ||
-					sale.venta_descuento.toString().includes(word) ||
-					sale.cliente_id.toString().includes(word)
-			)
-		);
+		filteredActiveSales = activeSales.filter((sale: any) => {
+			const date = dayjs(String(sale.venta_fecha));
+			const formattedDate = date.format('DD/MM/YYYY');
 
-		filteredDeactivatedSales = deactivatedSales.filter((sale: any) =>
-			searchWords.every(
+			return searchWords.every(
 				(word: string) =>
 					sale.venta_id.toString().includes(word) ||
-					new Date(String(sale.venta_fecha)).toLocaleDateString('en-GB').includes(word) ||
-					sale.venta_monto.toString().includes(word) ||
+					formattedDate.includes(word) ||
 					sale.venta_cantidad.toString().includes(word) ||
 					sale.venta_descuento.toString().includes(word) ||
-					sale.cliente_id.toString().includes(word)
-			)
-		);
+					sale.venta_monto.toString().includes(word)
+			);
+		});
+
+		filteredDeactivatedSales = deactivatedSales.filter((sale: any) => {
+			const date = dayjs(String(sale.venta_fecha));
+			const formattedDate = date.format('DD/MM/YYYY');
+
+			return searchWords.every(
+				(word: string) =>
+					sale.venta_id.toString().includes(word) ||
+					formattedDate.includes(word) ||
+					sale.venta_cantidad.toString().includes(word) ||
+					sale.venta_descuento.toString().includes(word) ||
+					sale.venta_monto.toString().includes(word)
+			);
+		});
 	};
 
 	const saleDeleted: ToastSettings = {
@@ -152,9 +155,9 @@
 					<tbody>
 						{#each paginatedActiveSales as activeSale (activeSale.venta_id)}
 							<SaleRow
-								toggleDetail={(clientId, saleTotal, saleQuantity) => {
+								toggleDetail={(saleId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
-									tempSaleId = clientId;
+									tempSaleId = saleId;
 									tempSaleTotal = saleTotal;
 									tempSaleQuantity = saleQuantity;
 								}}
@@ -185,7 +188,6 @@
 							<th class="text-left">Cantidad</th>
 							<th class="text-left">Descuento</th>
 							<th class="text-left">Pago</th>
-							<th class="text-left">Cliente</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -238,7 +240,7 @@
 	<DarkenSreen>
 		<ConfirmDialog
 			cancelHandler={toggleActivateConfirmation}
-			confirmHandler={activateClient}
+			confirmHandler={activateSale}
 			title="Activar Venta"
 			text="¿Seguro de que desea activar la venta?"
 		/>

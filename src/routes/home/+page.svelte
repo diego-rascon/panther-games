@@ -222,12 +222,14 @@
 
 	const bindValues = () => {
 		const editedProduct = products.find((item: any) => item.producto_id === tempProductId);
-		categoryId = editedProduct.categoria_id;
-		platformId = editedProduct.plataforma_id;
-		name = editedProduct.producto_nombre;
-		price = editedProduct.producto_precio;
-		minimumStock = editedProduct.producto_minimo;
-		used = !editedProduct.producto_nuevo;
+		if (editedProduct) {
+			categoryId = editedProduct.categoria_id;
+			platformId = editedProduct.plataforma_id;
+			name = editedProduct.producto_nombre;
+			price = editedProduct.producto_precio;
+			minimumStock = editedProduct.producto_minimo;
+			used = !editedProduct.producto_nuevo;
+		}
 	};
 
 	const editProduct = async () => {
@@ -243,11 +245,11 @@
 			})
 			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		const editedProduct = products.find((item: any) => item.producto_id === tempProductId);
-		editedProduct.producto_nombre = name;
-		editedProduct.producto_precio = price;
-		editedProduct.producto_minimo = minimumStock;
-		editedProduct.producto_nuevo = !used;
+		const editedProduct = products.findIndex((item: any) => item.producto_id === tempProductId);
+		products[editedProduct].producto_nombre = name;
+		products[editedProduct].producto_precio = price;
+		products[editedProduct].producto_minimo = minimumStock;
+		products[editedProduct].producto_nuevo = !used;
 		if (categoryId === 1) {
 			const { error: categoryError } = await supabase
 				.from('producto_plataforma')
@@ -260,11 +262,12 @@
 				.eq('plataforma_id', platformId)
 				.single();
 			if (platformError) console.log(platformError.message);
-			editedProduct.plataforma_id = platformId;
-			editedProduct.plataforma_nombre = platformName?.plataforma_nombre;
+			if (platformName) {
+				products[editedProduct].plataforma_id = platformId;
+				products[editedProduct].plataforma_nombre = platformName.plataforma_nombre;
+				toastStore.trigger(productEdited);
+			}
 		}
-		products = products;
-		toastStore.trigger(productEdited);
 	};
 
 	let tempProductStock: number;
@@ -281,9 +284,8 @@
 			.update({ producto_stock: newStock })
 			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		const changedProduct = products.find((item: any) => item.producto_id === tempProductId);
-		changedProduct.producto_stock = newStock;
-		products = products;
+		const changedProduct = products.findIndex((item: any) => item.producto_id === tempProductId);
+		products[changedProduct].producto_stock = newStock;
 		toastStore.trigger(stockChanged);
 	};
 
@@ -300,9 +302,10 @@
 			.update({ producto_activo: false })
 			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		const removedProduct = products.find((product: any) => product.producto_id === tempProductId);
-		if (removedProduct) removedProduct.producto_activo = false;
-		products = products;
+		const removedProduct = products.findIndex(
+			(product: any) => product.producto_id === tempProductId
+		);
+		products[removedProduct].producto_activo = false;
 		toastStore.trigger(productDeleted);
 	};
 
@@ -319,9 +322,10 @@
 			.update({ producto_activo: true })
 			.eq('producto_id', tempProductId);
 		if (error) console.log(error.message);
-		const activatedProduct = products.find((product: any) => product.producto_id === tempProductId);
-		if (activatedProduct) activatedProduct.producto_activo = true;
-		products = products;
+		const activatedProduct = products.findIndex(
+			(product: any) => product.producto_id === tempProductId
+		);
+		products[activatedProduct].producto_activo = true;
 		toastStore.trigger(productActivated);
 	};
 
@@ -347,12 +351,11 @@
 
 	const lowerStock = () => {
 		for (const cartProduct of cart) {
-			const boughtProduct = products.find(
+			const boughtProduct = products.findIndex(
 				(product: any) => product.producto_id === cartProduct.producto_id
 			);
-			boughtProduct.producto_stock -= rent ? 1 : cartProduct.producto_cantidad;
+			products[boughtProduct].producto_stock -= rent ? 1 : cartProduct.producto_cantidad;
 		}
-		products = products;
 	};
 
 	let doingRent = false;
@@ -450,8 +453,8 @@
 	const removeFromCart = async (cartId: number, productId: number) => {
 		await supabase.from('carrito').delete().eq('carrito_id', cartId);
 		cart = cart.filter((item: any) => item.carrito_id !== cartId);
-		const removedItem = products.find((item: any) => item.producto_id === productId);
-		removedItem.on_cart = false;
+		const removedItem = products.findIndex((item: any) => item.producto_id === productId);
+		products[removedItem].on_cart = false;
 		fetchTotal();
 	};
 
@@ -469,9 +472,8 @@
 			.eq('carrito_id', cartId)
 			.select()
 			.single();
-
-		const updatedItem = cart.find((item: any) => item.carrito_id === cartId);
-		updatedItem.producto_cantidad = quantity;
+		const updatedItem = cart.findIndex((item: any) => item.carrito_id === cartId);
+		cart[updatedItem].producto_cantidad = quantity;
 		fetchTotal();
 	};
 

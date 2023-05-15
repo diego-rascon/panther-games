@@ -80,11 +80,9 @@
 						.select();
 					if (stockError) console.log(stockError.message);
 					if (stock) {
-						const finishedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
-						if (finishedRent) finishedRent.renta_completada = true;
-						rents = rents;
+						const finishedRent = rents.findIndex((rent: any) => rent.renta_id === tempRentId);
+						rents[finishedRent].renta_completada = true;
 						toastStore.trigger(rentFinished);
-						console.log('hehe');
 					}
 				}
 			}
@@ -104,9 +102,8 @@
 			.update({ renta_activa: false })
 			.eq('renta_id', tempRentId);
 		if (error) console.log(error.message);
-		const removedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
-		if (removedRent) removedRent.renta_activa = false;
-		rents = rents;
+		const activatedRent = rents.findIndex((rent: any) => rent.renta_id === tempRentId);
+		rents[activatedRent].renta_activa = false;
 		toastStore.trigger(rentDeleted);
 	};
 
@@ -123,9 +120,8 @@
 			.update({ renta_activa: true })
 			.eq('renta_id', tempRentId);
 		if (error) console.log(error.message);
-		const activatedRent = rents.find((rent: any) => rent.renta_id === tempRentId);
-		if (activatedRent) activatedRent.renta_activa = true;
-		rents = rents;
+		const activatedRent = rents.findIndex((rent: any) => rent.renta_id === tempRentId);
+		rents[activatedRent].renta_activa = true;
 		toastStore.trigger(rentActivated);
 	};
 

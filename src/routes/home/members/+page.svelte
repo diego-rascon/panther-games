@@ -135,9 +135,11 @@
 
 	const bindValues = () => {
 		const editedMember = members.find((member: any) => member.cliente_id === tempClientId);
-		name = editedMember?.cliente_nombre;
-		email = editedMember?.cliente_email;
-		phone = editedMember?.cliente_telefono;
+		if (editedMember) {
+			name = editedMember.cliente_nombre;
+			email = editedMember.cliente_email;
+			phone = editedMember.cliente_telefono;
+		}
 	};
 
 	const editMember = async () => {
@@ -151,13 +153,10 @@
 			})
 			.eq('cliente_id', tempClientId);
 		if (error) console.log(error.message);
-		const editedClient = members.find((member: any) => member.cliente_id === tempClientId);
-		if (editedClient) {
-			editedClient.cliente_nombre = name;
-			editedClient.cliente_email = email;
-			editedClient.cliente_telefono = phone;
-		}
-		members = members;
+		const editedClient = members.findIndex((member: any) => member.cliente_id === tempClientId);
+		members[editedClient].cliente_nombre = name;
+		members[editedClient].cliente_email = email;
+		members[editedClient].cliente_telefono = phone;
 		toastStore.trigger(memberEdited);
 	};
 
@@ -176,11 +175,9 @@
 			.select();
 		if (error) console.log(error.message);
 		if (data) {
-			const renewedMember = members.find((member: any) => member.miembro_id === tempMemberId);
-			renewedMember.miembro_fecha_inicio = date;
-			renewedMember.miembro_fecha_final = endDate;
-			console.log(renewedMember);
-			members = members;
+			const renewedMember = members.findIndex((member: any) => member.miembro_id === tempMemberId);
+			members[renewedMember].miembro_fecha_inicio = date;
+			members[renewedMember].miembro_fecha_final = endDate;
 			toastStore.trigger(memberRenewed);
 		}
 	};
@@ -198,9 +195,8 @@
 			.update({ miembro_activo: false })
 			.eq('miembro_id', tempMemberId);
 		if (error) console.log(error.message);
-		const removedMember = members.find((member: any) => member.miembro_id === tempMemberId);
-		if (removedMember) removedMember.miembro_activo = false;
-		members = members;
+		const removedMember = members.findIndex((member: any) => member.miembro_id === tempMemberId);
+		members[removedMember].miembro_activo = false;
 		toastStore.trigger(memberDeleted);
 	};
 
@@ -217,9 +213,8 @@
 			.update({ miembro_activo: true })
 			.eq('miembro_id', tempMemberId);
 		if (error) console.log(error.message);
-		const activatedMemer = members.find((member: any) => member.miembro_id === tempMemberId);
-		if (activatedMemer) activatedMemer.miembro_activo = true;
-		members = members;
+		const removedMember = members.findIndex((member: any) => member.miembro_id === tempMemberId);
+		members[removedMember].miembro_activo = true;
 		toastStore.trigger(memberActivated);
 	};
 
