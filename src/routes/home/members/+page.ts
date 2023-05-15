@@ -12,6 +12,7 @@ export const load = async () => {
 		const { data } = await supabase
 			.rpc('get_clients')
 			.eq('cliente_miembro', false)
+			.neq('cliente_id', 1)
 			.order('cliente_nombre', { ascending: true });
 		return data ?? [];
 	};
