@@ -23,12 +23,10 @@
 
 	$: membersStore.set(members);
 	$: activeMembers = members.filter(
-		(member: any) =>
-			member.miembro_activo && new Date(String(member.miembro_fecha_final)) >= new Date()
+		(member: any) => member.miembro_activo && new Date(member.miembro_fecha_final) >= new Date()
 	);
 	$: expiredMembers = members.filter(
-		(member: any) =>
-			member.miembro_activo && new Date(String(member.miembro_fecha_final)) < new Date()
+		(member: any) => member.miembro_activo && new Date(member.miembro_fecha_final) < new Date()
 	);
 	$: deactivatedMembers = members.filter((member: any) => !member.miembro_activo);
 	$: filteredActiveMembers = activeMembers;
