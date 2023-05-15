@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { membersStore } from '$lib/stores';
-	import { popup } from '@skeletonlabs/skeleton';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
@@ -8,9 +7,8 @@
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import refreshOutline from '@iconify/icons-solar/refresh-outline';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
+	import restartLinear from '@iconify/icons-solar/restart-linear';
 	import dayjs from 'dayjs';
-	import { stop_propagation } from 'svelte/internal';
 
 	export let toggleDetail: (memberId: number) => void;
 	export let editMember: (clientId: number) => void;
@@ -49,7 +47,7 @@
 	}}
 	class="relative border-t border-stone-800 transition-all active:variant-soft-primary cursor-pointer {dropdownVisible
 		? 'variant-soft-primary'
-		: 'hover:bg-stone-800'} {!active || expired ? 'text-stone-400' : ''}"
+		: 'hover:bg-stone-800'}"
 >
 	<td class="p-4 text-left select-text">{memberId}</td>
 	<td class="text-left select-text">{name}</td>
@@ -99,7 +97,8 @@
 					{:else}
 						<DropdownItem
 							text="Activar"
-							icon={userCheckOutline}
+							icon={restartLinear}
+							flipIcon={true}
 							on:click={() => {
 								toggleMember(memberId);
 								toggleDropdown();

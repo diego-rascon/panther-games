@@ -3,7 +3,7 @@
 	import dayjs from 'dayjs';
 	import Icon from '@iconify/svelte';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import checkCircleOutline from '@iconify/icons-solar/check-circle-outline';
+	import restartLinear from '@iconify/icons-solar/restart-linear';
 
 	export let toggleDetail: (saleId: number, total: number, quantity: number) => void;
 	export let toggleSale: (saleId: number) => void;
@@ -25,9 +25,7 @@
 	on:click={() => {
 		toggleDetail(id, total, quantity);
 	}}
-	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer {active
-		? ''
-		: 'text-stone-400'}"
+	class="border-t border-stone-800 hover:bg-stone-800 active:variant-soft-primary transition-all cursor-pointer"
 >
 	<td class="p-4 text-left select-text">{id}</td>
 	<td class="text-left select-text">{formattedDate}</td>
@@ -40,7 +38,7 @@
 			on:click|stopPropagation={() => toggleSale(id)}
 			class="btn p-1 rounded-full variant-soft-surface"
 		>
-			<Icon icon={active ? trashBinMinimalisticLinear : checkCircleOutline} height={20} />
+			<Icon icon={active ? trashBinMinimalisticLinear : restartLinear} height={20} hFlip={true} />
 		</button>
 	</td>
 </tr>

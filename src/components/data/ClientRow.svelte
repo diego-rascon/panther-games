@@ -8,7 +8,7 @@
 	import menuDotsBold from '@iconify/icons-solar/menu-dots-bold';
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import userCheckOutline from '@iconify/icons-solar/user-check-outline';
+	import restartLinear from '@iconify/icons-solar/restart-linear';
 
 	export let editClient: (productId: number) => void;
 	export let deleteClient: (productId: number) => void = () => {};
@@ -81,7 +81,8 @@
 					{:else}
 						<DropdownItem
 							text="Activar"
-							icon={userCheckOutline}
+							icon={restartLinear}
+							flipIcon={true}
 							on:click={() => {
 								activateClient(id);
 								toggleDropdown();

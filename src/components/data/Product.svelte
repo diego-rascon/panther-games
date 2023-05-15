@@ -7,8 +7,8 @@
 	import pen2Linear from '@iconify/icons-solar/pen-2-linear';
 	import boxLinear from '@iconify/icons-solar/box-linear';
 	import trashBinMinimalisticLinear from '@iconify/icons-solar/trash-bin-minimalistic-linear';
-	import verifiedCheckOutline from '@iconify/icons-solar/verified-check-outline';
 	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
+	import restartLinear from '@iconify/icons-solar/restart-linear';
 
 	export let addToCart: (productId: number) => void;
 	export let editProduct: (productId: number) => void;
@@ -94,7 +94,8 @@
 						{:else}
 							<DropdownItem
 								text="Activar"
-								icon={verifiedCheckOutline}
+								icon={restartLinear}
+								flipIcon={true}
 								on:click={() => {
 									toggleProduct(id);
 								}}
