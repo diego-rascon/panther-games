@@ -404,19 +404,28 @@
 	};
 
 	const updateMemberCounter = async (rent: boolean, id: number, quantity: number) => {
-		const { data: counter, error: counterError } = await supabase
+		const { data: counter, error: counterError }: any = await supabase
 			.from('miembro')
-			.select('miembro_compras')
+			.select(rent ? 'miembro_rentas' : 'miembro_compras')
 			.eq(rent ? 'miembro_id' : 'cliente_id', id)
 			.single();
 		if (counterError) console.log(counterError.message);
 		if (counter) {
-			const newQuantity = counter.miembro_compras + quantity;
-			const { error } = await supabase
-				.from('miembro')
-				.update({ miembro_compras: newQuantity })
-				.eq(rent ? 'miembro_id' : 'cliente_id', id);
-			if (error) console.log(error.message);
+			if (rent) {
+				const newQuantity = counter.miembro_rentas + quantity;
+				const { error } = await supabase
+					.from('miembro')
+					.update({ miembro_rentas: newQuantity })
+					.eq('miembro_id', id);
+				if (error) console.log(error.message);
+			} else {
+				const newQuantity = counter.miembro_compras + quantity;
+				const { error } = await supabase
+					.from('miembro')
+					.update({ miembro_compras: newQuantity })
+					.eq('cliente_id', id);
+				if (error) console.log(error.message);
+			}
 		}
 	};
 
