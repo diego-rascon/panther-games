@@ -44,6 +44,7 @@
 		showingDetail = !showingDetail;
 	};
 
+	let tempClientId: number;
 	let tempSaleId: number;
 	let tempSaleTotal: number;
 	let tempSaleQuantity: number;
@@ -155,8 +156,9 @@
 					<tbody>
 						{#each paginatedActiveSales as activeSale (activeSale.venta_id)}
 							<SaleRow
-								toggleDetail={(saleId, saleTotal, saleQuantity) => {
+								toggleDetail={(clientId, saleId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
+									tempClientId = clientId;
 									tempSaleId = saleId;
 									tempSaleTotal = saleTotal;
 									tempSaleQuantity = saleQuantity;
@@ -193,12 +195,12 @@
 					<tbody>
 						{#each filteredDeactivatedSales as deactivatedSale (deactivatedSale.venta_id)}
 							<SaleRow
-								toggleDetail={(saleID, saleTotal, saleQuantity) => {
+								toggleDetail={(clientId, saleId, saleTotal, saleQuantity) => {
 									toggleShowDetail();
-									tempSaleId = saleID;
+									tempClientId = clientId;
+									tempSaleId = saleId;
 									tempSaleTotal = saleTotal;
 									tempSaleQuantity = saleQuantity;
-									console.log(saleQuantity);
 								}}
 								toggleSale={(saleId) => {
 									toggleActivateConfirmation();
@@ -220,6 +222,7 @@
 	<DarkenSreen>
 		<SaleDetail
 			closeHandler={toggleShowDetail}
+			clientId={tempClientId}
 			saleId={tempSaleId}
 			total={tempSaleTotal}
 			quantity={tempSaleQuantity}
