@@ -40,7 +40,9 @@
 		<div class="flex flex-col space-y-2">
 			<div class="flex justify-between">
 				<strong>Cliente</strong>
-				{#await clientPromise then client}
+				{#await clientPromise}
+					<p>...</p>
+				{:then client}
 					<p>{client?.cliente_nombre}</p>
 				{/await}
 			</div>
