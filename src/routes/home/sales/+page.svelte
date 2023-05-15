@@ -133,7 +133,7 @@
 </script>
 
 <div
-	class="fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
+	class="z-[100] fixed top-0 inset-x-0 p-4 ml-64 flex justify-between space-x-8 bg-gradient-to-b from-stone-950"
 >
 	<SectionTitle text="Ventas" />
 	<Search searchHandler={searchSale} bind:search />
