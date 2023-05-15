@@ -1,38 +1,42 @@
 <script lang="ts">
-	import { supabase } from '$lib/db';
-	import moment from 'moment';
-	import * as XLSX from 'xlsx';
+	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
+	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
 	import Icon from '@iconify/svelte';
 	import dollarOutline from '@iconify/icons-solar/dollar-outline';
 	import walletOutline from '@iconify/icons-solar/wallet-outline';
 	import cashOutOutline from '@iconify/icons-solar/cash-out-outline';
 	import wadOfMoneyOutline from '@iconify/icons-solar/wad-of-money-outline';
 	import handMoneyOutline from '@iconify/icons-solar/hand-money-outline';
+	import { cajaTotalStore } from '$lib/stores';
+	import { supabase } from '$lib/db';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
-	import SectionTitle from '../../../components/titles/SectionTitle.svelte';
-	import SectionSubtitle from '../../../components/titles/SectionSubtitle.svelte';
+	import moment from 'moment';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
+	import * as XLSX from 'xlsx';
 	import CashAction from '../../../components/data/CashAction.svelte';
 	import CashRow from '../../../components/data/CashRow.svelte';
+	import dialog2Linear from '@iconify/icons-solar/dialog-2-linear';
 
 	export let data;
 	let { caja } = data;
 	$: ({ caja } = data);
 
+	let cajaInicialExist = false;
+
 	let cajaTotal: number;
 	let cajaInicial: number;
-	let cajaFinal: number;
 	let fechaActual = new Date();
 	let fechaActualFormat = moment(fechaActual).format('MM-DD-YYYY');
 	let visualizarCorte = false;
+	let retiroMotivo: string;
+	let ingresoMotivo: string;
 
 	let gameReport: {
 		venta_id: number;
 		producto_id: number;
 		producto_nombre: string;
-		plataforma_nombre: string;
 		producto_stock: number;
 		producto_precio: number;
 		cantidad_vendida: number;
@@ -55,6 +59,11 @@
 		total_ventas: number;
 	}[] = [];
 
+	let saleCardReport: {
+		cantidad_ventas: number;
+		total_ventas: number;
+	}[] = [];
+
 	let accesoriesReport: {
 		venta_id: number;
 		producto_id: number;
@@ -63,6 +72,16 @@
 		producto_precio: number;
 		cantidad_vendida: number;
 		total_producto: number;
+	}[] = [];
+
+	let retirosDetalle: {
+		retiro_cantidad: number;
+		retiro_motivo: string;
+	}[] = [];
+
+	let ingresosDetalle: {
+		ingreso_cantidad: number;
+		ingreso_motivo: string;
 	}[] = [];
 
 	enum Action {
@@ -81,13 +100,22 @@
 
 	let tempCajaId: number;
 	let deleteConfirmation = false;
+	let corteConfirmation = false;
 
 	const toggleDeleteConfirmation = () => {
 		deleteConfirmation = !deleteConfirmation;
 	};
 
+	const toggleCorteConfirmation = () => {
+		corteConfirmation = !corteConfirmation;
+	};
+
+	// Movimientos en caja
+
 	const deleteCaja = async () => {
 		toggleDeleteConfirmation();
+		deleteCajaRetiroDetalle(); //Retiro borrar
+		deleteCajaIngresoDetalle(); //Ingreos borrar
 		const { data, error } = await supabase
 			.from('caja')
 			.delete()
@@ -98,6 +126,7 @@
 		if (data) caja = caja.filter((cajaEntry: any) => cajaEntry.caja_id != tempCajaId);
 		cajaTotal = caja[0].caja_total;
 		toastStore.trigger(cajaDeleted);
+		cajaInicialExist = false;
 	};
 
 	const setFondoInicial = async () => {
@@ -139,6 +168,7 @@
 			toastStore.trigger(depositMoneyError);
 			dineroEntrada = 0;
 		} else {
+			insertarIngresoDetalle(); //Ingreso
 			dineroEntrada = 0;
 			toastStore.trigger(depositMoneySuccess);
 			cajaTotal = data.caja_total;
@@ -158,6 +188,7 @@
 			toastStore.trigger(withdrawMoneyError);
 			dineroEntrada = 0;
 		} else {
+			insertarRetiroDetalle(); //Retiro
 			dineroEntrada = 0;
 			toastStore.trigger(withdrawMoneySuccess);
 			cajaTotal = data.caja_total;
@@ -177,6 +208,161 @@
 			cajaTotal = 0;
 		}
 	};
+
+	let tempCajaInicial: number;
+
+	const getCajaInicialFromDate = async () => {
+		const { data, error } = await supabase
+			.from('caja')
+			.select('caja_fondo_inicio')
+			.eq('caja_fecha', fechaActualFormat)
+			.limit(1);
+
+		if (data && data.length > 0) {
+			tempCajaInicial = data[0].caja_fondo_inicio;
+			cajaInicialExist = true;
+		} else {
+			tempCajaInicial = 0;
+		}
+	};
+
+	getCajaInicialFromDate();
+
+	// -----------------------------------------------
+
+	//Retiros funcionamiento.
+
+	let retirosCount = 0;
+	let sumRetiros = 0; // variable que almacena la sumatoria de retiro_cantidad
+
+	async function insertarRetiroDetalle() {
+		const nuevaFila = {
+			retiro_cantidad: dineroEntrada,
+			retiro_motivo: retiroMotivo,
+			caja_id: caja[0].caja_id
+		};
+
+		const { data, error } = await supabase.from('retiros_detalle').insert(nuevaFila);
+
+		if (error) {
+			console.log(error.message);
+		} else {
+			console.log('Nueva fila insertada correctamente:', data);
+			retiroMotivo = '';
+		}
+	}
+
+	const deleteCajaRetiroDetalle = async () => {
+		const { data, error } = await supabase
+			.from('retiros_detalle')
+			.delete()
+			.eq('caja_id', tempCajaId)
+			.select();
+	};
+
+	const getRetirosInfo = async () => {
+		const { data, error } = await supabase
+			.from('retiros_detalle')
+			.select()
+			.eq('caja_id', caja[0].caja_id);
+
+		if (data && data.length > 0) {
+			for (const retiro of data) {
+				sumRetiros += retiro.retiro_cantidad;
+			}
+			retirosDetalle = data.map(({ retiro_cantidad, retiro_motivo }) => ({
+				retiro_cantidad,
+				retiro_motivo
+			}));
+		} else {
+			console.log(error);
+		}
+	};
+
+	const getRetirosCount = async () => {
+		const { data, error } = await supabase
+			.from('retiros_detalle')
+			.select('*')
+			.eq('caja_id', caja[0].caja_id);
+		if (data) {
+			retirosCount = data.length;
+		} else {
+			console.log(error);
+		}
+	};
+
+	if (cajaInicialExist) {
+		getRetirosCount();
+	}
+
+	// ---------------------------------
+
+	//Ingresos funcionamiento
+
+	let ingresosCount = 0;
+	let sumIngresos = 0; // variable que almacena la sumatoria de ingresos_cantidad
+
+	async function insertarIngresoDetalle() {
+		const nuevaFila = {
+			ingreso_cantidad: dineroEntrada,
+			ingreso_motivo: ingresoMotivo,
+			caja_id: caja[0].caja_id
+		};
+
+		const { data, error } = await supabase.from('ingresos_detalle').insert(nuevaFila);
+
+		if (error) {
+			console.log(error.message);
+		} else {
+			console.log('Nueva fila insertada correctamente:', data);
+			ingresoMotivo = '';
+		}
+	}
+
+	const deleteCajaIngresoDetalle = async () => {
+		const { data, error } = await supabase
+			.from('ingresos_detalle')
+			.delete()
+			.eq('caja_id', tempCajaId)
+			.select();
+	};
+
+	const getIngresosInfo = async () => {
+		const { data, error } = await supabase
+			.from('ingresos_detalle')
+			.select()
+			.eq('caja_id', caja[0].caja_id);
+
+		if (data && data.length > 0) {
+			for (const ingreso of data) {
+				sumIngresos += ingreso.ingreso_cantidad;
+			}
+			ingresosDetalle = data.map(({ ingreso_cantidad, ingreso_motivo }) => ({
+				ingreso_cantidad,
+				ingreso_motivo
+			}));
+		} else {
+			console.log(error);
+		}
+	};
+
+	const getIngresoCount = async () => {
+		const { data, error } = await supabase
+			.from('ingresos_detalle')
+			.select('*')
+			.eq('caja_id', caja[0].caja_id);
+		if (data) {
+			ingresosCount = data.length;
+		} else {
+			console.log(error);
+		}
+	};
+
+	if (cajaInicialExist) {
+		getIngresoCount();
+	}
+
+	// ---------------------------------
 
 	getCajaTotalFromDate();
 
@@ -215,7 +401,7 @@
 		background: 'variant-filled-primary'
 	};
 
-	//Reporte del dia
+	//Metodos que llaman al reporte
 
 	const getColor = (plataforma: number): string => {
 		switch (plataforma) {
@@ -280,7 +466,25 @@
 		}
 	};
 
+	const getVentaTarjetaOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('ventatarjetaonedate', {
+				start_date: date
+			});
+			console.log('venta tarjeta', data);
+			saleCardReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const getReport = () => {
+		sumIngresos = 0;
+		sumRetiros = 0;
+		getCajaInicialFromDate();
+		getRetirosInfo();
+		getIngresosInfo();
+		getVentaTarjetaOneDate(fechaActualFormat);
 		getGamesReportOneDate(fechaActualFormat);
 		getConsolesReportOneDate(fechaActualFormat);
 		getSalesReportOneDate(fechaActualFormat);
@@ -297,9 +501,24 @@
 	//Hacer corte de caja
 
 	const hacerCorte = async () => {
+		toggleCorteConfirmation();
+
+		deleteCajaRetiroDetalle(); //Retiro borrar
+		deleteCajaIngresoDetalle(); //Ingresos borrar
+		const { data, error } = await supabase
+			.from('caja')
+			.delete()
+			.eq('caja_id', caja[0].caja_id)
+			.select()
+			.single();
+		if (error) console.log(error.message);
+
+		getExcel();
+
 		toggleVisualizarCorte();
-		console.log('se hizo el corte');
 	};
+
+	let arreglo: string[] = ["Ventas", "Caja", "Ingresos y Retiros", "Ingresos Detalles", "Retiros Detalles", "Juegos", "Consolas", "Accesorios" ];
 
 	const getExcel = () => {
 		try {
@@ -308,7 +527,7 @@
 
 			tables.forEach((table, index) => {
 				const ws = XLSX.utils.table_to_sheet(table);
-				XLSX.utils.book_append_sheet(wb, ws, index + 1 + '');
+				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
 			});
 			XLSX.writeFile(wb, 'reporte.xlsx');
 		} catch (error) {
@@ -390,6 +609,9 @@
 		{:else}
 			<!-- Panel gris claro -->
 			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+				<div class="m-2">
+					<SectionSubtitle text="Corte de caja {fechaActualFormat}" />
+				</div>
 				<!-- División de 2 columnas -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
 					<!-- Izquierda -->
@@ -397,16 +619,29 @@
 						<table id="TableToExport" class="table">
 							<thead class="border-b border-stone-800">
 								<tr>
-									<th class="p-2 text-left">Ventas totales</th>
-									<th class="p-2 text-left">Total por Ventas</th>
+									<th class="p-2 text-left">Cantidad de ventas tarjeta</th>
+									<th class="p-2 text-left">Total ventas tarjeta</th>
+									<th class="p-2 text-left">Cantidad de ventas efectivo</th>
+									<th class="p-2 text-left">Total ventas efectivo</th>
+									<th class="p-2 text-left">Cantidad de ventas totales</th>
+									<th class="p-2 text-left">Total ventas</th>
 								</tr>
 							</thead>
 							<tbody>
 								{#each saleReport as venta}
-									<tr>
-										<td class="p-2 text-left">{venta.cantidad_ventas}</td>
-										<td class="p-2 text-left">{venta.total_ventas}</td>
-									</tr>
+									{#each saleCardReport as tarjetaVenta}
+										<tr>
+											<td class="p-2 text-left">{tarjetaVenta.cantidad_ventas}</td>
+											<td class="p-2 text-left">{tarjetaVenta.total_ventas}</td>
+											<td class="p-2 text-left"
+												>{venta.cantidad_ventas - tarjetaVenta.cantidad_ventas}</td
+											>
+											<td class="p-2 text-left">{venta.total_ventas - tarjetaVenta.total_ventas}</td
+											>
+											<td class="p-2 text-left">{venta.cantidad_ventas}</td>
+											<td class="p-2 text-left">{venta.total_ventas}</td>
+										</tr>
+									{/each}
 								{/each}
 							</tbody>
 						</table>
@@ -419,19 +654,109 @@
 								<thead class="border-b border-stone-800">
 									<tr>
 										<th class="p-2 text-left">Cantidad en Caja</th>
+										<th class="p-2 text-left">Total esperado en caja</th>
 										<th class="p-2 text-left">Diferencia</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
 										{#each saleReport as venta}
-											<td class="p-2 text-left">{cajaTotal}</td>
-											<td class="p-2 text-left">{cajaTotal - venta.total_ventas}</td>
+											{#each saleCardReport as ventaTarjeta}
+												<td class="p-2 text-left">{cajaTotal}</td>
+												<td class="p-2 text-left">
+													{venta.total_ventas +
+														tempCajaInicial +
+														sumIngresos -
+														sumRetiros -
+														ventaTarjeta.total_ventas}</td
+												>
+												<td class="p-2 text-left"
+													>{cajaTotal -
+														(venta.total_ventas +
+															tempCajaInicial +
+															sumIngresos -
+															sumRetiros -
+															ventaTarjeta.total_ventas)}
+												</td>
+											{/each}
 										{/each}
 									</tr>
 								</tbody>
 							</table>
 						</div>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
+					<!-- Izquierda -->
+					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+						<table id="TableToExport" class="table">
+							<thead class="border-b border-stone-800">
+								<tr>
+									<th class="p-2 text-left">Fondo Inicial</th>
+									<th class="p-2 text-left">Retiros Realizados</th>
+									<th class="p-2 text-left">Total dinero por retiros</th>
+									<th class="p-2 text-left">Ingresos Realizados</th>
+									<th class="p-2 text-left">Total dinero por ingresos</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="p-2 text-left">{tempCajaInicial} </td>
+									<td class="p-2 text-left">{retirosCount} </td>
+									<td class="p-2 text-left">{sumRetiros} </td>
+									<td class="p-2 text-left">{ingresosCount}</td>
+									<td class="p-2 text-left">{sumIngresos}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 transition-all">
+					<!-- Izquierda -->
+					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+						<div class="m-2">
+							<SectionSubtitle text="Retiros" />
+						</div>
+						<table id="TableToExport" class="table">
+							<thead class="border-b border-stone-800">
+								<tr>
+									<th class="p-2 text-left">Cantidad</th>
+									<th class="p-2 text-left">Detalle</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each retirosDetalle as retiro}
+									<tr>
+										<td class="p-2 text-left">{retiro.retiro_cantidad} </td>
+										<td class="p-2 text-left">{retiro.retiro_motivo} </td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+					<!-- Derecha -->
+					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+						<div class="m-2">
+							<SectionSubtitle text="Ingresos" />
+						</div>
+						<table id="TableToExport" class="table">
+							<thead class="border-b border-stone-800">
+								<tr>
+									<th class="p-2 text-left">Cantidad</th>
+									<th class="p-2 text-left">Detalle</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each ingresosDetalle as ingreso}
+									<tr>
+										<td class="p-2 text-left">{ingreso.ingreso_cantidad} </td>
+										<td class="p-2 text-left">{ingreso.ingreso_motivo} </td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
 					</div>
 				</div>
 
@@ -446,8 +771,7 @@
 								<tr>
 									<th class="p-2 text-left">Folio</th>
 									<th class="p-2 text-left">Nombre</th>
-									<th class="p-2 text-left">Plataforma</th>
-									<th class="p-2 text-left">Stock Actual</th>
+									<th class="p-2 text-left">Stock</th>
 									<th class="p-2 text-left">Precio venta</th>
 									<th class="p-2 text-left">Vendidos</th>
 									<th class="p-2 text-left">Total</th>
@@ -457,7 +781,6 @@
 								<tr class={getColor(game.plataforma_id)}>
 									<td class="p-2 text-left">{game.venta_id}</td>
 									<td class="p-2 text-left">{game.producto_nombre}</td>
-									<td class="p-2 text-left">{game.plataforma_nombre}</td>
 									<td class="p-2 text-left">{game.producto_stock}</td>
 									<td class="p-2 text-left">{game.producto_precio}</td>
 									<td class="p-2 text-left">{game.cantidad_vendida}</td>
@@ -530,11 +853,8 @@
 					</div>
 				</div>
 				<div class="text-center">
-					<button on:click={getExcel} class="btn variant-filled-primary min-w-max max-w-md m-4 p-4">
-						<p class="font-bold">Exportar en .xlsx</p>
-					</button>
 					<button
-						on:click={hacerCorte}
+						on:click={toggleCorteConfirmation}
 						class="btn variant-filled-primary min-w-max max-w-md m-4 p-4"
 					>
 						<p class="font-bold">Hacer Corte</p>
@@ -543,18 +863,22 @@
 			</div>
 		{/if}
 	{:else if currentAction === Action.Fondo}
-		<div class="flex flex-col space-y-4 items-end">
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={wadOfMoneyOutline} height={24} /></div>
-				<input
-					type="number"
-					class="input"
-					placeholder="Cantidad de fondo inicial"
-					bind:value={cajaInicial}
-				/>
+		{#if !cajaInicialExist}
+			<div class="flex flex-col space-y-4 items-end">
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={wadOfMoneyOutline} height={24} /></div>
+					<input
+						type="number"
+						class="input"
+						placeholder="Cantidad de fondo inicial"
+						bind:value={cajaInicial}
+					/>
+				</div>
+				<button on:click={setFondoInicial} class="btn variant-filled-primary">Establecer</button>
 			</div>
-			<button on:click={setFondoInicial} class="btn variant-filled-primary">Establecer</button>
-		</div>
+		{:else}
+			Ya existe una caja para el dia de hoy. :)
+		{/if}
 	{:else if currentAction === Action.Retirar}
 		<div class="flex flex-col space-y-4 items-end">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
@@ -565,6 +889,10 @@
 					placeholder="Cantidad a retirar"
 					bind:value={dineroEntrada}
 				/>
+			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={dialog2Linear} height={24} /></div>
+				<input type="text" class="input" placeholder="Motivo" bind:value={retiroMotivo} />
 			</div>
 			<button on:click={withdrawMoney} class="btn variant-filled-primary">Retirar</button>
 		</div>
@@ -579,6 +907,10 @@
 					bind:value={dineroEntrada}
 				/>
 			</div>
+			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+				<div class="input-group-shim"><Icon icon={dialog2Linear} height={24} /></div>
+				<input type="text" class="input" placeholder="Motivo" bind:value={ingresoMotivo} />
+			</div>
 			<button on:click={depositMoney} class="btn variant-filled-primary">Ingresar</button>
 		</div>
 	{/if}
@@ -590,6 +922,17 @@
 			confirmHandler={deleteCaja}
 			title="Eliminar de Caja"
 			text="¿Seguro de que desea eliminar el registro de la caja?"
+		/>
+	</DarkenSreen>
+{/if}
+
+{#if corteConfirmation}
+	<DarkenSreen>
+		<ConfirmDialog
+			cancelHandler={toggleCorteConfirmation}
+			confirmHandler={hacerCorte}
+			title="Hacer corte"
+			text="¿Seguro de que desea hacer corte?"
 		/>
 	</DarkenSreen>
 {/if}
