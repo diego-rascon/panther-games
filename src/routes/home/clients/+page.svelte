@@ -88,9 +88,9 @@
 			editedClient.cliente_nombre = name;
 			editedClient.cliente_email = email;
 			editedClient.cliente_telefono = phone;
+			clients = clients;
+			toastStore.trigger(clientEdited);
 		}
-		clients = clients;
-		toastStore.trigger(clientEdited);
 	};
 
 	let deleteConfirmation = false;
