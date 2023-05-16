@@ -190,14 +190,25 @@
 
 	const deleteMember = async () => {
 		toggleDeleteConfirmation();
-		const { error } = await supabase
-			.from('miembro')
-			.update({ miembro_activo: false })
-			.eq('miembro_id', tempMemberId);
+		const { data: activeRents, error } = await supabase
+			.from('renta')
+			.select()
+			.eq('miembro_id', tempMemberId)
+			.or('renta_completada.eq.false,renta_activa.eq.false');
+		//.eq('renta_completada', false)
 		if (error) console.log(error.message);
-		const removedMember = members.findIndex((member: any) => member.miembro_id === tempMemberId);
-		members[removedMember].miembro_activo = false;
-		toastStore.trigger(memberDeleted);
+		if (activeRents && activeRents.length === 0) {
+			const { error: memberError } = await supabase
+				.from('miembro')
+				.update({ miembro_activo: false })
+				.eq('miembro_id', tempMemberId);
+			if (memberError) console.log(memberError.message);
+			const removedMember = members.findIndex((member: any) => member.miembro_id === tempMemberId);
+			members[removedMember].miembro_activo = false;
+			toastStore.trigger(memberDeleted);
+		} else {
+			toastStore.trigger(memberWithRents);
+		}
 	};
 
 	let activateConfirmation = false;
@@ -285,27 +296,32 @@
 	};
 
 	const memberAdded: ToastSettings = {
-		message: 'Un nuevo miembro fue registrado exitosamente',
+		message: 'Un nuevo miembro fue registrado exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
 	const memberEdited: ToastSettings = {
-		message: 'Se actualizaron los datos del miembro exitosamente',
+		message: 'Se actualizaron los datos del miembro exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
 	const memberRenewed: ToastSettings = {
-		message: 'Se renovó al miembro exitosamente',
+		message: 'Se renovó al miembro exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
 	const memberDeleted: ToastSettings = {
-		message: 'Se eliminó al miembro exitosamente',
+		message: 'Se eliminó al miembro exitosamente.',
 		background: 'variant-filled-primary'
 	};
 
 	const memberActivated: ToastSettings = {
-		message: 'Se activó al miembro exitosamente',
+		message: 'Se activó al miembro exitosamente.',
+		background: 'variant-filled-primary'
+	};
+
+	const memberWithRents: ToastSettings = {
+		message: 'No se pueden eliminar miembros con rentas activas.',
 		background: 'variant-filled-primary'
 	};
 </script>
