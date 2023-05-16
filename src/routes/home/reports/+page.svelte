@@ -242,10 +242,15 @@
 		reporteGenerado = !reporteGenerado;
 	};
 
+	let errorFechas: boolean;
+
 	const getReport = () => {
 		reporteGenerado = true;
 		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
 		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
+		if (dateBegin > dateFinal) {
+			errorFechas = true;
+		}
 		if (dateBeginMoment === dateFinalMoment) {
 			getGamesReportOneDate(dateBeginMoment);
 			getConsolesReportOneDate(dateBeginMoment);
@@ -265,7 +270,7 @@
 		}
 	};
 
-	let arreglo: string[] = ['Ventas','Rentas', 'Juegos', 'Consolas', 'Accesorios'];
+	let arreglo: string[] = ['Ventas', 'Rentas', 'Juegos', 'Consolas', 'Accesorios'];
 
 	const getExcel = () => {
 		try {
@@ -334,10 +339,25 @@
 			font: { color: { rgb: 'FF000000' }, sz: 12, bold: false }
 		}
 	};
+
+	const errorFechasHandler = () => {
+		errorFechas = !errorFechas;
+		reporteGeneradoHandler();
+	};
 </script>
 
 <SectionTitle text="Reportes" />
-{#if reporteGenerado}
+{#if errorFechas}
+<div class="flex flex-col py-4">
+	<div class="text-xl py-4">Se han introducido las fechas de forma incorrecta.</div>
+	<button
+		on:click={errorFechasHandler}
+		class="btn variant-ringed-primary min-w-max max-w-md m-4 p-4"
+	>
+		<p class="font-bold">Volver</p>
+	</button>
+</div>
+{:else if reporteGenerado}
 	<!-- Panel gris claro -->
 	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 		<div class="m-2">

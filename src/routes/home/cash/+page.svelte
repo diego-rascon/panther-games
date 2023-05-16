@@ -178,10 +178,14 @@
 			toastStore.trigger(depositMoneyError);
 			dineroEntrada = 0;
 		} else {
-			insertarIngresoDetalle(); //Ingreso
-			dineroEntrada = 0;
-			toastStore.trigger(depositMoneySuccess);
-			cajaTotal = data.caja_total;
+			if (await insertarIngresoDetalle()) {
+				//Ingreso
+				dineroEntrada = 0;
+				toastStore.trigger(depositMoneySuccess);
+				cajaTotal = data.caja_total;
+			} else {
+				toastStore.trigger(depositMoneyError);
+			}
 		}
 	};
 
@@ -198,10 +202,14 @@
 			toastStore.trigger(withdrawMoneyError);
 			dineroEntrada = 0;
 		} else {
-			insertarRetiroDetalle(); //Retiro
-			dineroEntrada = 0;
-			toastStore.trigger(withdrawMoneySuccess);
-			cajaTotal = data.caja_total;
+			if (await insertarRetiroDetalle()) {
+				//Retiro
+				dineroEntrada = 0;
+				toastStore.trigger(withdrawMoneySuccess);
+				cajaTotal = data.caja_total;
+			} else {
+				toastStore.trigger(withdrawMoneyError);
+			}
 		}
 	};
 
@@ -256,9 +264,11 @@
 
 		if (error) {
 			console.log(error.message);
+			return false;
 		} else {
 			console.log('Nueva fila insertada correctamente:', data);
 			retiroMotivo = '';
+			return true;
 		}
 	}
 
@@ -323,9 +333,11 @@
 
 		if (error) {
 			console.log(error.message);
+			return false;
 		} else {
 			console.log('Nueva fila insertada correctamente:', data);
 			ingresoMotivo = '';
+			return true;
 		}
 	}
 
@@ -402,7 +414,7 @@
 	};
 
 	const withdrawMoneyError: ToastSettings = {
-		message: 'Hubo un error retirando dinero,',
+		message: 'Hubo un error retirando dinero.',
 		background: 'variant-filled-primary'
 	};
 
