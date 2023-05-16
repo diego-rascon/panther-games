@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade, scale } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
 	import SectionTitle from '../titles/SectionTitle.svelte';
 	import ConfirmDialog from '../modals/ConfirmDialog.svelte';
 	import InputError from '../utils/InputError.svelte';
