@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { usersStore } from '$lib/stores';
+	import { readUser, usersStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
@@ -36,7 +36,7 @@
 	};
 
 	const windowHandler = (e: any) => {
-		if (container.contains(e.target) == false) dropdownVisible = false;
+		if (!$readUser) if (container.contains(e.target) == false) dropdownVisible = false;
 	};
 </script>
 
@@ -52,28 +52,29 @@
 	<td class="text-left select-text">{email}</td>
 	<td class="text-left select-text">{phone}</td>
 	<td class="text-left select-text">{permissions}</td>
-	<td class="pr-4 text-right" bind:this={container}>
-		<button
-			on:click={toggleDropdown}
-			class="btn p-1 rounded-full {dropdownVisible
-				? 'variant-soft-primary'
-				: 'hover:variant-filled-surface'}"
-		>
-			<Icon icon={menuDotsBold} rotate={1} height={20} />
-		</button>
-		{#if dropdownVisible}
-			<div class="z-[999] absolute bottom-12 right-4">
-				<Dropdown>
-					<DropdownItem
-						text="Editar"
-						icon={pen2Linear}
-						on:click={() => {
-							editUser(userId);
-							toggleDropdown();
-						}}
-					/>
-					{#if active}
-						<!--
+	{#if !$readUser}
+		<td class="pr-4 text-right" bind:this={container}>
+			<button
+				on:click={toggleDropdown}
+				class="btn p-1 rounded-full {dropdownVisible
+					? 'variant-soft-primary'
+					: 'hover:variant-filled-surface'}"
+			>
+				<Icon icon={menuDotsBold} rotate={1} height={20} />
+			</button>
+			{#if dropdownVisible}
+				<div class="z-[999] absolute bottom-12 right-4">
+					<Dropdown>
+						<DropdownItem
+							text="Editar"
+							icon={pen2Linear}
+							on:click={() => {
+								editUser(userId);
+								toggleDropdown();
+							}}
+						/>
+						{#if active}
+							<!--
 						<DropdownItem
 							text="Cambiar contraseña"
 							icon={keyOutline}
@@ -82,27 +83,28 @@
 							}}
 						/>
                         -->
-						<DropdownItem
-							text="Eliminar"
-							icon={trashBinMinimalisticLinear}
-							on:click={() => {
-								toggleDropdown();
-								toggleUser(userId);
-							}}
-						/>
-					{:else}
-						<DropdownItem
-							text="Activar"
-							icon={restartLinear}
-							flipIcon={true}
-							on:click={() => {
-								toggleDropdown();
-								toggleUser(userId);
-							}}
-						/>
-					{/if}
-				</Dropdown>
-			</div>
-		{/if}
-	</td>
+							<DropdownItem
+								text="Eliminar"
+								icon={trashBinMinimalisticLinear}
+								on:click={() => {
+									toggleDropdown();
+									toggleUser(userId);
+								}}
+							/>
+						{:else}
+							<DropdownItem
+								text="Activar"
+								icon={restartLinear}
+								flipIcon={true}
+								on:click={() => {
+									toggleDropdown();
+									toggleUser(userId);
+								}}
+							/>
+						{/if}
+					</Dropdown>
+				</div>
+			{/if}
+		</td>
+	{/if}
 </tr>

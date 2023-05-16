@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { productsStore, cartStore } from '$lib/stores';
+	import { productsStore, cartStore, readUser } from '$lib/stores';
 	import { RadioGroup, RadioItem, type ToastSettings } from '@skeletonlabs/skeleton';
 	import { toastStore } from '@skeletonlabs/skeleton';
 	import { fade } from 'svelte/transition';
@@ -550,8 +550,8 @@
 		}
 	};
 
-	let cartVisible = cart.length > 0;
-	$: cartVisible = cart.length > 0;
+	let cartVisible = cart.length > 0 && !$readUser;
+	$: cartVisible = cart.length > 0 && !$readUser;
 
 	let cartTotal: number = 0;
 	let cartQuantity: number = 0;
@@ -858,9 +858,11 @@
 		{/if}
 	</div>
 </div>
+{#if !$readUser}
 <div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
 	<AddButton on:click={toggleAddingProduct} />
 </div>
+{/if}
 {#if addingProduct}
 	<DarkenSreen>
 		<ProductForm

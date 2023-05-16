@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { membersStore } from '$lib/stores';
+	import { membersStore, readUser } from '$lib/stores';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
@@ -36,7 +36,7 @@
 	};
 
 	const windowHandler = (e: any) => {
-		if (container.contains(e.target) == false) dropdownVisible = false;
+		if (!$readUser) if (container.contains(e.target) == false) dropdownVisible = false;
 	};
 </script>
 
@@ -55,58 +55,60 @@
 	<td class="text-left select-text">{phone}</td>
 	<td class="text-left select-text">{formattedStartDate}</td>
 	<td class="text-left select-text">{formattedEndDate}</td>
-	<td class="pr-4 text-right" bind:this={container}>
-		<button
-			on:click|stopPropagation={toggleDropdown}
-			class="btn p-1 rounded-full {dropdownVisible
-				? 'variant-soft-primary'
-				: 'hover:variant-filled-surface'}"
-		>
-			<Icon icon={menuDotsBold} rotate={1} height={20} />
-		</button>
-		{#if dropdownVisible}
-			<div class="z-[999] absolute bottom-12 right-4">
-				<Dropdown>
-					<DropdownItem
-						text="Editar"
-						icon={pen2Linear}
-						on:click={() => {
-							editMember(clientId);
-							toggleDropdown();
-						}}
-					/>
-					{#if active && expired}
+	{#if !$readUser}
+		<td class="pr-4 text-right" bind:this={container}>
+			<button
+				on:click|stopPropagation={toggleDropdown}
+				class="btn p-1 rounded-full {dropdownVisible
+					? 'variant-soft-primary'
+					: 'hover:variant-filled-surface'}"
+			>
+				<Icon icon={menuDotsBold} rotate={1} height={20} />
+			</button>
+			{#if dropdownVisible}
+				<div class="z-[999] absolute bottom-12 right-4">
+					<Dropdown>
 						<DropdownItem
-							text="Renovar"
-							icon={refreshOutline}
+							text="Editar"
+							icon={pen2Linear}
 							on:click={() => {
-								renewMember(memberId);
+								editMember(clientId);
 								toggleDropdown();
 							}}
 						/>
-					{/if}
-					{#if active}
-						<DropdownItem
-							text="Eliminar"
-							icon={trashBinMinimalisticLinear}
-							on:click={() => {
-								toggleMember(memberId);
-								toggleDropdown();
-							}}
-						/>
-					{:else}
-						<DropdownItem
-							text="Activar"
-							icon={restartLinear}
-							flipIcon={true}
-							on:click={() => {
-								toggleMember(memberId);
-								toggleDropdown();
-							}}
-						/>
-					{/if}
-				</Dropdown>
-			</div>
-		{/if}
-	</td>
+						{#if active && expired}
+							<DropdownItem
+								text="Renovar"
+								icon={refreshOutline}
+								on:click={() => {
+									renewMember(memberId);
+									toggleDropdown();
+								}}
+							/>
+						{/if}
+						{#if active}
+							<DropdownItem
+								text="Eliminar"
+								icon={trashBinMinimalisticLinear}
+								on:click={() => {
+									toggleMember(memberId);
+									toggleDropdown();
+								}}
+							/>
+						{:else}
+							<DropdownItem
+								text="Activar"
+								icon={restartLinear}
+								flipIcon={true}
+								on:click={() => {
+									toggleMember(memberId);
+									toggleDropdown();
+								}}
+							/>
+						{/if}
+					</Dropdown>
+				</div>
+			{/if}
+		</td>
+	{/if}
 </tr>

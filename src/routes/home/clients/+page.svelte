@@ -9,7 +9,7 @@
 	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
-	import { clientsStore } from '$lib/stores';
+	import { clientsStore, readUser } from '$lib/stores';
 	import { nfd, nfc } from 'unorm';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 	import ClientRow from '../../../components/data/ClientRow.svelte';
@@ -257,9 +257,11 @@
 		{/if}
 	{/if}
 </div>
-<div class="fixed bottom-0 right-0">
-	<AddButton on:click={toggleAddingClient} />
-</div>
+{#if !$readUser}
+	<div class="fixed bottom-0 right-0">
+		<AddButton on:click={toggleAddingClient} />
+	</div>
+{/if}
 {#if addingClient}
 	<DarkenSreen>
 		<ClientForm

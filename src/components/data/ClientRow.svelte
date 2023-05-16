@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clientsStore } from '$lib/stores';
+	import { clientsStore, readUser } from '$lib/stores';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
@@ -29,7 +29,7 @@
 	};
 
 	const windowHandler = (e: any) => {
-		if (container.contains(e.target) == false) dropdownVisible = false;
+		if (!$readUser) if (container.contains(e.target) == false) dropdownVisible = false;
 	};
 </script>
 
@@ -48,48 +48,50 @@
 			<Icon icon={crownMinimalisticBold} />
 		{/if}
 	</td>
-	<td class="pr-4 text-right" bind:this={container}>
-		<button
-			on:click={toggleDropdown}
-			class="btn p-1 rounded-full {dropdownVisible
-				? 'variant-soft-primary'
-				: 'hover:variant-filled-surface'}"
-		>
-			<Icon icon={menuDotsBold} rotate={1} height={20} />
-		</button>
-		{#if dropdownVisible}
-			<div class="z-[999] absolute bottom-12 right-4">
-				<Dropdown>
-					<DropdownItem
-						text="Editar"
-						icon={pen2Linear}
-						on:click={() => {
-							editClient(id);
-							toggleDropdown();
-						}}
-					/>
-					{#if active}
+	{#if !$readUser}
+		<td class="pr-4 text-right" bind:this={container}>
+			<button
+				on:click={toggleDropdown}
+				class="btn p-1 rounded-full {dropdownVisible
+					? 'variant-soft-primary'
+					: 'hover:variant-filled-surface'}"
+			>
+				<Icon icon={menuDotsBold} rotate={1} height={20} />
+			</button>
+			{#if dropdownVisible}
+				<div class="z-[999] absolute bottom-12 right-4">
+					<Dropdown>
 						<DropdownItem
-							text="Eliminar"
-							icon={trashBinMinimalisticLinear}
+							text="Editar"
+							icon={pen2Linear}
 							on:click={() => {
-								deleteClient(id);
+								editClient(id);
 								toggleDropdown();
 							}}
 						/>
-					{:else}
-						<DropdownItem
-							text="Activar"
-							icon={restartLinear}
-							flipIcon={true}
-							on:click={() => {
-								activateClient(id);
-								toggleDropdown();
-							}}
-						/>
-					{/if}
-				</Dropdown>
-			</div>
-		{/if}
-	</td>
+						{#if active}
+							<DropdownItem
+								text="Eliminar"
+								icon={trashBinMinimalisticLinear}
+								on:click={() => {
+									deleteClient(id);
+									toggleDropdown();
+								}}
+							/>
+						{:else}
+							<DropdownItem
+								text="Activar"
+								icon={restartLinear}
+								flipIcon={true}
+								on:click={() => {
+									activateClient(id);
+									toggleDropdown();
+								}}
+							/>
+						{/if}
+					</Dropdown>
+				</div>
+			{/if}
+		</td>
+	{/if}
 </tr>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cartStore, productsStore } from '$lib/stores';
+	import { cartStore, productsStore, readUser } from '$lib/stores';
 	import Dropdown from '../dropdown/Dropdown.svelte';
 	import DropdownItem from '../dropdown/DropdownItem.svelte';
 	import Icon from '@iconify/svelte';
@@ -58,51 +58,53 @@
 			{/if}
 		</div>
 		<div bind:this={container}>
-			<button
-				on:click={toggleDropdown}
-				class="btn p-1 rounded-full {dropdownVisible
-					? 'variant-soft-primary'
-					: 'hover:variant-filled-surface'}"
-			>
-				<Icon icon={menuDotsBold} rotate={1} height={20} />
-			</button>
-			{#if dropdownVisible}
-				<div class="absolute right-4 -top-[132px]">
-					<Dropdown>
-						<DropdownItem
-							text="Editar"
-							icon={pen2Linear}
-							on:click={() => {
-								editProduct(id);
-							}}
-						/>
-						<DropdownItem
-							text="Editar stock"
-							icon={boxLinear}
-							on:click={() => {
-								changeStock(id, stock);
-							}}
-						/>
-						{#if active}
+			{#if !$readUser}
+				<button
+					on:click={toggleDropdown}
+					class="btn p-1 rounded-full {dropdownVisible
+						? 'variant-soft-primary'
+						: 'hover:variant-filled-surface'}"
+				>
+					<Icon icon={menuDotsBold} rotate={1} height={20} />
+				</button>
+				{#if dropdownVisible}
+					<div class="absolute right-4 -top-[132px]">
+						<Dropdown>
 							<DropdownItem
-								text="Eliminar"
-								icon={trashBinMinimalisticLinear}
+								text="Editar"
+								icon={pen2Linear}
 								on:click={() => {
-									toggleProduct(id);
+									editProduct(id);
 								}}
 							/>
-						{:else}
 							<DropdownItem
-								text="Activar"
-								icon={restartLinear}
-								flipIcon={true}
+								text="Editar stock"
+								icon={boxLinear}
 								on:click={() => {
-									toggleProduct(id);
+									changeStock(id, stock);
 								}}
 							/>
-						{/if}
-					</Dropdown>
-				</div>
+							{#if active}
+								<DropdownItem
+									text="Eliminar"
+									icon={trashBinMinimalisticLinear}
+									on:click={() => {
+										toggleProduct(id);
+									}}
+								/>
+							{:else}
+								<DropdownItem
+									text="Activar"
+									icon={restartLinear}
+									flipIcon={true}
+									on:click={() => {
+										toggleProduct(id);
+									}}
+								/>
+							{/if}
+						</Dropdown>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -116,7 +118,7 @@
 			{/if}
 			<p class="unstyled pt-2 text-xl font-bold">{formattedPrice}</p>
 		</div>
-		{#if active && !soldOut}
+		{#if active && !soldOut && !$readUser}
 			<button
 				class="btn {onCart || loading
 					? 'text-stone-400 bg-surface-700 border-surface-400'

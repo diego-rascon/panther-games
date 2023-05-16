@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { rentsStore } from '$lib/stores';
+	import { readUser, rentsStore } from '$lib/stores';
 	import dayjs from 'dayjs';
 	import Icon from '@iconify/svelte';
 	import billCheckOutline from '@iconify/icons-solar/bill-check-outline';
@@ -55,22 +55,24 @@
 	<td class="text-left select-text">{paymentType}</td>
 	<td class="text-left select-text">{discount}%</td>
 	<td class="text-left select-text">{formattedPrice}</td>
-	{#if pending}
+	{#if !$readUser}
+		{#if pending}
+			<td class="pr-4 text-right">
+				<button
+					on:click|stopPropagation={() => finishRent(rentId)}
+					class="btn p-1 rounded-full variant-soft-surface"
+				>
+					<Icon icon={billCheckOutline} height={20} />
+				</button>
+			</td>
+		{/if}
 		<td class="pr-4 text-right">
 			<button
-				on:click|stopPropagation={() => finishRent(rentId)}
+				on:click|stopPropagation={() => toggleRent(rentId)}
 				class="btn p-1 rounded-full variant-soft-surface"
 			>
-				<Icon icon={billCheckOutline} height={20} />
+				<Icon icon={active ? trashBinMinimalisticLinear : restartLinear} height={20} hFlip={true} />
 			</button>
 		</td>
 	{/if}
-	<td class="pr-4 text-right">
-		<button
-			on:click|stopPropagation={() => toggleRent(rentId)}
-			class="btn p-1 rounded-full variant-soft-surface"
-		>
-			<Icon icon={active ? trashBinMinimalisticLinear : restartLinear} height={20} hFlip={true} />
-		</button>
-	</td>
 </tr>

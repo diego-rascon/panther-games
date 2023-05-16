@@ -8,7 +8,7 @@
 	import Search from '../../../components/utils/Search.svelte';
 	import DarkenSreen from '../../../components/modals/DarkenSreen.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
-	import { membersStore } from '$lib/stores';
+	import { membersStore, readUser } from '$lib/stores';
 	import { nfd, nfc } from 'unorm';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
 	import dayjs from 'dayjs';
@@ -464,9 +464,11 @@
 		{/if}
 	{/if}
 </div>
-<div class="fixed bottom-0 right-0">
-	<AddButton on:click={toggleAddingMember} />
-</div>
+{#if !$readUser}
+	<div class="fixed bottom-0 right-0">
+		<AddButton on:click={toggleAddingMember} />
+	</div>
+{/if}
 {#if showingDetail}
 	<DarkenSreen>
 		<MemberDetail closeHandler={toggleShowDetail} memberId={tempMemberId} />

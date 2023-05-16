@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { clientsStore, usersStore } from '$lib/stores';
+	import { clientsStore, readUser, usersStore } from '$lib/stores';
 	import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import UserRow from '../../../components/data/UserRow.svelte';
 	import UserForm from '../../../components/forms/UserForm.svelte';
@@ -274,9 +274,11 @@
 		{/if}
 	{/if}
 </div>
-<div class="fixed bottom-0 right-0">
-	<AddButton on:click={toggleAddingUser} />
-</div>
+{#if !$readUser}
+	<div class="fixed bottom-0 right-0">
+		<AddButton on:click={toggleAddingUser} />
+	</div>
+{/if}
 {#if addingUser}
 	<DarkenSreen>
 		<UserForm
