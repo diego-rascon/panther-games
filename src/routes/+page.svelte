@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/db';
-	import { session } from '$lib/stores';
+	import { adminUser, readUser, session } from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import PantherGamesLogo from '../components/titles/PantherGamesLogo.svelte';
 	import InputError from '../components/utils/InputError.svelte';
@@ -8,6 +8,8 @@
 	import refreshCircleOutline from '@iconify/icons-solar/refresh-circle-outline';
 
 	session.set(false);
+	readUser.set(false);
+	adminUser.set(false);
 
 	let user = '';
 	let password = '';
@@ -24,8 +26,9 @@
 			.eq('usuario_password', password)
 			.maybeSingle();
 		if (data) {
-			session.set(true);
-			validLogin = true;
+			if (data.usuario_activo) session.set(true);
+			if (data.usuario_leer) readUser.set(true);
+			else if (data.usuario_admin) adminUser.set(true);
 			goto('/home');
 		} else inputError = true;
 		loading = false;
