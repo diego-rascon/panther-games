@@ -10,6 +10,7 @@
 	import moneyBagOutline from '@iconify/icons-solar/money-bag-outline';
 	import logoutLinear from '@iconify/icons-solar/logout-linear';
 	import shieldUserOutline from '@iconify/icons-solar/shield-user-outline';
+	import { readUser } from '$lib/stores';
 
 	const sections = [
 		{ href: '/home', text: 'Productos', icon: gamepadLinear },
@@ -32,7 +33,9 @@
 		<NavItem href={section.href} text={section.text} icon={section.icon} />
 	{/each}
 	<div class="mt-auto">
-		<NavItem href="/home/cash" text="Caja" icon={moneyBagOutline} />
+		{#if !$readUser}
+			<NavItem href="/home/cash" text="Caja" icon={moneyBagOutline} />
+		{/if}
 		<NavItem href="/" text="Cerrar sesión" icon={logoutLinear} />
 	</div>
 </nav>
