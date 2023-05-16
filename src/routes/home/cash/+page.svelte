@@ -17,6 +17,10 @@
 	import CashAction from '../../../components/data/CashAction.svelte';
 	import CashRow from '../../../components/data/CashRow.svelte';
 	import dialog2Linear from '@iconify/icons-solar/dialog-2-linear';
+	import { readUser } from '$lib/stores';
+	import { goto } from '$app/navigation';
+
+	if (!$readUser) goto('/');
 
 	export let data;
 	let { caja } = data;
