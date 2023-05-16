@@ -277,14 +277,6 @@
 		}
 	}
 
-	const deleteCajaRetiroDetalle = async () => {
-		const { data, error } = await supabase
-			.from('retiros_detalle')
-			.delete()
-			.eq('caja_id', tempCajaId)
-			.select();
-	};
-
 	const getRetirosInfo = async () => {
 		const { data, error } = await supabase
 			.from('retiros_detalle')
@@ -299,28 +291,11 @@
 				retiro_cantidad,
 				retiro_motivo
 			}));
-		} else {
-			console.log(error);
-		}
-	};
-
-	const getRetirosCount = async () => {
-		const { data, error } = await supabase
-			.from('retiros_detalle')
-			.select('*')
-			.eq('caja_id', caja[0].caja_id);
-		if (data) {
 			retirosCount = data.length;
 		} else {
 			console.log(error);
 		}
 	};
-
-	if (cajaInicialExist) {
-		getRetirosCount();
-	}
-
-	// ---------------------------------
 
 	//Ingresos funcionamiento
 
@@ -346,14 +321,6 @@
 		}
 	}
 
-	const deleteCajaIngresoDetalle = async () => {
-		const { data, error } = await supabase
-			.from('ingresos_detalle')
-			.delete()
-			.eq('caja_id', tempCajaId)
-			.select();
-	};
-
 	const getIngresosInfo = async () => {
 		const { data, error } = await supabase
 			.from('ingresos_detalle')
@@ -368,26 +335,11 @@
 				ingreso_cantidad,
 				ingreso_motivo
 			}));
-		} else {
-			console.log(error);
-		}
-	};
-
-	const getIngresoCount = async () => {
-		const { data, error } = await supabase
-			.from('ingresos_detalle')
-			.select('*')
-			.eq('caja_id', caja[0].caja_id);
-		if (data) {
 			ingresosCount = data.length;
 		} else {
 			console.log(error);
 		}
 	};
-
-	if (cajaInicialExist) {
-		getIngresoCount();
-	}
 
 	// ---------------------------------
 
