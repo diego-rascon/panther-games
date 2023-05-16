@@ -135,7 +135,43 @@
 	const searchRent = (search: string) => {
 		const searchWords = search.split(' ');
 
+		filteredPendingRents = pendingRents.filter((rent: any) =>
+			searchWords.every(
+				(word: string) =>
+					rent.renta_id.toString().includes(word) ||
+					new Date(String(rent.renta_fecha_inicio)).toLocaleDateString('en-GB').includes(word) ||
+					new Date(String(rent.renta_fecha_final)).toLocaleDateString('en-GB').includes(word) ||
+					rent.renta_cantidad.toString().includes(word) ||
+					rent.renta_descuento.toString().includes(word) ||
+					rent.renta_monto.toString().includes(word)
+			)
+		);
+
 		filteredActiveRents = activeRents.filter((rent: any) =>
+			searchWords.every(
+				(word: string) =>
+					rent.renta_id.toString().includes(word) ||
+					new Date(String(rent.renta_fecha_inicio)).toLocaleDateString('en-GB').includes(word) ||
+					new Date(String(rent.renta_fecha_final)).toLocaleDateString('en-GB').includes(word) ||
+					rent.renta_cantidad.toString().includes(word) ||
+					rent.renta_descuento.toString().includes(word) ||
+					rent.renta_monto.toString().includes(word)
+			)
+		);
+
+		filteredPreviousRents = previousRents.filter((rent: any) =>
+			searchWords.every(
+				(word: string) =>
+					rent.renta_id.toString().includes(word) ||
+					new Date(String(rent.renta_fecha_inicio)).toLocaleDateString('en-GB').includes(word) ||
+					new Date(String(rent.renta_fecha_final)).toLocaleDateString('en-GB').includes(word) ||
+					rent.renta_cantidad.toString().includes(word) ||
+					rent.renta_descuento.toString().includes(word) ||
+					rent.renta_monto.toString().includes(word)
+			)
+		);
+
+		filteredUnactiveRents = unactiveRents.filter((rent: any) =>
 			searchWords.every(
 				(word: string) =>
 					rent.renta_id.toString().includes(word) ||
