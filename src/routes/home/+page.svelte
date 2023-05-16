@@ -340,12 +340,11 @@
 
 	const updateCaja = async (cashPayment: boolean) => {
 		if (cashPayment) {
+			const newTotal = (await getCajaValue()) + cartTotal;
 			const { data, error } = await supabase
 				.from('caja')
-				.update({ caja_total: (await getCajaValue()) + cartTotal })
-				.eq('caja_fecha', fechaActualFormat)
-				.select()
-				.maybeSingle();
+				.update({ caja_total: newTotal })
+				.eq('caja_fecha', fechaActualFormat);
 			if (error) {
 				console.log(error.message);
 				console.log('no hubo caja');
@@ -359,9 +358,7 @@
 			const { data, error } = await supabase
 				.from('caja')
 				.update({ caja_total: await getCajaValue() })
-				.eq('caja_fecha', fechaActualFormat)
-				.select()
-				.maybeSingle();
+				.eq('caja_fecha', fechaActualFormat);
 			if (error) {
 				console.log(error.message);
 				console.log('no hubo caja');
@@ -383,10 +380,10 @@
 			.maybeSingle();
 		if (error) {
 			toastStore.trigger(cajaNotFound);
-			return;
 		}
-		if (data) return data.caja_total;
+		if (data) return Number(data.caja_total);
 		else toastStore.trigger(cajaNotFound);
+		return -1;
 	};
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
@@ -452,17 +449,14 @@
 		doingRent = !doingRent;
 	};
 
-	const updateCajaRent = async (duration: number, cashPayment: boolean) => {
+	const updateCajaRent = async (rentTotal: number, cashPayment: boolean) => {
 		if (cashPayment) {
+			const currentTotal = await getCajaValue();
+			const newTotal = currentTotal + rentTotal;
 			const { data, error } = await supabase
 				.from('caja')
-				.update({
-					caja_total:
-						(await getCajaValue()) + duration === 3 ? cart.length * 100 : 200 * cart.length
-				})
-				.eq('caja_fecha', fechaActualFormat)
-				.select()
-				.maybeSingle();
+				.update({ caja_total: newTotal })
+				.eq('caja_fecha', fechaActualFormat);
 			if (error) {
 				console.log(error.message);
 				console.log('no hubo caja');
@@ -478,9 +472,7 @@
 				.update({
 					caja_total: await getCajaValue()
 				})
-				.eq('caja_fecha', fechaActualFormat)
-				.select()
-				.maybeSingle();
+				.eq('caja_fecha', fechaActualFormat);
 			if (error) {
 				console.log(error.message);
 				console.log('no hubo caja');
@@ -496,7 +488,9 @@
 	const registerRent = async (memberId: number, duration: number, cashPayment: boolean) => {
 		toggleRent();
 
-		if (await updateCajaRent(duration, cashPayment)) {
+		const rentTotal = duration === 3 ? 100 * cart.length : 200 * cart.length;
+
+		if (await updateCajaRent(rentTotal, cashPayment)) {
 			const startDate = new Date();
 			const endDate = new Date();
 
@@ -510,7 +504,7 @@
 				.insert({
 					miembro_id: memberId,
 					renta_duracion: duration,
-					renta_monto: duration === 3 ? cart.length * 100 : 200 * cart.length,
+					renta_monto: rentTotal,
 					renta_descuento: 0,
 					renta_tarjeta: !cashPayment,
 					renta_cantidad: cart.length,
