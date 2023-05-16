@@ -1,4 +1,5 @@
 import { supabase } from '$lib/db';
+import dayjs from 'dayjs';
 
 export const load = async () => {
 	const fetchCategories = async () => {
@@ -39,8 +40,11 @@ export const load = async () => {
 	};
 
 	const fetchMembers = async () => {
+		const currentDate = dayjs(new Date()).format('YYYY-MM-DD');
 		const { data } = await supabase
 			.rpc('get_clients_members')
+			.gte('miembro_fecha_final', currentDate)
+			.eq('miembro_activo', true)
 			.neq('cliente_id', 1)
 			.order('cliente_nombre', { ascending: true });
 		return data ?? [];
