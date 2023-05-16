@@ -9,6 +9,8 @@
 	import restartLinear from '@iconify/icons-solar/restart-linear';
 	import keyOutline from '@iconify/icons-solar/key-outline';
 
+	export let editUser: (userId: number) => void;
+	export let toggleUser: (userId: number) => void;
 	export let userId: number;
 
 	$: user = $usersStore.find((userEntry: any) => userEntry.usuario_id === userId);
@@ -17,11 +19,14 @@
 	$: email = user?.usuario_email;
 	$: phone = user?.usuario_telefono;
 	$: active = user?.usuario_activo;
-	$: admin = user?.usuario_admin;
-	$: read = user?.usuario_leer;
+	$: admin = Boolean(user?.usuario_admin);
+	$: read = Boolean(user?.usuario_leer);
 
-	let permissions = 'Administrador';
-	if (read) permissions = 'Lector';
+	let permissions = '';
+	$: {
+		if (admin) permissions = 'Administador';
+		else if (read) permissions = 'Lector';
+	}
 
 	let dropdownVisible = false;
 	let container: HTMLElement;
@@ -63,10 +68,12 @@
 						text="Editar"
 						icon={pen2Linear}
 						on:click={() => {
+							editUser(userId);
 							toggleDropdown();
 						}}
 					/>
 					{#if active}
+						<!--
 						<DropdownItem
 							text="Cambiar contraseña"
 							icon={keyOutline}
@@ -74,11 +81,13 @@
 								toggleDropdown();
 							}}
 						/>
+                        -->
 						<DropdownItem
 							text="Eliminar"
 							icon={trashBinMinimalisticLinear}
 							on:click={() => {
 								toggleDropdown();
+								toggleUser(userId);
 							}}
 						/>
 					{:else}
@@ -88,6 +97,7 @@
 							flipIcon={true}
 							on:click={() => {
 								toggleDropdown();
+								toggleUser(userId);
 							}}
 						/>
 					{/if}
