@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "Panther Games",
-		"version": "0.7.0"
+		"version": "1.0.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -58,11 +58,14 @@
 		},
 		"windows": [
 			{
-				"fullscreen": false,
-				"height": 600,
-				"resizable": true,
 				"title": "Panther Games",
-				"width": 800
+				"fullscreen": false,
+				"resizable": true,
+				"maximized": true,
+				"width": 800,
+				"height": 600,
+				"minWidth": 800,
+				"minHeight": 600
 			}
 		]
 	}
