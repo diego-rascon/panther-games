@@ -9,6 +9,7 @@
 	import userIdOutline from '@iconify/icons-solar/user-id-outline';
 	import keyLinear from '@iconify/icons-solar/key-linear';
 	import SectionSubtitle from '../titles/SectionSubtitle.svelte';
+	import InputError from '../utils/InputError.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let editing = false;
@@ -26,10 +27,13 @@
 
 	$: {
 		switch (permissions) {
-			case 1:
-				reader = false;
+			case 0:
+				reader = true;
 				admin = false;
 				break;
+			case 1:
+				reader = false;
+				admin = true;
 		}
 	}
 
@@ -44,23 +48,23 @@
 
 	const validInput = () => {
 		if (!name || !namePattern.test(name)) {
-			errorMessage = 'El nombre del cliente no es válido.';
+			errorMessage = 'El nombre del usuario no es válido.';
 			return false;
 		} else if (!email || !emailPattern.test(email)) {
-			errorMessage = 'El correo del cliente no es válido.';
+			errorMessage = 'El correo del usuario no es válido.';
 			return false;
 		} else if (!phone || !phonePattern.test(phone)) {
-			errorMessage = 'El teléfono del cliente no es válido.';
+			errorMessage = 'El teléfono del usuario no es válido.';
 			return false;
-		} else if (!userName || !userNamePattern.test(userName)) {
+		} else if (!editing && (!userName || !userNamePattern.test(userName))) {
 			errorMessage =
 				'Los nombres de usuario tienen que ser de entre 3 y 20 carácteres y solo pueden contener carácteres alfanuméricos y guiones.';
 			return false;
-		} else if (!password || !passwordPattern.test(password)) {
+		} else if (!editing && (!password || !passwordPattern.test(password))) {
 			errorMessage =
 				'Las contraseñas tienen que ser de mínimo 4 carácteres y solo pueden tener letras, números, carácteres especiales.';
 			return false;
-		} else if (password !== passwordConfirmation) {
+		} else if (!editing && password !== passwordConfirmation) {
 			errorMessage = 'Las contraseñas introducidas no coinciden.';
 			return false;
 		}
@@ -111,30 +115,32 @@
 				<div class="input-group-shim"><Icon icon={phoneCallingRoundedOutline} height={24} /></div>
 				<input bind:value={phone} type="text" class="input" placeholder="Teléfono" />
 			</div>
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={userIdOutline} height={24} /></div>
-				<input bind:value={userName} type="text" class="input" placeholder="Nombre de usuario" />
-			</div>
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={keyLinear} height={24} /></div>
-				<input bind:value={password} type="text" class="password" placeholder="Contraseña" />
-			</div>
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><Icon icon={keyLinear} height={24} /></div>
-				<input
-					bind:value={passwordConfirmation}
-					type="text"
-					class="password"
-					placeholder="Confirmar contraseña"
-				/>
-			</div>
-			<SectionSubtitle text="Permisos" />
-			<RadioGroup class="justify-center" active="variant-filled-primary">
-				<RadioItem bind:group={permissions} name="justify" value={0}>Lector</RadioItem>
-				<RadioItem bind:group={permissions} name="justify" value={1}>Administrador</RadioItem>
-			</RadioGroup>
+			{#if !editing}
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={userIdOutline} height={24} /></div>
+					<input bind:value={userName} type="text" class="input" placeholder="Nombre de usuario" />
+				</div>
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={keyLinear} height={24} /></div>
+					<input bind:value={password} type="password" class="input" placeholder="Contraseña" />
+				</div>
+				<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim"><Icon icon={keyLinear} height={24} /></div>
+					<input
+						bind:value={passwordConfirmation}
+						type="password"
+						class="input"
+						placeholder="Confirmar contraseña"
+					/>
+				</div>
+				<SectionSubtitle text="Permisos" />
+				<RadioGroup class="justify-center" active="variant-filled-primary">
+					<RadioItem bind:group={permissions} name="justify" value={0}>Lector</RadioItem>
+					<RadioItem bind:group={permissions} name="justify" value={1}>Administrador</RadioItem>
+				</RadioGroup>
+			{/if}
 			{#if inputError}
-				<inputError text={errorMessage} />
+				<InputError text={errorMessage} />
 			{/if}
 		</div>
 		<div class="grid grid-cols-2 gap-4">
