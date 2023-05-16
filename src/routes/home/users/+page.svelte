@@ -10,6 +10,7 @@
 	import Search from '../../../components/utils/Search.svelte';
 	import ConfirmDialog from '../../../components/modals/ConfirmDialog.svelte';
 	import NoResultsMessage from '../../../components/utils/NoResultsMessage.svelte';
+	import { nfc, nfd } from 'unorm';
 
 	export let data;
 	let { users } = data;
@@ -140,7 +141,35 @@
 
 	let search: string;
 
-	const searchUser = () => {};
+	const searchUser = (search: string) => {
+		const searchWords = search.split(' ');
+
+		filteredActiveUsers = activeUsers.filter((client: any) =>
+			searchWords.every(
+				(word: string) =>
+					client.usuario_id.toString().includes(word) ||
+					nfd(client.usuario_nombre.toLowerCase()).includes(word) ||
+					nfc(client.usuario_nombre.toLowerCase()).includes(word) ||
+					nfd(client.usuario_username.toLowerCase()).includes(word) ||
+					nfc(client.usuario_username.toLowerCase()).includes(word) ||
+					client.usuario_email.toLowerCase().includes(word) ||
+					client.usuario_telefono.toLowerCase().includes(word)
+			)
+		);
+
+		filteredUnactiveUsers = unactiveUsers.filter((client: any) =>
+			searchWords.every(
+				(word: string) =>
+					client.usuario_id.toString().includes(word) ||
+					nfd(client.usuario_nombre.toLowerCase()).includes(word) ||
+					nfc(client.usuario_nombre.toLowerCase()).includes(word) ||
+					nfd(client.usuario_username.toLowerCase()).includes(word) ||
+					nfc(client.usuario_username.toLowerCase()).includes(word) ||
+					client.usuario_email.toLowerCase().includes(word) ||
+					client.usuario_telefono.toLowerCase().includes(word)
+			)
+		);
+	};
 
 	const userAdded: ToastSettings = {
 		message: 'Se agregó a un nuevo usuario exitosamente.',
