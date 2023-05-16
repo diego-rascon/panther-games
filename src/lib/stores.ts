@@ -10,4 +10,5 @@ export const salesStore = writable<{ [key: string]: number | string | boolean }[
 export const rentsStore = writable<{ [key: string]: number | string | boolean }[]>([]);
 export const clientsStore = writable<{ [key: string]: number | string | boolean }[]>([]);
 export const membersStore = writable<{ [key: string]: number | string | boolean }[]>([]);
+export const usersStore = writable<{ [key: string]: number | string | boolean }[]>([]);
 export const cajaTotalStore = writable(0);
