@@ -184,6 +184,7 @@
 				dineroEntrada = 0;
 				toastStore.trigger(depositMoneySuccess);
 				cajaTotal = data.caja_total;
+				caja[0].caja_total = cajaTotal;
 			} else {
 				toastStore.trigger(depositMoneyError);
 			}
@@ -208,8 +209,6 @@
 				dineroEntrada = 0;
 				toastStore.trigger(withdrawMoneySuccess);
 				cajaTotal = data.caja_total;
-			} else {
-				toastStore.trigger(withdrawMoneyError);
 			}
 		}
 	};
@@ -255,6 +254,11 @@
 	let sumRetiros = 0; // variable que almacena la sumatoria de retiro_cantidad
 
 	async function insertarRetiroDetalle() {
+		if (retiroMotivo === undefined || retiroMotivo === '') {
+			toastStore.trigger(motiveEmpty);
+			return false;
+		}
+
 		const nuevaFila = {
 			retiro_cantidad: dineroEntrada,
 			retiro_motivo: retiroMotivo,
@@ -424,6 +428,16 @@
 		background: 'variant-filled-primary'
 	};
 
+	const emptyInput: ToastSettings = {
+		message: 'Se requiere de una cantidad valida para retirar dinero.',
+		background: 'variant-filled-primary'
+	};
+
+	const motiveEmpty: ToastSettings = {
+		message: 'Se requiere de un motivo para retirar dinero.',
+		background: 'variant-filled-primary'
+	};
+
 	//Metodos que llaman al reporte
 
 	const getColor = (plataforma: number): string => {
@@ -560,17 +574,18 @@
 			.select()
 			.single();
 		if (error) console.log(error.message);
-
+		cajaTotal = 0;
+		caja.length = 0;
+		cajaInicialExist = false;
 		getExcel();
-
 		toggleVisualizarCorte();
 	};
 
-	let arreglo: string[] = [
+	let pagesName: string[] = [
 		'Ventas',
-		'Caja',
-		'Ingresos y Retiros',
 		'Rentas',
+		'Ingresos y Retiros',
+		'Caja',
 		'Ingresos Detalles',
 		'Retiros Detalles',
 		'Juegos',
@@ -585,7 +600,7 @@
 
 			tables.forEach((table, index) => {
 				const ws = XLSX.utils.table_to_sheet(table);
-				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
+				XLSX.utils.book_append_sheet(wb, ws, pagesName[index]);
 			});
 			XLSX.writeFile(wb, 'Corte Caja ' + fechaActualFormat + '.xlsx');
 		} catch (error) {
@@ -651,7 +666,6 @@
 								<th class="p-4 text-left">Fecha</th>
 								<th class="text-left">Fondo inicial</th>
 								<th class="text-left">Fondo total</th>
-								<th class="" />
 							</tr>
 						</thead>
 						<tbody>
@@ -993,7 +1007,16 @@
 				<div class="input-group-shim"><Icon icon={dialog2Linear} height={24} /></div>
 				<input type="text" class="input" placeholder="Motivo" bind:value={retiroMotivo} />
 			</div>
-			<button on:click={withdrawMoney} class="btn variant-filled-primary">Retirar</button>
+			<button
+				class="btn variant-filled-primary"
+				on:click={() => {
+					if (dineroEntrada > 1 && dineroEntrada <= cajaTotal) {
+						withdrawMoney();
+						return;
+					}
+					toastStore.trigger(emptyInput);
+				}}>Retirar</button
+			>
 		</div>
 	{:else if currentAction === Action.Ingresar}
 		<div class="flex flex-col space-y-4 items-end">
