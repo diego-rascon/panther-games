@@ -9,10 +9,7 @@
 	import documentTextLinear from '@iconify/icons-solar/document-text-linear';
 	import moneyBagOutline from '@iconify/icons-solar/money-bag-outline';
 	import logoutLinear from '@iconify/icons-solar/logout-linear';
-	import DarkenSreen from '../modals/DarkenSreen.svelte';
-	import SectionTitle from '../titles/SectionTitle.svelte';
-	import { text } from 'svelte/internal';
-	import { scale } from 'svelte/transition';
+	import shieldUserOutline from '@iconify/icons-solar/shield-user-outline';
 
 	const sections = [
 		{ href: '/home', text: 'Productos', icon: gamepadLinear },
@@ -20,7 +17,8 @@
 		{ href: '/home/rents', text: 'Rentas', icon: watchRoundOutline },
 		{ href: '/home/members', text: 'Miembros', icon: crownStarLinear },
 		{ href: '/home/clients', text: 'Clientes', icon: usersGroupRoundedOutline },
-		{ href: '/home/reports', text: 'Reportes', icon: documentTextLinear }
+		{ href: '/home/reports', text: 'Reportes', icon: documentTextLinear },
+		{ href: '/home/users', text: 'Usuarios', icon: shieldUserOutline }
 	];
 </script>
 
