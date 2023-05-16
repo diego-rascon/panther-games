@@ -43,6 +43,16 @@
 		total_ventas: number;
 	}[] = [];
 
+	let rentReport: {
+		cantidad_rentas: number;
+		total_rentas: number;
+	}[] = [];
+
+	let rentCardReport: {
+		cantidad_rentas: number;
+		total_rentas: number;
+	}[] = [];
+
 	let accesoriesReport: {
 		venta_id: number;
 		producto_id: number;
@@ -167,7 +177,6 @@
 		}
 	};
 
-
 	const getVentaTarjetaOneDate = async (date: string) => {
 		try {
 			const { data } = await supabase.rpc('ventatarjetaonedate', {
@@ -179,30 +188,89 @@
 		}
 	};
 
+	const getRentsReportOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentsonedate', {
+				start_date: date
+			});
+			console.log(data);
+			rentReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getRentsReportTarjetaOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentscardonedate', {
+				start_date: date
+			});
+			console.log(data);
+			rentCardReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getRentsReportDate = async (dateStart: string, dateEnd: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentsdate', {
+				start_date: dateStart,
+				end_date: dateEnd
+			});
+			console.log(data);
+			rentReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getRentsReportTarjetaDate = async (dateStart: string, dateEnd: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentscarddate', {
+				start_date: dateStart,
+				end_date: dateEnd
+			});
+			console.log(data);
+			rentCardReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const reporteGeneradoHandler = () => {
 		reporteGenerado = !reporteGenerado;
 	};
+
+	let errorFechas: boolean;
 
 	const getReport = () => {
 		reporteGenerado = true;
 		dateBeginMoment = moment(dateBegin).format('MM-DD-YYYY');
 		dateFinalMoment = moment(dateFinal).format('MM-DD-YYYY');
+		if (dateBegin > dateFinal) {
+			errorFechas = true;
+		}
 		if (dateBeginMoment === dateFinalMoment) {
 			getGamesReportOneDate(dateBeginMoment);
 			getConsolesReportOneDate(dateBeginMoment);
 			getSalesReportOneDate(dateBeginMoment);
 			getAccesoriesReportOneDate(dateBeginMoment);
 			getVentaTarjetaOneDate(dateBeginMoment);
+			getRentsReportOneDate(dateBeginMoment);
+			getRentsReportTarjetaOneDate(dateBeginMoment);
 		} else {
 			getGamesReport(dateBeginMoment, dateFinalMoment);
 			getConsolesReport(dateBeginMoment, dateFinalMoment);
 			getSalesReport(dateBeginMoment, dateFinalMoment);
 			getAccesoriesReport(dateBeginMoment, dateFinalMoment);
 			getVentaTarjetaDate(dateBeginMoment, dateFinalMoment);
+			getRentsReportDate(dateBeginMoment, dateFinalMoment);
+			getRentsReportTarjetaDate(dateBeginMoment, dateFinalMoment);
 		}
 	};
 
-	let arreglo: string[] = ["Ventas", "Juegos", "Consolas", "Accesorios" ];
+	let arreglo: string[] = ['Ventas', 'Rentas', 'Juegos', 'Consolas', 'Accesorios'];
 
 	const getExcel = () => {
 		try {
@@ -213,7 +281,7 @@
 				const ws = XLSX.utils.table_to_sheet(table);
 				XLSX.utils.book_append_sheet(wb, ws, arreglo[index]);
 			});
-			XLSX.writeFile(wb, 'Reporte ' + dateBeginMoment+' a '+dateFinalMoment+'.xlsx');
+			XLSX.writeFile(wb, 'Reporte ' + dateBeginMoment + ' a ' + dateFinalMoment + '.xlsx');
 		} catch (error) {
 			console.error(error);
 		}
@@ -271,10 +339,25 @@
 			font: { color: { rgb: 'FF000000' }, sz: 12, bold: false }
 		}
 	};
+
+	const errorFechasHandler = () => {
+		errorFechas = !errorFechas;
+		reporteGeneradoHandler();
+	};
 </script>
 
 <SectionTitle text="Reportes" />
-{#if reporteGenerado}
+{#if errorFechas}
+<div class="flex flex-col py-4">
+	<div class="text-xl py-4">Se han introducido las fechas de forma incorrecta.</div>
+	<button
+		on:click={errorFechasHandler}
+		class="btn variant-ringed-primary min-w-max max-w-md m-4 p-4"
+	>
+		<p class="font-bold">Volver</p>
+	</button>
+</div>
+{:else if reporteGenerado}
 	<!-- Panel gris claro -->
 	<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 		<div class="m-2">
@@ -315,6 +398,37 @@
 									<td class="p-2 text-left">{venta.total_ventas - tarjetaVenta.total_ventas}</td>
 									<td class="p-2 text-left">{venta.cantidad_ventas}</td>
 									<td class="p-2 text-left">{venta.total_ventas}</td>
+								</tr>
+							{/each}
+						{/each}
+					</tbody>
+				</table>
+			</div>
+			<!-- Derecha -->
+			<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
+				<table id="TableToExport" class="table">
+					<thead class="border-b border-stone-800">
+						<tr>
+							<th class="p-2 text-left">Cantidad Rentas Tarjeta</th>
+							<th class="p-2 text-left">Total Rentas Tarjeta</th>
+							<th class="p-2 text-left">Cantidad Rentas Efectivo</th>
+							<th class="p-2 text-left">Total Rentas Efectivo</th>
+							<th class="p-2 text-left">Cantidad Rentas Totales</th>
+							<th class="p-2 text-left">Total Rentas</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each rentReport as renta}
+							{#each rentCardReport as tarjetaRenta}
+								<tr>
+									<td class="p-2 text-left">{tarjetaRenta.cantidad_rentas}</td>
+									<td class="p-2 text-left">{tarjetaRenta.total_rentas}</td>
+									<td class="p-2 text-left"
+										>{renta.cantidad_rentas - tarjetaRenta.cantidad_rentas}</td
+									>
+									<td class="p-2 text-left">{renta.total_rentas - tarjetaRenta.total_rentas}</td>
+									<td class="p-2 text-left">{renta.cantidad_rentas}</td>
+									<td class="p-2 text-left">{renta.total_rentas}</td>
 								</tr>
 							{/each}
 						{/each}

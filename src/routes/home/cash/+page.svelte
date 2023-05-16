@@ -44,8 +44,6 @@
 		plataforma_id: number;
 	}[] = [];
 
-	
-
 	let consoleReport: {
 		venta_id: number;
 		producto_id: number;
@@ -76,8 +74,6 @@
 		total_rentas: number;
 	}[] = [];
 
-	
-
 	let accesoriesReport: {
 		venta_id: number;
 		producto_id: number;
@@ -97,8 +93,6 @@
 		ingreso_cantidad: number;
 		ingreso_motivo: string;
 	}[] = [];
-
-
 
 	enum Action {
 		None,
@@ -184,10 +178,14 @@
 			toastStore.trigger(depositMoneyError);
 			dineroEntrada = 0;
 		} else {
-			insertarIngresoDetalle(); //Ingreso
-			dineroEntrada = 0;
-			toastStore.trigger(depositMoneySuccess);
-			cajaTotal = data.caja_total;
+			if (await insertarIngresoDetalle()) {
+				//Ingreso
+				dineroEntrada = 0;
+				toastStore.trigger(depositMoneySuccess);
+				cajaTotal = data.caja_total;
+			} else {
+				toastStore.trigger(depositMoneyError);
+			}
 		}
 	};
 
@@ -204,10 +202,14 @@
 			toastStore.trigger(withdrawMoneyError);
 			dineroEntrada = 0;
 		} else {
-			insertarRetiroDetalle(); //Retiro
-			dineroEntrada = 0;
-			toastStore.trigger(withdrawMoneySuccess);
-			cajaTotal = data.caja_total;
+			if (await insertarRetiroDetalle()) {
+				//Retiro
+				dineroEntrada = 0;
+				toastStore.trigger(withdrawMoneySuccess);
+				cajaTotal = data.caja_total;
+			} else {
+				toastStore.trigger(withdrawMoneyError);
+			}
 		}
 	};
 
@@ -262,9 +264,11 @@
 
 		if (error) {
 			console.log(error.message);
+			return false;
 		} else {
 			console.log('Nueva fila insertada correctamente:', data);
 			retiroMotivo = '';
+			return true;
 		}
 	}
 
@@ -329,9 +333,11 @@
 
 		if (error) {
 			console.log(error.message);
+			return false;
 		} else {
 			console.log('Nueva fila insertada correctamente:', data);
 			ingresoMotivo = '';
+			return true;
 		}
 	}
 
@@ -408,7 +414,7 @@
 	};
 
 	const withdrawMoneyError: ToastSettings = {
-		message: 'Hubo un error retirando dinero,',
+		message: 'Hubo un error retirando dinero.',
 		background: 'variant-filled-primary'
 	};
 
@@ -505,12 +511,40 @@
 		getConsolesReportOneDate(fechaActualFormat);
 		getSalesReportOneDate(fechaActualFormat);
 		getAccesoriesReportOneDate(fechaActualFormat);
+		getRentsReportOneDate(fechaActualFormat);
+		getRentsReportTarjetaOneDate(fechaActualFormat);
 	};
 
 	const toggleVisualizarCorte = async () => {
 		visualizarCorte = !visualizarCorte;
 		if (visualizarCorte) {
 			getReport();
+		}
+	};
+
+	//Reporte rentas.
+
+	const getRentsReportOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentsonedate', {
+				start_date: date
+			});
+			console.log(data);
+			rentReport = data;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getRentsReportTarjetaOneDate = async (date: string) => {
+		try {
+			const { data } = await supabase.rpc('generalreportrentscardonedate', {
+				start_date: date
+			});
+			console.log(data);
+			rentCardReport = data;
+		} catch (error) {
+			console.error(error);
 		}
 	};
 
@@ -683,34 +717,31 @@
 							<table id="TableToExport" class="table">
 								<thead class="border-b border-stone-800">
 									<tr>
-										<th class="p-2 text-left">Cantidad en Caja</th>
-										<th class="p-2 text-left">Total esperado en caja</th>
-										<th class="p-2 text-left">Diferencia</th>
+										<th class="p-2 text-left">Cantidad Rentas Tarjeta</th>
+										<th class="p-2 text-left">Total Rentas Tarjeta</th>
+										<th class="p-2 text-left">Cantidad Rentas Efectivo</th>
+										<th class="p-2 text-left">Total Rentas Efectivo</th>
+										<th class="p-2 text-left">Cantidad Rentas Totales</th>
+										<th class="p-2 text-left">Total Rentas</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										{#each saleReport as venta}
-											{#each saleCardReport as ventaTarjeta}
-												<td class="p-2 text-left">{cajaTotal}</td>
-												<td class="p-2 text-left">
-													{venta.total_ventas +
-														tempCajaInicial +
-														sumIngresos -
-														sumRetiros -
-														ventaTarjeta.total_ventas}</td
+									{#each rentReport as renta}
+										{#each rentCardReport as tarjetaRenta}
+											<tr>
+												<td class="p-2 text-left">{tarjetaRenta.cantidad_rentas}</td>
+												<td class="p-2 text-left">{tarjetaRenta.total_rentas}</td>
+												<td class="p-2 text-left"
+													>{renta.cantidad_rentas - tarjetaRenta.cantidad_rentas}</td
 												>
 												<td class="p-2 text-left"
-													>{cajaTotal -
-														(venta.total_ventas +
-															tempCajaInicial +
-															sumIngresos -
-															sumRetiros -
-															ventaTarjeta.total_ventas)}
-												</td>
-											{/each}
+													>{renta.total_rentas - tarjetaRenta.total_rentas}</td
+												>
+												<td class="p-2 text-left">{renta.cantidad_rentas}</td>
+												<td class="p-2 text-left">{renta.total_rentas}</td>
+											</tr>
 										{/each}
-									</tr>
+									{/each}
 								</tbody>
 							</table>
 						</div>
@@ -742,18 +773,38 @@
 						</table>
 					</div>
 					<!-- Derecha -->
+
 					<div class="flex flex-col min-w-full bg-stone-900 mt-4 px-4 py-2 rounded-xl">
 						<table id="TableToExport" class="table">
 							<thead class="border-b border-stone-800">
 								<tr>
-									<th class="p-2 text-left">Cantidad Rentas</th>
-									<th class="p-2 text-left">Dinero por rentas</th>
+									<th class="p-2 text-left">Cantidad en Caja</th>
+									<th class="p-2 text-left">Total esperado en caja</th>
+									<th class="p-2 text-left">Diferencia</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td class="p-2 text-left">{tempCajaInicial} </td>
-									<td class="p-2 text-left">{retirosCount} </td>
+									{#each saleReport as venta}
+										{#each saleCardReport as ventaTarjeta}
+											<td class="p-2 text-left">{cajaTotal}</td>
+											<td class="p-2 text-left">
+												{venta.total_ventas +
+													tempCajaInicial +
+													sumIngresos -
+													sumRetiros -
+													ventaTarjeta.total_ventas}</td
+											>
+											<td class="p-2 text-left"
+												>{cajaTotal -
+													(venta.total_ventas +
+														tempCajaInicial +
+														sumIngresos -
+														sumRetiros -
+														ventaTarjeta.total_ventas)}
+											</td>
+										{/each}
+									{/each}
 								</tr>
 							</tbody>
 						</table>
