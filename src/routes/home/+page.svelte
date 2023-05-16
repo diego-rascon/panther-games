@@ -345,12 +345,13 @@
 				.update({ caja_total: (await getCajaValue()) + cartTotal })
 				.eq('caja_fecha', fechaActualFormat)
 				.select()
-				.single();
+				.maybeSingle();
 			if (error) {
-				console.error('error updateando caja', error);
+				console.log(error.message);
 				console.log('no hubo caja');
 				return false;
-			} else {
+			}
+			if (data) {
 				console.log('si hubo caja');
 				return true;
 			}
@@ -360,12 +361,13 @@
 				.update({ caja_total: await getCajaValue() })
 				.eq('caja_fecha', fechaActualFormat)
 				.select()
-				.single();
+				.maybeSingle();
 			if (error) {
-				console.error('error updateando caja', error);
+				console.log(error.message);
 				console.log('no hubo caja');
 				return false;
-			} else {
+			}
+			if (data) {
 				console.log('si hubo caja');
 				return true;
 			}
@@ -377,12 +379,14 @@
 			.from('caja')
 			.select('caja_total')
 			.eq('caja_fecha', fechaActualFormat)
-			.single();
+			.select()
+			.maybeSingle();
 		if (error) {
 			toastStore.trigger(cajaNotFound);
 			return;
 		}
-		return data.caja_total;
+		if (data) return data.caja_total;
+		else toastStore.trigger(cajaNotFound);
 	};
 
 	const registerSale = async (clientId: number, cashPayment: boolean) => {
@@ -458,11 +462,14 @@
 				})
 				.eq('caja_fecha', fechaActualFormat)
 				.select()
-				.single();
+				.maybeSingle();
 			if (error) {
-				console.error('error updateando caja', error);
+				console.log(error.message);
+				console.log('no hubo caja');
 				return false;
-			} else {
+			}
+			if (data) {
+				console.log('si hubo caja');
 				return true;
 			}
 		} else {
@@ -473,11 +480,14 @@
 				})
 				.eq('caja_fecha', fechaActualFormat)
 				.select()
-				.single();
+				.maybeSingle();
 			if (error) {
-				console.error('error updateando caja', error);
+				console.log(error.message);
+				console.log('no hubo caja');
 				return false;
-			} else {
+			}
+			if (data) {
+				console.log('si hubo caja');
 				return true;
 			}
 		}
