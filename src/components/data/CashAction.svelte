@@ -13,6 +13,6 @@
 >
 	<div class="flex flex-col space-y-2 items-center">
 		<Icon {icon} height={48} />
-		<p class="unstyled font-lexend font-bold text-2xl">{text}</p>
+		<p class="unstyled font-lexend font-bold text-xl">{text}</p>
 	</div>
 </button>
