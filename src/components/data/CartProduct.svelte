@@ -25,19 +25,21 @@
 
 <div class="p-4 bg-stone-800 rounded-xl space-y-2">
 	<div class="flex justify-between">
-		<p class="line-clamp-2 w-32">{name}</p>
-		<p class="mr-2 flex-shrink-0">{formattedPrice}</p>
+		<p class="line-clamp-2">{name}</p>
+		{#if !rent}
+			<p class="mr-2 flex-shrink-0">{formattedPrice}</p>
+		{/if}
 	</div>
 	<div class="flex flex-col space-y-1 items-start">
 		<div class="flex space-x-2">
-			{#if !rent}
+			{#if !rent || categoryId !== 1}
 				<p class="unstyled px-2 p-1 variant-soft-primary rounded-full text-xs">{categoryName}</p>
 			{/if}
 			{#if !newProduct}
 				<p class="unstyled px-2 p-1 variant-soft-warning rounded-full text-xs">Usado</p>
 			{/if}
 		</div>
-		{#if (!rent && categoryId === 1) || (rent && platformName !== 'Switch')}
+		{#if (!rent && categoryId === 1) || (rent && categoryId === 1 && platformName !== 'Switch')}
 			<p class="unstyled flex px-2 p-1 variant-soft-success rounded-full text-xs">{platformName}</p>
 		{/if}
 	</div>
