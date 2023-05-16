@@ -20,7 +20,7 @@
 	import { readUser } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
-	if (!$readUser) goto('/');
+	if ($readUser) goto('/');
 
 	export let data;
 	let { caja } = data;
