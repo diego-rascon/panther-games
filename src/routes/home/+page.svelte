@@ -122,6 +122,8 @@
 					product.producto_nombre.toLowerCase().includes(word) ||
 					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
 					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfd(product.plataforma_nombre.toLowerCase()).includes(word) ||
+					nfc(product.plataforma_nombre.toLowerCase()).includes(word) ||
 					product.producto_stock.toString().includes(word) ||
 					product.producto_minimo.toString().includes(word) ||
 					product.producto_precio.toString().includes(word)
@@ -135,6 +137,8 @@
 					product.producto_nombre.toLowerCase().includes(word) ||
 					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
 					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfd(product.plataforma_nombre.toLowerCase()).includes(word) ||
+					nfc(product.plataforma_nombre.toLowerCase()).includes(word) ||
 					product.producto_stock.toString().includes(word) ||
 					product.producto_minimo.toString().includes(word) ||
 					product.producto_precio.toString().includes(word)
@@ -148,6 +152,8 @@
 					product.producto_nombre.toLowerCase().includes(word) ||
 					nfd(product.producto_nombre.toLowerCase()).includes(word) ||
 					nfc(product.producto_nombre.toLowerCase()).includes(word) ||
+					nfd(product.plataforma_nombre.toLowerCase()).includes(word) ||
+					nfc(product.plataforma_nombre.toLowerCase()).includes(word) ||
 					product.producto_stock.toString().includes(word) ||
 					product.producto_minimo.toString().includes(word) ||
 					product.producto_precio.toString().includes(word)
