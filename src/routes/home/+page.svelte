@@ -341,7 +341,7 @@
 	const updateCaja = async (cashPayment: boolean) => {
 		if (cashPayment) {
 			const newTotal = (await getCajaValue()) + cartTotal;
-			const { data, error } = await supabase
+			const { error } = await supabase
 				.from('caja')
 				.update({ caja_total: newTotal })
 				.eq('caja_fecha', fechaActualFormat);
@@ -350,12 +350,10 @@
 				console.log('no hubo caja');
 				return false;
 			}
-			if (data) {
-				console.log('si hubo caja');
-				return true;
-			}
+			console.log('si hubo caja');
+			return true;
 		} else {
-			const { data, error } = await supabase
+			const { error } = await supabase
 				.from('caja')
 				.update({ caja_total: await getCajaValue() })
 				.eq('caja_fecha', fechaActualFormat);
@@ -364,10 +362,8 @@
 				console.log('no hubo caja');
 				return false;
 			}
-			if (data) {
-				console.log('si hubo caja');
-				return true;
-			}
+			console.log('si hubo caja');
+			return true;
 		}
 	};
 
@@ -462,10 +458,8 @@
 				console.log('no hubo caja');
 				return false;
 			}
-			if (data) {
-				console.log('si hubo caja');
-				return true;
-			}
+			console.log('si hubo caja');
+			return true;
 		} else {
 			const { data, error } = await supabase
 				.from('caja')
@@ -478,10 +472,8 @@
 				console.log('no hubo caja');
 				return false;
 			}
-			if (data) {
-				console.log('si hubo caja');
-				return true;
-			}
+			console.log('si hubo caja');
+			return true;
 		}
 	};
 
@@ -853,9 +845,9 @@
 	</div>
 </div>
 {#if !$readUser}
-<div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
-	<AddButton on:click={toggleAddingProduct} />
-</div>
+	<div class="fixed bottom-0 transition-all {cartVisible ? 'right-64' : 'right-0'}">
+		<AddButton on:click={toggleAddingProduct} />
+	</div>
 {/if}
 {#if addingProduct}
 	<DarkenSreen>
