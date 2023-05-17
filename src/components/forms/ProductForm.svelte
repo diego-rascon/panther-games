@@ -40,7 +40,7 @@
 				errorMessage = 'El stock del producto no es válido.';
 				return false;
 			}
-		} else if (!minimumStock || minimumStock < 1 || minimumStock >= stock) {
+		} else if (minimumStock && minimumStock > stock) {
 			errorMessage = 'El stock mínimo del producto no es válido.';
 			return false;
 		}
